@@ -1,0 +1,11 @@
+- op: replace
+  path: /spec/expose
+  value:
+    type: service            # Spinnaker is exposed using kubernetes services
+    service:
+      type: LoadBalancer     # Kubernetes service type used to expose Spinnaker. Can be ClusterIP, NodePort or LoadBalancer.
+      overrides:
+        gate:
+          publicPort: 8084   # (Optional). Port used to expose Gate.
+        deck:
+          publicPort: 9000   # (Optional). Port used to expose Deck.

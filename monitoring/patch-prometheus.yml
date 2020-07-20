@@ -1,0 +1,5 @@
+- op: add
+  path: /spec/spinnakerConfig/config/metricStores/prometheus
+  value:
+    enabled: true
+    add_source_metalabels: true

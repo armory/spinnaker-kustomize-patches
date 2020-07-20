@@ -1,0 +1,18 @@
+- op: add
+  path: /spec/spinnakerConfig/config/spinnaker/extensibility
+  value:
+    plugins:
+      Armory.RandomWaitPlugin:
+        id: Armory.RandomWaitPlugin
+        enabled: true
+        version: 1.1.11
+        extensions:
+          armory.randomWaitStage:
+            id: armory.randomWaitStage
+            enabled: true
+            config:
+              defaultMaxWaitTime: 3
+    repositories:
+      github-repository:
+        id: github-repository
+        url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json

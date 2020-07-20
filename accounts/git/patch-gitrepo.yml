@@ -1,0 +1,16 @@
+- op: add
+  path: /spec/spinnakerConfig/config/artifacts/gitrepo
+  value:
+    enabled: true
+    accounts:
+    - name: gitrepo
+      username: john.doe                # Git username.
+      token: encrypted:k8s!n:spin-secrets!k:github-token # (Secret). Git token.
+      #password: xyz                    # (Secret). Git password.
+      #tokenFile: token.txt             # (Secret). File containing a Git authentication token. File needs to be present on the machine running Spinnaker.
+      #usernamePasswordFile: creds.txt  # (Secret). File containing “username:password” to use for GitHub authentication. File needs to be present on the machine running Spinnaker.
+      #sshPrivateKeyFilePath: sshKey    # (Secret). Path to the ssh private key in PEM format. File needs to be present on the machine running Spinnaker.
+      #sshPrivateKeyPassphrase: xyz     # (Secret). Passphrase for encrypted private key.
+      #sshKnownHostsFilePath: hosts     # (Secret). File containing the known and trusted SSH hosts. File needs to be present on the machine running Spinnaker.
+      #sshTrustUnknownHosts: false      # Setting this to true allows Spinnaker to authenticate with unknown hosts.
+

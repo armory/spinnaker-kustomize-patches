@@ -1,0 +1,96 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spin-cluster-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - ingresses/status
+  - endpoints
+  resourceNames:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - services/finalizers
+  - events
+  - configmaps
+  - secrets
+  - namespaces
+  - ingresses
+  - jobs
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+  - patch
+- apiGroups:
+  - apps
+  - extensions
+  resources:
+  - deployments
+  - deployments/finalizers
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+  - patch
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - get
+  - create
+- apiGroups:
+  - spinnaker.armory.io
+  resources:
+  - '*'
+  - spinnakerservices
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+  - patch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  verbs:
+  - '*'
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spin-sa
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spin-cluster-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: spin-sa
+    namespace: spinnaker
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spin-cluster-role
+
