@@ -4,7 +4,8 @@ This repository contains example [kustomize](https://kustomize.io) patch files t
 
 ### Prerequisites
 
-You need to have a working Kubernetes cluster, and be able to execute `kubectl` commands against that cluster, with permissions to list and create namespaces.
+1. You need to have a working Kubernetes cluster, and be able to execute `kubectl` commands against that cluster, with permissions to list and create namespaces.
+2. Spinnaker Operator should have been installed to the cluster.
 
 ### Usage
 
