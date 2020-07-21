@@ -1,0 +1,87 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace where spinnaker and all its infrastructure will be installed.
+# NOTE: If changed, also change infrastructure/spin-sa.yml at ClusterRoleBinding.subjects.namespace
+namespace: spinnaker
+
+resources:
+  - infrastructure/minio.yml   # S3 compatible data store, don't use for production
+  - infrastructure/spin-sa.yml # Needed by kubernetes account where spinnaker is installed
+  - spinnakerservice-armory.yml
+
+patchesJson6902:
+  # Persistence, one patch mandatory
+  - path: persistentStorage/patch-s3.yml
+    target:
+      group: spinnaker.armory.io
+      version: v1alpha2
+      kind: SpinnakerService
+      name: spinnaker
+  # Automatically expose spinnaker, optional
+  - path: expose/patch-lb.yml
+    target:
+      group: spinnaker.armory.io
+      version: v1alpha2
+      kind: SpinnakerService
+      name: spinnaker
+  # Kubernetes accounts
+  - path: accounts/kubernetes/patch-kube.yml
+    target:
+      group: spinnaker.armory.io
+      version: v1alpha2
+      kind: SpinnakerService
+      name: spinnaker
+  # AWS accounts
+#  - path: accounts/aws/patch-aws.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+#  - path: accounts/aws/packer-templates.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+  # Docker accounts
+  - path: accounts/docker/patch-docker.yml
+    target:
+      group: spinnaker.armory.io
+      version: v1alpha2
+      kind: SpinnakerService
+      name: spinnaker
+  # Git accounts
+#  - path: accounts/git/patch-github.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+#  - path: accounts/git/patch-gitrepo.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+  # Spinnaker monitoring
+#  - path: monitoring/patch-prometheus.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+#  - path: monitoring/patch-datadog.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+  # Plugins
+#  - path: plugins/patch-plugin-wait.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
