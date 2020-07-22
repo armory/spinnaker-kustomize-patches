@@ -6,7 +6,8 @@ kind: Kustomization
 namespace: spinnaker
 
 resources:
-  - infrastructure/minio.yml   # S3 compatible data store, don't use for production
+  - infrastructure/minio.yml   # (Not for production use). S3 compatible data store
+  - infrastructure/mysql.yml   # (Not for production use). MySQL server needed if using SQL backend in Spinnaker
   - infrastructure/spin-sa.yml # Needed by kubernetes account where spinnaker is installed
   - spinnakerservice-armory.yml
 
@@ -78,6 +79,13 @@ patchesJson6902:
 #      version: v1alpha2
 #      kind: SpinnakerService
 #      name: spinnaker
+  # SQL backend
+  - path: sql/patch-clouddriver.yml
+    target:
+      group: spinnaker.armory.io
+      version: v1alpha2
+      kind: SpinnakerService
+      name: spinnaker
   # Plugins
 #  - path: plugins/patch-plugin-wait.yml
 #    target:

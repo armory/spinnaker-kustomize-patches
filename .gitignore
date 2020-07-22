@@ -1,5 +1,6 @@
 .idea
-secrets/files
+secrets/files/*
+!secrets/files/secretfile-example
 secrets.env
 *-local.yml
 *-local.yaml
