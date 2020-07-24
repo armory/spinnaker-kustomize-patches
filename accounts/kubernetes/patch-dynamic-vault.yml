@@ -1,0 +1,22 @@
+# Load kubernetes account from vault using spring config server. Spring docs: https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.0.2.RELEASE/single/spring-cloud-config.html#_git_backend
+- op: add
+  path: /spec/spinnakerConfig/profiles/spinnakerconfig/spring
+  value:
+    profiles:
+      include: vault
+    cloud:
+      config:
+        server:
+          vault:
+            scheme: https                                       # Url scheme for talking to vault
+            host: vault.myorg.com                               # Vault url excluding scheme and port information
+            port: 443                                           # Vault port
+            backend: secret                                     # Name of backend in Vault where kubernetes accounts are stored
+            kvVersion: 2                                        # In case of using key value store, this is the API version
+            default-key: spinnaker/clouddriver                  # Path within Vault where clouddriver information is stored
+            token: encrypted:k8s!n:spin-secrets!k:vaultToken    # (Secret). Vault token
+
+- op: add
+  path: /spec/spinnakerConfig/config/providers/kubernetes
+  value:
+    enabled: true

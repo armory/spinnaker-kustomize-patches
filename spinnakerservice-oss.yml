@@ -5,13 +5,14 @@ metadata:
 spec:
   spinnakerConfig:
     config:
-      version: 1.20.5
+      version: 1.21.0
       artifacts: {}
       providers: {}
       metricStores: {}
       spinnaker: {}
     profiles:
       spinnaker: {}
+      spinnakerconfig: {}
       gate: {}
       orca: {}
       rosco: {}

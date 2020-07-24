@@ -33,6 +33,18 @@ patchesJson6902:
       version: v1alpha2
       kind: SpinnakerService
       name: spinnaker
+#  - path: accounts/kubernetes/patch-dynamic-git.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
+#  - path: accounts/kubernetes/patch-dynamic-vault.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
   # AWS accounts
 #  - path: accounts/aws/patch-aws.yml
 #    target:

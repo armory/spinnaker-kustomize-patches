@@ -32,7 +32,7 @@
         enabled: true                       # (Default: false). Enable cloudformation support on this AWS account.
 
 # Only needed if spinnaker is not running in AWS and will deploy to AWS accounts
-- op: add
-  path: /spec/spinnakerConfig/service-settings/clouddriver/env
-  value:
-    EC2_REGION: us-west-2
+#- op: add
+#  path: /spec/spinnakerConfig/service-settings/clouddriver/env
+#  value:
+#    EC2_REGION: us-west-2

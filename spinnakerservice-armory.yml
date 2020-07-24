@@ -12,6 +12,7 @@ spec:
       spinnaker: {}
     profiles:
       spinnaker: {}
+      spinnakerconfig: {}
       gate: {}
       orca: {}
       rosco: {}
