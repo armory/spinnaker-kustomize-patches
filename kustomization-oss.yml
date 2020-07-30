@@ -98,6 +98,13 @@ patchesJson6902:
       version: v1alpha2
       kind: SpinnakerService
       name: spinnaker
+  # Customizations to spinnaker pods in Kubernetes
+#  - path: deploymentEnvironment/patch-volumes.yml
+#    target:
+#      group: spinnaker.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
   # Plugins
 #  - path: plugins/patch-plugin-wait.yml
 #    target:
@@ -105,3 +112,11 @@ patchesJson6902:
 #      version: v1alpha2
 #      kind: SpinnakerService
 #      name: spinnaker
+
+# For mounting custom files into spinnaker pods (see patch-volumes.yml)
+#generatorOptions:
+#  disableNameSuffixHash: true
+#secretGenerator:
+#  - name: custom-volume
+#    files:
+#      - deploymentEnvironment/custom-volume/file.txt

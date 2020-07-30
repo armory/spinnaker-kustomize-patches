@@ -30,3 +30,5 @@ spec:
       igor: {}
       clouddriver: {}
       front50: {}
+  kustomize:
+    clouddriver: {}

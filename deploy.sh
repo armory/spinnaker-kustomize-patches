@@ -11,21 +11,42 @@
 #--------------------------------------------------------------------------------------------------------------------------
 
 OPERATOR_NS=spinnaker-operator
+OUT=/dev/null
 
-function check_prerequisites {
-  if ! command -v jq &> /dev/null ; then
-    echo "ERROR: \'jq\' is not installed." >&2
-    exit 1
+function log() {
+  RED='\033[0;31m'
+  GREEN='\033[0;32m'
+  NC='\033[0m'
+  LEVEL=$1
+  MSG=$2
+  case $LEVEL in
+  "INFO") COLOR=$GREEN ;;
+  "ERROR") COLOR=$RED ;;
+  esac
+  printf "${COLOR}[%-5.5s]${NC} %b" "${LEVEL}" "${MSG}"
+}
+
+function info() {
+  log "INFO" "$1"
+}
+
+function error() {
+  log "ERROR" "$1" && exit 1
+}
+
+function check_prerequisites() {
+  if ! command -v jq &>/dev/null; then
+    error "ERROR" "'jq' is not installed."
   fi
 
-  if ! command -v kustomize &> /dev/null ; then
+  if ! command -v kustomize &>/dev/null; then
     HAS_KUSTOMIZE=0
   else
     HAS_KUSTOMIZE=1
-    KUST_OUT=$(kustomize build .)
-    [[ $? != 0 ]] && echo -ne "ERROR on kustomize build:\n$KUST_OUT" && exit 1
+    KUST_OUT=$(kustomize build . 2>&1)
+    [[ $? != 0 ]] && error "Kustomize build returned an error:\n$KUST_OUT\n"
   fi
-  if ! command -v watch &> /dev/null ; then
+  if ! command -v watch &>/dev/null; then
     HAS_WATCH=0
   else
     HAS_WATCH=1
@@ -36,7 +57,7 @@ ROOT_DIR=$(pwd)
 case $(readlink kustomization.yml) in
 "kustomization-oss.yml") FLAVOR=oss ;;
 "kustomization-armory.yml") FLAVOR=armory ;;
-*) echo "ERROR: kustomization.yml is not a symlink pointing to kustomization-oss.yml or kustomization-armory.yml" && exit 1 ;;
+*) error "kustomization.yml is not a symlink pointing to kustomization-oss.yml or kustomization-armory.yml" ;;
 esac
 
 case $FLAVOR in
@@ -44,84 +65,94 @@ case $FLAVOR in
 "armory") CRD=spinnakerservices.spinnaker.armory.io && OP_URL=https://github.com/armory-io/spinnaker-operator/releases/latest/download/manifests.tgz ;;
 esac
 
-function assert_crd {
-  if [[ $(kubectl get crd | grep "$CRD") == "" ]] ; then
+function assert_crd() {
+  info "Detected operator namespace: $OPERATOR_NS\n"
+  if [[ $(kubectl get crd | grep "$CRD") == "" ]]; then
     CRD_READY=0
     EXISTING_CRD=$(kubectl get crd | grep "spinnakerservices.spinnaker" | awk '{print $1}')
-    if [[ "$EXISTING_CRD" != "" ]] ; then
-      echo -ne "Expected operator flavor \"$FLAVOR\" but detected a different one, uninstalling the other operator.\n\n"
-      kubectl delete crd "$EXISTING_CRD"
-      kubectl delete crd spinnakeraccounts.spinnaker.io
-      kubectl -n $OPERATOR_NS delete deployment spinnaker-operator
+    if [[ "$EXISTING_CRD" != "" ]]; then
+      info "Expected operator flavor \"$FLAVOR\" but detected a different one, uninstalling the other operator.\n"
+      {
+        kubectl delete crd "$EXISTING_CRD"
+        kubectl delete crd spinnakeraccounts.spinnaker.io
+        kubectl -n $OPERATOR_NS delete deployment spinnaker-operator
+      } >$OUT 2>&1
     fi
   else
     CRD_READY=1
   fi
 }
 
-function check_operator_status {
+function check_operator_status() {
   OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}')
 }
 
-function assert_operator {
+function assert_operator() {
   assert_crd
   check_operator_status
-  if [[ $CRD_READY = 0 || "$OP_STATUS" != "2/2" ]] ; then
-    echo "Installing $FLAVOR operator from url $OP_URL"
-    rm -rf "$ROOT_DIR/operator"
-    mkdir -p "$ROOT_DIR/operator" && cd "$ROOT_DIR/operator" || exit 1
-    curl -L $OP_URL | tar -xz
-    kubectl apply -f deploy/crds/
-    if ! kubectl get ns "$OPERATOR_NS" > /dev/null 2>&1 ; then
-      kubectl create ns $OPERATOR_NS
-    fi
-    sed "s|.*# edit if you want the operator to live somewhere besides here|  namespace: $OPERATOR_NS   # edit if you want the operator to live somewhere besides here|" \
-      "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml > "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new
-    mv "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml
-    kubectl -n $OPERATOR_NS apply -f deploy/operator/cluster
-    echo -ne "\nWaiting for operator to become ready"
+  if [[ $CRD_READY == 0 || "$OP_STATUS" != "2/2" ]]; then
+    info "Deploying $FLAVOR operator from url $OP_URL."
+    {
+      rm -rf "$ROOT_DIR/operator"
+      mkdir -p "$ROOT_DIR/operator" && cd "$ROOT_DIR/operator" || exit 1
+      curl -L $OP_URL | tar -xz
+      kubectl apply -f deploy/crds/
+      if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
+        kubectl create ns $OPERATOR_NS
+      fi
+      sed "s|.*# edit if you want the operator to live somewhere besides here|  namespace: $OPERATOR_NS   # edit if you want the operator to live somewhere besides here|" \
+        "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml >"$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new
+      mv "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml
+      kubectl -n $OPERATOR_NS apply -f deploy/operator/cluster
+    } >$OUT 2>&1
     check_operator_status
-    while [[ "$OP_STATUS" != "2/2" ]] ; do
+    while [[ "$OP_STATUS" != "2/2" ]]; do
       echo -ne "."
-      sleep 1
+      sleep 2
       check_operator_status
     done
-    echo -ne " done\n\n"
+    echo -ne "Done\n"
     OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
-    echo -ne "Operator flavor: $FLAVOR, version: $OP_IMAGE\n\n"
+    info "Operator flavor: $FLAVOR, version: $OP_IMAGE\n"
     cd "$ROOT_DIR" || exit 1
   else
     OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
-    echo -ne "Operator ready. Flavor: $FLAVOR, version: $OP_IMAGE\n\n"
+    info "Operator flavor: $FLAVOR, version: $OP_IMAGE\n"
   fi
 }
 
-function deploy_secrets {
+function deploy_secrets() {
   SPIN_NS=$(grep "^namespace:" "$ROOT_DIR"/kustomization.yml | awk '{print $2}')
-  [[ "x$SPIN_NS" = "x" ]] && SPIN_NS=spinnaker
-  if ! kubectl get ns "$SPIN_NS" > /dev/null 2>&1 ; then
-    kubectl create ns $SPIN_NS
-  fi
-  "$ROOT_DIR"/secrets/create-secrets.sh
-  echo -ne "\nSecrets ready.\n\n"
+  [[ "x$SPIN_NS" == "x" ]] && SPIN_NS=spinnaker
+  info "Detected spinnaker namespace: $SPIN_NS\n"
+  info "Deploying secrets..."
+  {
+    if ! kubectl get ns "$SPIN_NS" >/dev/null 2>&1; then
+      kubectl create ns $SPIN_NS
+    fi
+    "$ROOT_DIR"/secrets/create-secrets.sh
+  } >$OUT 2>&1
+  echo -ne "Done\n"
 }
 
-function deploy_spinnaker {
-  echo -ne "\nInstalling spinnaker\n\n"
-  if [[ $HAS_KUSTOMIZE = 1 ]] ; then
-    kustomize build . | kubectl -n $SPIN_NS apply -f -
-  else
-    kubectl -n $SPIN_NS apply -k .
-  fi
+function deploy_spinnaker() {
+  info "Deploying spinnaker..."
+  {
+    if [[ $HAS_KUSTOMIZE == 1 ]]; then
+      kustomize build . | kubectl -n $SPIN_NS apply -f -
+    else
+      kubectl -n $SPIN_NS apply -k .
+    fi
+  } > $OUT 2>&1
   sleep 5
-  echo -ne "\nSpinnaker installed.\n"
+  echo -ne "Done\n"
 }
 
 check_prerequisites
 assert_operator
 deploy_secrets
 deploy_spinnaker
-if [[ $HAS_WATCH = 1 ]] ; then
+if [[ $HAS_WATCH == 1 ]]; then
   watch "kubectl get spinsvc && echo "" && kubectl get pods"
 else
   kubectl get spinsvc && echo "" && kubectl get pods
