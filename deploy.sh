@@ -19,9 +19,16 @@ function check_prerequisites {
   fi
 
   if ! command -v kustomize &> /dev/null ; then
-    HAS_KUSTOMIZE=1
-  else
     HAS_KUSTOMIZE=0
+  else
+    HAS_KUSTOMIZE=1
+    KUST_OUT=$(kustomize build .)
+    [[ $? != 0 ]] && echo -ne "ERROR on kustomize build:\n$KUST_OUT" && exit 1
+  fi
+  if ! command -v watch &> /dev/null ; then
+    HAS_WATCH=0
+  else
+    HAS_WATCH=1
   fi
 }
 
@@ -107,11 +114,15 @@ function deploy_spinnaker {
     kubectl -n $SPIN_NS apply -k .
   fi
   sleep 5
-  echo -ne "\nSpinnaker installed:\n"
-  kubectl -n $SPIN_NS get spinsvc
+  echo -ne "\nSpinnaker installed.\n"
 }
 
 check_prerequisites
 assert_operator
 deploy_secrets
 deploy_spinnaker
+if [[ $HAS_WATCH = 1 ]] ; then
+  watch "kubectl get spinsvc && echo "" && kubectl get pods"
+else
+  kubectl get spinsvc && echo "" && kubectl get pods
+fi

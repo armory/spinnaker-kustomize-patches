@@ -78,6 +78,13 @@ patchesJson6902:
 #      version: v1alpha2
 #      kind: SpinnakerService
 #      name: spinnaker
+  # Terraformer
+#  - path: armory/patch-terraformer.yml
+#    target:
+#      group: spinnaker.armory.io
+#      version: v1alpha2
+#      kind: SpinnakerService
+#      name: spinnaker
   # Spinnaker monitoring
 #  - path: monitoring/patch-prometheus.yml
 #    target:

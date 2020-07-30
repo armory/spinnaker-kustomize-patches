@@ -5,11 +5,12 @@ metadata:
 spec:
   spinnakerConfig:
     config:
-      version: 2.20.3
+      version: 2.20.4
       artifacts: {}
       providers: {}
       metricStores: {}
       spinnaker: {}
+      armory: {}
     profiles:
       spinnaker: {}
       spinnakerconfig: {}

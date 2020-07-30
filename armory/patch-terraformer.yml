@@ -1,0 +1,56 @@
+# Docs: https://docs.armory.io/docs/spinnaker/terraform-enable-integration/
+
+# Enables terraformer backend feature
+- op: add
+  path: /spec/spinnakerConfig/config/armory/terraform
+  value:
+    enabled: true
+
+# Enables terraformer UI
+- op: add
+  path: /spec/spinnakerConfig/profiles/deck
+  value:
+    settings-local.js: |
+      window.spinnakerSettings.feature.terraform = true;
+
+- op: add
+  path: /spec/spinnakerConfig/profiles/terraformer
+  value:
+    # Terraformer named profiles, for supplying credentials to terraformer
+    profiles:
+      - name: aws-with-session-tokens
+        variables:
+          - kind: static
+            options:
+              name: AWS_ACCESS_KEY_ID
+              value: XXXXXXXXXXXXXXXXXXXX
+          - kind: static
+            options:
+              name: AWS_SECRET_ACCESS_KEY
+              value: encrypted:k8s!n:spin-secrets!k:aws-secret-key
+          - kind: static
+            options:
+              name: AWS_SESSION_TOKEN
+              value: encrypted:k8s!n:spin-secrets!k:aws-session-token
+    # Used for connecting to an external Redis instance
+#    redis:
+#      baseUrl: "redis://spin-redis:6379"
+#      password: "password"
+
+# Gitrepo support, so that terraformer downloads terraform scripts from git repositories
+- op: add
+  path: /spec/spinnakerConfig/config/artifacts/gitrepo
+  value:
+    enabled: true
+    accounts:
+      - name: gitrepo
+        username: john.doe                # Git username.
+        token: encrypted:k8s!n:spin-secrets!k:github-token # (Secret). Git token.
+        #password: xyz                    # (Secret). Git password.
+        #tokenFile: token.txt             # (Secret). File containing a Git authentication token. File needs to be present on the machine running Spinnaker.
+        #usernamePasswordFile: creds.txt  # (Secret). File containing “username:password” to use for GitHub authentication. File needs to be present on the machine running Spinnaker.
+        #sshPrivateKeyFilePath: sshKey    # (Secret). Path to the ssh private key in PEM format. File needs to be present on the machine running Spinnaker.
+        #sshPrivateKeyPassphrase: xyz     # (Secret). Passphrase for encrypted private key.
+        #sshKnownHostsFilePath: hosts     # (Secret). File containing the known and trusted SSH hosts. File needs to be present on the machine running Spinnaker.
+        #sshTrustUnknownHosts: false      # Setting this to true allows Spinnaker to authenticate with unknown hosts.
+
