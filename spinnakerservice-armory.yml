@@ -5,7 +5,7 @@ metadata:
 spec:
   spinnakerConfig:
     config:
-      version: 2.20.4
+      version: 2.21.0
       artifacts: {}
       providers: {}
       metricStores: {}
@@ -32,4 +32,6 @@ spec:
       clouddriver: {}
       front50: {}
   kustomize:
+    deck: {}
+    gate: {}
     clouddriver: {}

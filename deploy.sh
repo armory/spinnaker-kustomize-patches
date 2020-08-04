@@ -137,13 +137,12 @@ function deploy_secrets() {
 
 function deploy_spinnaker() {
   info "Deploying spinnaker..."
-  {
-    if [[ $HAS_KUSTOMIZE == 1 ]]; then
-      kustomize build . | kubectl -n $SPIN_NS apply -f -
-    else
-      kubectl -n $SPIN_NS apply -k .
-    fi
-  } > $OUT 2>&1
+  if [[ $HAS_KUSTOMIZE == 1 ]]; then
+    DEPLOY_OUTPUT=$(kustomize build . | kubectl -n $SPIN_NS apply -f - 2>&1)
+  else
+    DEPLOY_OUTPUT=$(kubectl -n $SPIN_NS apply -k . 2>&1)
+  fi
+  [[ $? != 0 ]] && echo "" && error "$DEPLOY_OUTPUT\n"
   sleep 5
   echo -ne "Done\n"
 }
@@ -153,7 +152,7 @@ assert_operator
 deploy_secrets
 deploy_spinnaker
 if [[ $HAS_WATCH == 1 ]]; then
-  watch "kubectl get spinsvc && echo "" && kubectl get pods"
+  watch "kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods"
 else
-  kubectl get spinsvc && echo "" && kubectl get pods
+  kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods
 fi

@@ -9,3 +9,12 @@
           publicPort: 8084   # (Optional). Port used to expose Gate.
         deck:
           publicPort: 9000   # (Optional). Port used to expose Deck.
+
+# Public-facing spinnaker urls. If not configured, load balancer urls will be used automatically
+#- op: add
+#  path: /spec/spinnakerConfig/config/security
+#  value:
+#    apiSecurity:
+#      overrideBaseUrl: http://localhost:8084
+#    uiSecurity:
+#      overrideBaseUrl: http://localhost:9000
