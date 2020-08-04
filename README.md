@@ -9,7 +9,7 @@ This repository contains example [kustomize](https://kustomize.io) patch files t
 ### Quick start
 
 1. Update the symlink `kustomization.yml` to point to the flavor of Spinnaker you want to install: `kustomization-oss.yml` for OSS Spinnaker or `kustomization-armory.yml` for Armory Spinnaker.
-1. Run `./deploy.sh`. It will deploy Spinnaker Operator, and a base Spinnaker instance with some default integrations.
+1. Run `./deploy.sh`. It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base Spinnaker instance to `spinnaker` namespace with some default integrations.
 
 ### General usage
 
@@ -20,8 +20,8 @@ This repository can be used in two ways:
 
 If using this repository to directly manage a Spinnaker instance:
 
-* Namespace for the Spinnaker Operator is specified in script `deploy.sh`.
-* Namespace for Spinnaker and its infrastructure is specified in `kustomization.yml`.
+* Namespace for the Spinnaker Operator is configured in script `deploy.sh`.
+* Namespace for Spinnaker and its infrastructure is configured in `kustomization.yml`.
 * Store secret literals in `secrets/secrets.env` and secret files in `secrets/files`.
 * Comment/uncomment patches from `kustomization.yml`.
 * Deploy everything with `deploy.sh`.
