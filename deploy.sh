@@ -84,7 +84,7 @@ function assert_crd() {
 }
 
 function check_operator_status() {
-  OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}')
+  OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}' 2>$OUT)
 }
 
 function assert_operator() {

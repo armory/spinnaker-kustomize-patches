@@ -87,6 +87,8 @@ spec:
                 secretKeyRef:
                   name: spin-secrets
                   key: mysqlCdMigratePassword
+          args:
+            - "--ignore-db-dir=lost+found"
           ports:
             - containerPort: 3306
               name: mysql
