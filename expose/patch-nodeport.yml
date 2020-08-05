@@ -1,0 +1,32 @@
+- op: add
+  path: /spec/spinnakerConfig/config/security
+  value:
+    apiSecurity:
+      overrideBaseUrl: http://localhost:30084
+    uiSecurity:
+      overrideBaseUrl: http://localhost:30000
+
+- op: add
+  path: /spec/kustomize/deck/service
+  value:
+    patches:
+      - |
+        spec:
+          type: NodePort
+          ports:
+          - name: http
+            port: 9000
+            targetPort: 9000
+            nodePort: 30000
+- op: add
+  path: /spec/kustomize/gate/service
+  value:
+    patches:
+      - |
+        spec:
+          type: NodePort
+          ports:
+          - name: http
+            port: 8084
+            targetPort: 8084
+            nodePort: 30084
