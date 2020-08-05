@@ -11,7 +11,9 @@
 #--------------------------------------------------------------------------------------------------------------------------
 
 OPERATOR_NS=spinnaker-operator
-OUT=/dev/null
+
+ROOT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1 ; pwd -P )"
+OUT="$ROOT_DIR/log.txt"
 
 function log() {
   RED='\033[0;31m'
@@ -53,7 +55,6 @@ function check_prerequisites() {
   fi
 }
 
-ROOT_DIR=$(pwd)
 case $(readlink kustomization.yml) in
 "kustomization-oss.yml") FLAVOR=oss ;;
 "kustomization-armory.yml") FLAVOR=armory ;;
@@ -66,17 +67,17 @@ case $FLAVOR in
 esac
 
 function assert_crd() {
-  info "Detected operator namespace: $OPERATOR_NS\n"
-  if [[ $(kubectl get crd | grep "$CRD") == "" ]]; then
+  info "Resolved operator namespace: $OPERATOR_NS\n"
+  if [[ $(kubectl get crd | grep "$CRD" 2>"$OUT") == "" ]]; then
     CRD_READY=0
-    EXISTING_CRD=$(kubectl get crd | grep "spinnakerservices.spinnaker" | awk '{print $1}')
+    EXISTING_CRD=$(kubectl get crd | grep "spinnakerservices.spinnaker" | awk '{print $1}' 2>"$OUT")
     if [[ "$EXISTING_CRD" != "" ]]; then
       info "Expected operator flavor \"$FLAVOR\" but detected a different one, uninstalling the other operator.\n"
       {
         kubectl delete crd "$EXISTING_CRD"
         kubectl delete crd spinnakeraccounts.spinnaker.io
         kubectl -n $OPERATOR_NS delete deployment spinnaker-operator
-      } >$OUT 2>&1
+      } >>"$OUT" 2>&1
     fi
   else
     CRD_READY=1
@@ -84,7 +85,9 @@ function assert_crd() {
 }
 
 function check_operator_status() {
-  OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}' 2>$OUT)
+  {
+    OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}')
+  } >> "$OUT" 2>&1
 }
 
 function assert_operator() {
@@ -104,7 +107,7 @@ function assert_operator() {
         "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml >"$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new
       mv "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml
       kubectl -n $OPERATOR_NS apply -f deploy/operator/cluster
-    } >$OUT 2>&1
+    } >>"$OUT" 2>&1
     check_operator_status
     while [[ "$OP_STATUS" != "2/2" ]]; do
       echo -ne "."
@@ -124,14 +127,14 @@ function assert_operator() {
 function deploy_secrets() {
   SPIN_NS=$(grep "^namespace:" "$ROOT_DIR"/kustomization.yml | awk '{print $2}')
   [[ "x$SPIN_NS" == "x" ]] && SPIN_NS=spinnaker
-  info "Detected spinnaker namespace: $SPIN_NS\n"
+  info "Resolved spinnaker namespace: $SPIN_NS\n"
   info "Deploying secrets..."
   {
     if ! kubectl get ns "$SPIN_NS" >/dev/null 2>&1; then
       kubectl create ns $SPIN_NS
     fi
     "$ROOT_DIR"/secrets/create-secrets.sh
-  } >$OUT 2>&1
+  } >>"$OUT" 2>&1
   echo -ne "Done\n"
 }
 
@@ -154,5 +157,6 @@ deploy_spinnaker
 if [[ $HAS_WATCH == 1 ]]; then
   watch "kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods"
 else
+  info "Consider installing \"watch\" command to monitor installation progress"
   kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods
 fi
