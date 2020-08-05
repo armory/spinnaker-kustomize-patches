@@ -146,6 +146,7 @@ function deploy_spinnaker() {
     DEPLOY_OUTPUT=$(kubectl -n $SPIN_NS apply -k . 2>&1)
   fi
   [[ $? != 0 ]] && echo "" && error "$DEPLOY_OUTPUT\n"
+  echo -ne "$DEPLOY_OUTPUT" >> "$OUT"
   sleep 5
   echo -ne "Done\n"
 }

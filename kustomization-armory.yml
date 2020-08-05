@@ -2,13 +2,14 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 # Namespace where spinnaker and all its infrastructure will be installed.
-# NOTE: If changed, also change infrastructure/spin-sa.yml at ClusterRoleBinding.subjects.namespace
+# NOTE: If changed, also change it in all ClusterRoleBinding namespace references under infrastructure folder.
 namespace: spinnaker
 
 resources:
-  - infrastructure/minio.yml   # (Not for production use). S3 compatible data store
-  - infrastructure/mysql.yml   # (Not for production use). MySQL server needed if using SQL backend in Spinnaker
-  - infrastructure/spin-sa.yml # Needed by kubernetes account where spinnaker is installed
+  - infrastructure/minio.yml              # (Not for production use). S3 compatible data store
+  - infrastructure/mysql.yml              # (Not for production use). MySQL server needed if using SQL backend in Spinnaker
+  - infrastructure/spin-sa.yml            # Needed by kubernetes account where spinnaker is installed
+#  - infrastructure/prometheus-grafana.yml # Embedded prometheus-grafana for monitoring spinnaker
   - spinnakerservice-armory.yml
 
 patchesJson6902:
