@@ -10,8 +10,8 @@
 # 3. Deploys spinnaker with kubectl
 #--------------------------------------------------------------------------------------------------------------------------
 
+SPIN_FLAVOR=${SPIN_FLAVOR:-armory}
 OPERATOR_NS=spinnaker-operator
-FLAVOR=armory
 
 ROOT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1 ; pwd -P )"
 OUT="$ROOT_DIR/log.txt"
@@ -37,7 +37,31 @@ function error() {
   log "ERROR" "$1" && exit 1
 }
 
+function change_patch_flavor {
+  echo "API_VERSION: $API_VERSION" > "$OUT"
+  # shellcheck disable=SC2044
+  for f in $(find "$ROOT_DIR" -name '*.yml' -or -name '*.yaml') ; do
+    if ! grep -E "^apiVersion: spinnaker.(armory.)?io/v1alpha2" "$f" > /dev/null 2>&1 ; then continue ; fi
+    if grep "^$API_VERSION" "$f" > /dev/null 2>&1 ; then continue ; fi
+    echo "Changing file: $f" > "$OUT"
+    sed "s|^apiVersion: spinnaker.\(armory.\)\{0,1\}io/v1alpha2|$API_VERSION|" "$f" > "$f".new
+    mv "$f.new" "$f"
+  done
+}
+
 function check_prerequisites() {
+  case $SPIN_FLAVOR in
+  "oss")
+    CRD=spinnakerservices.spinnaker.io
+    OP_URL=https://github.com/armory/spinnaker-operator/releases/latest/download/manifests.tgz
+    API_VERSION="apiVersion: spinnaker.io/v1alpha2" ;;
+  "armory")
+    CRD=spinnakerservices.spinnaker.armory.io
+    OP_URL=https://github.com/armory-io/spinnaker-operator/releases/latest/download/manifests.tgz
+    API_VERSION="apiVersion: spinnaker.armory.io/v1alpha2" ;;
+  *) error "Invalid spinnaker flavor: $SPIN_FLAVOR. Valid values: armory, oss\n"
+  esac
+
   if ! kubectl get ns > /dev/null 2>&1 ; then
     error "Unable to list namespaces of the kubernetes cluster:\n$(kubectl get ns)"
   fi
@@ -45,6 +69,8 @@ function check_prerequisites() {
   if ! command -v jq &>/dev/null; then
     error "'jq' is not installed."
   fi
+
+  change_patch_flavor
 
   if ! command -v kustomize &>/dev/null; then
     HAS_KUSTOMIZE=0
@@ -60,18 +86,13 @@ function check_prerequisites() {
   fi
 }
 
-case $FLAVOR in
-"oss") CRD=spinnakerservices.spinnaker.io && OP_URL=https://github.com/armory/spinnaker-operator/releases/latest/download/manifests.tgz ;;
-"armory") CRD=spinnakerservices.spinnaker.armory.io && OP_URL=https://github.com/armory-io/spinnaker-operator/releases/latest/download/manifests.tgz ;;
-esac
-
-function assert_crd() {
+function assert_operator_crd() {
   info "Resolved operator namespace: $OPERATOR_NS\n"
   if [[ $(kubectl get crd | grep "$CRD" 2>"$OUT") == "" ]]; then
     CRD_READY=0
     EXISTING_CRD=$(kubectl get crd | grep "spinnakerservices.spinnaker" | awk '{print $1}' 2>"$OUT")
     if [[ "$EXISTING_CRD" != "" ]]; then
-      info "Expected operator flavor \"$FLAVOR\" but detected a different one, uninstalling the other operator.\n"
+      info "Expected operator flavor \"$SPIN_FLAVOR\" but detected a different one, uninstalling the other operator.\n"
       {
         kubectl delete crd "$EXISTING_CRD"
         kubectl delete crd spinnakeraccounts.spinnaker.io
@@ -90,10 +111,10 @@ function check_operator_status() {
 }
 
 function assert_operator() {
-  assert_crd
+  assert_operator_crd
   check_operator_status
   if [[ $CRD_READY == 0 || "$OP_STATUS" != "2/2" ]]; then
-    info "Deploying $FLAVOR operator from url $OP_URL."
+    info "Deploying $SPIN_FLAVOR operator from url $OP_URL."
     {
       rm -rf "$ROOT_DIR/operator"
       mkdir -p "$ROOT_DIR/operator" && cd "$ROOT_DIR/operator" || exit 1
@@ -115,11 +136,11 @@ function assert_operator() {
     done
     echo -ne "Done\n"
     OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
-    info "Operator flavor: $FLAVOR, version: $OP_IMAGE\n"
+    info "Operator flavor: $SPIN_FLAVOR, version: $OP_IMAGE\n"
     cd "$ROOT_DIR" || exit 1
   else
     OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
-    info "Operator flavor: $FLAVOR, version: $OP_IMAGE\n"
+    info "Operator flavor: $SPIN_FLAVOR, version: $OP_IMAGE\n"
   fi
 }
 
