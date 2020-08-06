@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 # Namespace where spinnaker and all its infrastructure will be installed.
-# NOTE: If changed, also change it in all ClusterRoleBinding namespace references under infrastructure folder.
+# NOTE: If changed, also change it in all ClusterRoleBinding namespace references.
 namespace: spinnaker
 
 resources:
