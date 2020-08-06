@@ -3,6 +3,10 @@ kind: SpinnakerService
 metadata:
   name: spinnaker
 spec:
+  validation:
+    providers:
+      docker:
+        enabled: true    # Default: true. Indicate if operator should do connectivity checks to configured docker accounts before applying the manifest
   spinnakerConfig:
     config:
       providers:
