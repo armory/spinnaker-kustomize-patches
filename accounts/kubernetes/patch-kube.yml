@@ -1,48 +1,53 @@
-- op: add
-  path: /spec/spinnakerConfig/config/providers/kubernetes
-  value:
-    enabled: true
-    primaryAccount: spinnaker
-    accounts:
-    # Account for Spinnaker's own kubernetes cluster (Optional).
-    - name: spinnaker
-      serviceAccount: true             # When true, Spinnaker will attempt to authenticate against Kubernetes using a Kubernetes service account. This only works when Spinnaker is deployed in the same Kubernetes cluster. Read more about service accounts here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/.
-      providerVersion: V2
-      permissions: {}
-      dockerRegistries: []
-      cacheThreads: 1                  # Number of caching agents for this kubernetes account. Each agent handles a subset of the namespaces available to this account. By default, only 1 agent caches all kinds for all namespaces in the account.
-      namespaces: []                   # A list of namespaces this Spinnaker account can deploy to and will cache. When no namespaces are configured, this defaults to ‘all namespaces’.
-      omitNamespaces: []               # A list of namespaces this Spinnaker account cannot deploy to or cache. This can only be set when –namespaces is empty or not set.
-      kinds: []                        # A list of resource kinds this Spinnaker account can deploy to and will cache. When no kinds are configured, this defaults to ‘all kinds described here https://spinnaker.io/reference/providers/kubernetes-v2/'.
-      omitKinds: []                    # A list of resource kinds this Spinnaker account cannot deploy to or cache. This can only be set when –kinds is empty or not set.
-      customResources: []              # List of Kubernetes custom resources to managed by clouddriver and made available for use in patch and delete manifest stages.
-      checkPermissionsOnStartup: true  # When false, clouddriver will skip the permission checks for all Kubernetes Kinds at startup. This can save a great deal of time during clouddriver startup when you have many Kubernetes accounts configured. This disables the log messages at startup about missing permissions.
-      liveManifestCalls: false         # When true, clouddriver will query manifest status during pipeline executions using live data rather than the cache. This eliminates all time spent in the “force cache refresh” task in pipelines, greatly reducing execution time.
-      cachingPolicies: []
-      oAuthScopes: []
-      onlySpinnakerManaged: false      # When true, Spinnaker will only cache/display applications that have been created by Spinnaker; as opposed to attempting to configure applications for resources already present in Kubernetes.
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        kubernetes:
+          enabled: true
+          primaryAccount: spinnaker
+          accounts:
+          # Account for Spinnaker's own kubernetes cluster (Optional).
+          - name: spinnaker
+            serviceAccount: true             # When true, Spinnaker will attempt to authenticate against Kubernetes using a Kubernetes service account. This only works when Spinnaker is deployed in the same Kubernetes cluster. Read more about service accounts here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/.
+            providerVersion: V2
+            permissions: {}
+            dockerRegistries: []
+            cacheThreads: 1                  # Number of caching agents for this kubernetes account. Each agent handles a subset of the namespaces available to this account. By default, only 1 agent caches all kinds for all namespaces in the account.
+            namespaces: []                   # A list of namespaces this Spinnaker account can deploy to and will cache. When no namespaces are configured, this defaults to ‘all namespaces’.
+            omitNamespaces: []               # A list of namespaces this Spinnaker account cannot deploy to or cache. This can only be set when –namespaces is empty or not set.
+            kinds: []                        # A list of resource kinds this Spinnaker account can deploy to and will cache. When no kinds are configured, this defaults to ‘all kinds described here https://spinnaker.io/reference/providers/kubernetes-v2/'.
+            omitKinds: []                    # A list of resource kinds this Spinnaker account cannot deploy to or cache. This can only be set when –kinds is empty or not set.
+            customResources: []              # List of Kubernetes custom resources to managed by clouddriver and made available for use in patch and delete manifest stages.
+            checkPermissionsOnStartup: true  # When false, clouddriver will skip the permission checks for all Kubernetes Kinds at startup. This can save a great deal of time during clouddriver startup when you have many Kubernetes accounts configured. This disables the log messages at startup about missing permissions.
+            liveManifestCalls: false         # When true, clouddriver will query manifest status during pipeline executions using live data rather than the cache. This eliminates all time spent in the “force cache refresh” task in pipelines, greatly reducing execution time.
+            cachingPolicies: []
+            oAuthScopes: []
+            onlySpinnakerManaged: false      # When true, Spinnaker will only cache/display applications that have been created by Spinnaker; as opposed to attempting to configure applications for resources already present in Kubernetes.
 
-    # Account for some remote Kubernetes cluster using a kubeconfig file stored in a Kubernetes secret
-#    - name: remote
-#      providerVersion: V2
-#      permissions: {}
-#      dockerRegistries: []
-#      cacheThreads: 1
-#      namespaces: []
-#      omitNamespaces: []
-#      kinds: []
-#      omitKinds: []
-#      customResources: []
-#      checkPermissionsOnStartup: true
-#      liveManifestCalls: false
-#      cachingPolicies: []
-#      oAuthScopes: []
-#      onlySpinnakerManaged: false
-#      kubeconfigFile: encryptedFile:k8s!n:spin-secrets!k:kubecfg-remote # (Secret).
+          # Account for some remote Kubernetes cluster using a kubeconfig file stored in a Kubernetes secret
+#          - name: remote
+#            providerVersion: V2
+#            permissions: {}
+#            dockerRegistries: []
+#            cacheThreads: 1
+#            namespaces: []
+#            omitNamespaces: []
+#            kinds: []
+#            omitKinds: []
+#            customResources: []
+#            checkPermissionsOnStartup: true
+#            liveManifestCalls: false
+#            cachingPolicies: []
+#            oAuthScopes: []
+#            onlySpinnakerManaged: false
+#            kubeconfigFile: encryptedFile:k8s!n:spin-secrets!k:kubecfg-remote # (Secret).
 
-# Needed for Kubernetes accounts of type "serviceAccount: true"
-- op: add
-  path: /spec/spinnakerConfig/service-settings/clouddriver/kubernetes
-  value:
-    serviceAccountName: spin-sa
-
+    # Needed for Kubernetes accounts of type "serviceAccount: true"
+    service-settings:
+      clouddriver:
+        kubernetes:
+          serviceAccountName: spin-sa

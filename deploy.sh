@@ -11,6 +11,7 @@
 #--------------------------------------------------------------------------------------------------------------------------
 
 OPERATOR_NS=spinnaker-operator
+FLAVOR=armory
 
 ROOT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1 ; pwd -P )"
 OUT="$ROOT_DIR/log.txt"
@@ -37,8 +38,12 @@ function error() {
 }
 
 function check_prerequisites() {
+  if ! kubectl get ns > /dev/null 2>&1 ; then
+    error "Unable to list namespaces of the kubernetes cluster:\n$(kubectl get ns)"
+  fi
+
   if ! command -v jq &>/dev/null; then
-    error "ERROR" "'jq' is not installed."
+    error "'jq' is not installed."
   fi
 
   if ! command -v kustomize &>/dev/null; then
@@ -54,12 +59,6 @@ function check_prerequisites() {
     HAS_WATCH=1
   fi
 }
-
-case $(readlink kustomization.yml) in
-"kustomization-oss.yml") FLAVOR=oss ;;
-"kustomization-armory.yml") FLAVOR=armory ;;
-*) error "kustomization.yml is not a symlink pointing to kustomization-oss.yml or kustomization-armory.yml" ;;
-esac
 
 case $FLAVOR in
 "oss") CRD=spinnakerservices.spinnaker.io && OP_URL=https://github.com/armory/spinnaker-operator/releases/latest/download/manifests.tgz ;;
@@ -138,14 +137,20 @@ function deploy_secrets() {
   echo -ne "Done\n"
 }
 
-function deploy_spinnaker() {
-  info "Deploying spinnaker..."
-  if [[ $HAS_KUSTOMIZE == 1 ]]; then
-    DEPLOY_OUTPUT=$(kustomize build . | kubectl -n $SPIN_NS apply -f - 2>&1)
-  else
-    DEPLOY_OUTPUT=$(kubectl -n $SPIN_NS apply -k . 2>&1)
+function deploy_dependency_crd {
+  if grep "^  - infrastructure/prometheus-grafana" kustomization.yml > /dev/null 2>&1 ; then
+    info "Deploying prometheus crds..."
+    DEPLOY_OUTPUT=$(kubectl apply -f "$ROOT_DIR"/infrastructure/prometheus-grafana/crd.yml 2>&1)
+    [[ $? != 0 ]] && echo "" && error "Error deploying prometheus crds:\n$DEPLOY_OUTPUT\n"
+    echo -ne "Done\n"
   fi
-  [[ $? != 0 ]] && echo "" && error "$DEPLOY_OUTPUT\n"
+}
+
+function deploy_spinnaker() {
+  deploy_dependency_crd
+  info "Deploying spinnaker..."
+  DEPLOY_OUTPUT=$(kubectl -n $SPIN_NS apply -k . 2>&1)
+  [[ $? != 0 ]] && echo "" && error "Error deploying spinnaker:\n$DEPLOY_OUTPUT\n"
   echo -ne "$DEPLOY_OUTPUT" >> "$OUT"
   sleep 5
   echo -ne "Done\n"
@@ -158,6 +163,6 @@ deploy_spinnaker
 if [[ $HAS_WATCH == 1 ]]; then
   watch "kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods"
 else
-  info "Consider installing \"watch\" command to monitor installation progress"
+  info "=== Consider installing \"watch\" command to monitor installation progress"
   kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods
 fi

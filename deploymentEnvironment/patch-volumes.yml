@@ -1,15 +1,20 @@
-- op: add
-  path: /spec/kustomize/clouddriver/deployment
-  value:
-    patchesJson6902: |
-      - op: add
-        path: /spec/template/spec/containers/0/volumeMounts/-
-        value:
-          mountPath: /custom-volume
-          name: custom-volume
-      - op: add
-        path: /spec/template/spec/volumes/-
-        value:
-          name: custom-volume
-          secret:
-            secretName: custom-volume
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesJson6902: |
+          - op: add
+            path: /spec/template/spec/containers/0/volumeMounts/-
+            value:
+              mountPath: /custom-volume
+              name: custom-volume
+          - op: add
+            path: /spec/template/spec/volumes/-
+            value:
+              name: custom-volume
+              secret:
+                secretName: custom-volume

@@ -1,5 +1,11 @@
-- op: add
-  path: /spec/spinnakerConfig/config/metricStores/prometheus
-  value:
-    enabled: true
-    add_source_metalabels: true
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      metricStores:
+        prometheus:
+          enabled: true
+          add_source_metalabels: true

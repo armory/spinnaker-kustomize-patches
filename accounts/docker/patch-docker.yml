@@ -1,43 +1,49 @@
-- op: add
-  path: /spec/spinnakerConfig/config/providers/dockerRegistry
-  value:
-    enabled: true
-    primaryAccount: dockerhub   # Must be one of the enabled docker accounts in other patch files
-    accounts:
-    # Example dockerhub account
-    - name: dockerhub
-      requiredGroupMembership: []
-      providerVersion: V1
-      permissions: {}
-      address: https://index.docker.io  # (Required). The registry address you want to pull and deploy images from; e.g. https://index.docker.io
-      email: fake.email@spinnaker.io    # Your docker registry email (often this only needs to be well-formed, rather than be a real address)
-      cacheIntervalSeconds: 30          # (Default: 30). How many seconds elapse between polling your docker registry. Certain registries are sensitive to over-polling, and larger intervals (e.g. 10 minutes = 600 seconds) are desirable if you’re seeing rate limiting.
-      clientTimeoutMillis: 60000        # (Default: 60000). Timeout time in milliseconds for this repository.
-      cacheThreads: 1                   # (Default: 1). How many threads to cache all provided repos on. Really only useful if you have a ton of repos.
-      paginateSize: 100                 # (Default: 100). Paginate size for the docker repository _catalog endpoint.
-      sortTagsByDate: false             # (Default: false). Sort tags by creation date.
-      trackDigests: false               # (Default: false). Track digest changes. This is not recommended as it consumes a high QPM, and most registries are flaky.
-      insecureRegistry: false           # (Default: false). Treat the docker registry as insecure (don’t validate the ssl cert).
-      repositories:                     # (Default: []). An optional list of repositories to cache images from. If not provided, Spinnaker will attempt to read accessible repositories from the registries _catalog endpoint
-        - library/nginx
-      #username: abc                     # Your docker registry username.
-      #password: xyz                     # (Secret). Your docker registry password.
-      #passwordFile: docker-creds        # (Secret). The path to a file containing your docker password in plaintext (not a docker/config.json file). File needs to be present on the machine running Spinnaker. Supports encrypted file.
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        dockerRegistry:
+          enabled: true
+          primaryAccount: dockerhub   # Must be one of the enabled docker accounts in other patch files
+          accounts:
+          # Example dockerhub account
+          - name: dockerhub
+            requiredGroupMembership: []
+            providerVersion: V1
+            permissions: {}
+            address: https://index.docker.io  # (Required). The registry address you want to pull and deploy images from; e.g. https://index.docker.io
+            email: fake.email@spinnaker.io    # Your docker registry email (often this only needs to be well-formed, rather than be a real address)
+            cacheIntervalSeconds: 30          # (Default: 30). How many seconds elapse between polling your docker registry. Certain registries are sensitive to over-polling, and larger intervals (e.g. 10 minutes = 600 seconds) are desirable if you’re seeing rate limiting.
+            clientTimeoutMillis: 60000        # (Default: 60000). Timeout time in milliseconds for this repository.
+            cacheThreads: 1                   # (Default: 1). How many threads to cache all provided repos on. Really only useful if you have a ton of repos.
+            paginateSize: 100                 # (Default: 100). Paginate size for the docker repository _catalog endpoint.
+            sortTagsByDate: false             # (Default: false). Sort tags by creation date.
+            trackDigests: false               # (Default: false). Track digest changes. This is not recommended as it consumes a high QPM, and most registries are flaky.
+            insecureRegistry: false           # (Default: false). Treat the docker registry as insecure (don’t validate the ssl cert).
+            repositories:                     # (Default: []). An optional list of repositories to cache images from. If not provided, Spinnaker will attempt to read accessible repositories from the registries _catalog endpoint
+              - library/nginx
+#            username: abc                     # Your docker registry username.
+#            password: xyz                     # (Secret). Your docker registry password.
+#            passwordFile: docker-creds        # (Secret). The path to a file containing your docker password in plaintext (not a docker/config.json file). File needs to be present on the machine running Spinnaker. Supports encrypted file.
 
-    # Example GCR account
-#    - name: gcr
-#      requiredGroupMembership: []
-#      providerVersion: V1
-#      permissions: {}
-#      address: https://gcr.io
-#      username: _json_key
-#      email: fake.email@spinnaker.io
-#      cacheIntervalSeconds: 30
-#      clientTimeoutMillis: 60000
-#      cacheThreads: 1
-#      paginateSize: 100
-#      sortTagsByDate: true
-#      trackDigests: false
-#      insecureRegistry: false
-#      repositories: []
-#      passwordFile: encryptedFile:k8s!n:spin-secrets!k:gcp.json
+          # Example GCR account
+#          - name: gcr
+#            requiredGroupMembership: []
+#            providerVersion: V1
+#            permissions: {}
+#            address: https://gcr.io
+#            username: _json_key
+#            email: fake.email@spinnaker.io
+#            cacheIntervalSeconds: 30
+#            clientTimeoutMillis: 60000
+#            cacheThreads: 1
+#            paginateSize: 100
+#            sortTagsByDate: true
+#            trackDigests: false
+#            insecureRegistry: false
+#            repositories: []
+#            passwordFile: encryptedFile:k8s!n:spin-secrets!k:gcp.json
