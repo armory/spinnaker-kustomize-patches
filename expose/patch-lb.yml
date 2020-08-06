@@ -1,6 +1,9 @@
-- op: replace
-  path: /spec/expose
-  value:
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  expose:
     type: service            # Spinnaker is exposed using kubernetes services
     service:
       type: LoadBalancer     # Kubernetes service type used to expose Spinnaker. Can be ClusterIP, NodePort or LoadBalancer.
@@ -10,11 +13,11 @@
         deck:
           publicPort: 9000   # (Optional). Port used to expose Deck.
 
-# Public-facing spinnaker urls. If not configured, load balancer urls will be used automatically
-#- op: add
-#  path: /spec/spinnakerConfig/config/security
-#  value:
-#    apiSecurity:
-#      overrideBaseUrl: http://localhost:8084
-#    uiSecurity:
-#      overrideBaseUrl: http://localhost:9000
+  # Public-facing spinnaker urls. If not configured, load balancer urls will be used automatically
+#  spinnakerConfig:
+#    config:
+#      security:
+#        apiSecurity:
+#          overrideBaseUrl: http://localhost:8084
+#        uiSecurity:
+#          overrideBaseUrl: http://localhost:9000

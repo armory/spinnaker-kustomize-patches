@@ -1,1 +1,63 @@
-kustomization-armory.yml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace where spinnaker and all its infrastructure will be installed.
+# NOTE: If changed, also change it in all ClusterRoleBinding namespace references.
+namespace: spinnaker
+
+resources:
+  - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
+  - infrastructure/minio.yml           # (Optional, not for production use). S3 compatible data store
+  - infrastructure/mysql.yml           # (Optional, not for production use). MySQL server needed if using SQL backend in Spinnaker
+#  - infrastructure/debugging-tools.yml # (Optional). A pod with some tools for troubleshooting spinnaker (curl, kubectl, vault, etc.)
+  - accounts/kubernetes/spin-sa.yml    # (Optional, needed by accounts/kubernetes/patch-kube.yml). Kubernetes service account for spinnaker to use in its own cluster
+#bases:
+#  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
+
+patchesStrategicMerge:
+  # (Mandatory). Persistence to store spinnaker applications and pipelines
+  - persistentStorage/patch-s3.yml
+
+  # Automatically expose spinnaker
+  - expose/patch-lb.yml
+#  - expose/patch-nodeport.yml
+
+  # Kubernetes accounts
+  - accounts/kubernetes/patch-kube.yml
+#  - accounts/kubernetes/patch-dynamic-git.yml
+#  - accounts/kubernetes/patch-dynamic-vault.yml
+
+  # AWS accounts
+#  - accounts/aws/patch-aws.yml
+#  - accounts/aws/packer-templates.yml
+
+  # Docker accounts
+  - accounts/docker/patch-docker.yml
+
+  # Git accounts
+#  - accounts/git/patch-github.yml
+#  - accounts/git/patch-gitrepo.yml
+
+  # Terraformer
+#  - armory/patch-terraformer.yml
+
+  # Spinnaker monitoring
+#  - monitoring/patch-prometheus.yml
+#  - monitoring/patch-datadog.yml
+
+  # SQL backend
+  - sql/patch-clouddriver.yml
+
+  # Customizations to spinnaker pods in Kubernetes
+#  - deploymentEnvironment/patch-volumes.yml
+
+  # Plugins
+#  - plugins/patch-plugin-wait.yml
+
+# Mounting any custom files into spinnaker pods (see patch-volumes.yml)
+#generatorOptions:
+#  disableNameSuffixHash: true
+#secretGenerator:
+#  - name: custom-volume
+#    files:
+#      - deploymentEnvironment/custom-volume/file.txt

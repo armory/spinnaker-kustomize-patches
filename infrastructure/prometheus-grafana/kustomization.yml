@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - prometheus-grafana.yml
+
+configMapGenerator:
+  - name: grafana-dashboard-spinnaker
+    files:
+      - spinnaker-dashboards.json
+
+generatorOptions:
+  disableNameSuffixHash: true

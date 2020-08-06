@@ -1,38 +1,44 @@
-- op: add
-  path: /spec/spinnakerConfig/config/providers/aws
-  value:
-    enabled: true
-    primaryAccount: aws-dev
-    accounts:
-    - name: aws-dev
-      accountId: "XXXXXXXXXXXX"            # (Required). Your AWS account ID to manage. See the AWS IAM User Guide for more information.
-      assumeRole: role/spinnaker           # (Required). If set, will configure a credentials provider that uses AWS Security Token Service to assume the specified role. Example: “user/spinnaker” or “role/spinnakerManaged”
-      lifecycleHooks: []                   # (Optional). Configuration for AWS Auto Scaling Lifecycle Hooks. For more information, see: https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html
-      permissions: {}
-      providerVersion: V1
-      regions:                             # (Default: []). The AWS regions this Spinnaker account will manage.
-      - name: us-east-1
-      - name: us-east-2
-      - name: us-west-1
-      - name: us-west-2
-    bakeryDefaults:                        # Configuration for Spinnaker’s image bakery.Configuration for Spinnaker’s image bakery.
-      baseImages: []
-    #accessKeyId: XXXXXXXXXXXXXXXXXXXX      # Only needed if cluster worker nodes don't have IAM roles for talking to the target aws account
-    #secretAccessKey: encrypted:k8s!n:spin-secrets!k:aws-secret-key  # Only needed if cluster worker nodes don't have IAM roles for talking to the target aws account
-    defaultKeyPairTemplate: '{{"{{"}}name{{"}}"}}-keypair'
-    defaultRegions:
-    - name: us-east-1
-    - name: us-east-2
-    - name: us-west-1
-    - name: us-west-2
-    defaults:
-      iamRole: BaseIAMRole
-    features:
-      cloudFormation:
-        enabled: true                       # (Default: false). Enable cloudformation support on this AWS account.
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        aws:
+          enabled: true
+          primaryAccount: aws-dev
+          accounts:
+          - name: aws-dev
+            accountId: "XXXXXXXXXXXX"            # (Required). Your AWS account ID to manage. See the AWS IAM User Guide for more information.
+            assumeRole: role/spinnaker           # (Required). If set, will configure a credentials provider that uses AWS Security Token Service to assume the specified role. Example: “user/spinnaker” or “role/spinnakerManaged”
+            lifecycleHooks: []                   # (Optional). Configuration for AWS Auto Scaling Lifecycle Hooks. For more information, see: https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html
+            permissions: {}
+            providerVersion: V1
+            regions:                             # (Default: []). The AWS regions this Spinnaker account will manage.
+            - name: us-east-1
+            - name: us-east-2
+            - name: us-west-1
+            - name: us-west-2
+          bakeryDefaults:                        # Configuration for Spinnaker’s image bakery.Configuration for Spinnaker’s image bakery.
+            baseImages: []
+#          accessKeyId: XXXXXXXXXXXXXXXXXXXX      # Only needed if cluster worker nodes don't have IAM roles for talking to the target aws account
+#          secretAccessKey: encrypted:k8s!n:spin-secrets!k:aws-secret-key  # Only needed if cluster worker nodes don't have IAM roles for talking to the target aws account
+          defaultKeyPairTemplate: '{{"{{"}}name{{"}}"}}-keypair'
+          defaultRegions:
+          - name: us-east-1
+          - name: us-east-2
+          - name: us-west-1
+          - name: us-west-2
+          defaults:
+            iamRole: BaseIAMRole
+          features:
+            cloudFormation:
+              enabled: true                       # (Default: false). Enable cloudformation support on this AWS account.
 
-# Only needed if spinnaker is not running in AWS and will deploy to AWS accounts
-#- op: add
-#  path: /spec/spinnakerConfig/service-settings/clouddriver/env
-#  value:
-#    EC2_REGION: us-west-2
+    # Only needed if spinnaker is not running in AWS and will deploy to AWS accounts
+#    service-settings:
+#      clouddriver:
+#        env:
+#          EC2_REGION: us-west-2

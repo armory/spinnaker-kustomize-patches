@@ -49,3 +49,5 @@ KUBECONFIG+="\n  user:"
 KUBECONFIG+="\n    token: $TOKEN\n"
 
 echo -ne "$KUBECONFIG" > "$CWD"/files/kubecfg-"$ACCOUNT_NAME"
+
+echo "Encrypted reference for using in spinnaker configuration: \"kubeconfigFile: encryptedFile:k8s!n:spin-secrets!k:kubecfg-$ACCOUNT_NAME\""

@@ -1,12 +1,17 @@
-- op: add
-  path: /spec/spinnakerConfig/config/artifacts/github
-  value:
-    enabled: true
-    accounts:
-    - name: github
-      token: encrypted:k8s!n:spin-secrets!k:github-token  # (Secret). GitHub token.
-      #tokenFile: token.txt             # (Secret). File containing a GitHub authentication token. File needs to be present on the machine running Spinnaker.
-      #username: abc                    # GitHub username.
-      #password: xyz                    # (Secret). GitHub password.
-      #usernamePasswordFile: creds.txt  # (Secret). File containing “username:password” to use for GitHub authentication. File needs to be present on the machine running Spinnaker.
-
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      artifacts:
+        github:
+          enabled: true
+          accounts:
+          - name: github
+            token: encrypted:k8s!n:spin-secrets!k:github-token  # (Secret). GitHub token.
+#            tokenFile: token.txt             # (Secret). File containing a GitHub authentication token. File needs to be present on the machine running Spinnaker.
+#            username: abc                    # GitHub username.
+#            password: xyz                    # (Secret). GitHub password.
+#            usernamePasswordFile: creds.txt  # (Secret). File containing “username:password” to use for GitHub authentication. File needs to be present on the machine running Spinnaker.

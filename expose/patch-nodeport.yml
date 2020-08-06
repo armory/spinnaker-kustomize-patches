@@ -1,32 +1,35 @@
-- op: add
-  path: /spec/spinnakerConfig/config/security
-  value:
-    apiSecurity:
-      overrideBaseUrl: http://localhost:30084
-    uiSecurity:
-      overrideBaseUrl: http://localhost:30000
-
-- op: add
-  path: /spec/kustomize/deck/service
-  value:
-    patches:
-      - |
-        spec:
-          type: NodePort
-          ports:
-          - name: http
-            port: 9000
-            targetPort: 9000
-            nodePort: 30000
-- op: add
-  path: /spec/kustomize/gate/service
-  value:
-    patches:
-      - |
-        spec:
-          type: NodePort
-          ports:
-          - name: http
-            port: 8084
-            targetPort: 8084
-            nodePort: 30084
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      security:
+        apiSecurity:
+          overrideBaseUrl: http://localhost:30084
+        uiSecurity:
+          overrideBaseUrl: http://localhost:30000
+  kustomize:
+    deck:
+      service:
+        patches:
+          - |
+            spec:
+              type: NodePort
+              ports:
+              - name: http
+                port: 9000
+                targetPort: 9000
+                nodePort: 30000
+    gate:
+      service:
+        patches:
+        - |
+          spec:
+            type: NodePort
+            ports:
+            - name: http
+              port: 8084
+              targetPort: 8084
+              nodePort: 30084
