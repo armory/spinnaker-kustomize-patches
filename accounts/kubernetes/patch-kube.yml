@@ -3,6 +3,10 @@ kind: SpinnakerService
 metadata:
   name: spinnaker
 spec:
+  validation:
+    providers:
+      kubernetes:
+        enabled: true    # Default: true. Indicate if operator should do connectivity checks to configured kubernetes accounts before applying the manifest
   spinnakerConfig:
     config:
       providers:
