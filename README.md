@@ -4,24 +4,36 @@ This repository contains example [kustomize](https://kustomize.io) patch files t
 
 ### Prerequisites
 
-1. You need to have a working Kubernetes cluster, and be able to execute `kubectl` commands against that cluster, with permissions to list and create namespaces.
+* You need to have a working Kubernetes cluster, and be able to execute `kubectl` commands against that cluster, with permissions to list and create namespaces.
 
 ### Quick start
 
-1. Update the symlink `kustomization.yml` to point to the flavor of Spinnaker you want to install: `kustomization-oss.yml` for OSS Spinnaker or `kustomization-armory.yml` for Armory Spinnaker.
-1. Run `./deploy.sh`. It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base Spinnaker instance to `spinnaker` namespace with some default integrations.
+Run `./deploy.sh`. It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base Spinnaker instance to `spinnaker` namespace with some default integrations.
 
 ### General usage
 
-This repository can be used in two ways:
+1. Comment or uncomment lines from the file `kustomization.yml` depending on what you want to be included in spinnaker. 
+1. Change any of the kustomize patch files to match your desired configuration. For example changing github username, aws account id, etc.
+1. Store secret literals in `secrets/secrets.env` and secret files in `secrets/files`. They are ignored by source control.
+1. Run `./deploy.sh` to deploy spinnaker. 
 
-1. Deploy and manage a spinnaker installation: This makes use of the helper shell scripts to install prerequisites and quickly iterate over Spinnaker changes. It's good for POCs and quick setups.
-1. Serve as a repository for example configurations for specific things, like how to enable dynamic Kubernetes accounts, load custom packer templates for AWS deployments, etc. Ideally there's one kustomize patch file for each complete "feature" to use.
+* Namespace for the Spinnaker Operator can be changed with the environment variable `OPERATOR_NS` when running `deploy.sh`.
+* Namespace for Spinnaker and all its infrastructure is configured in `kustomization.yml`.
+* Spinnaker version is configured in `spinnakerservice.yml`.
 
-If using this repository to directly manage a Spinnaker instance:
+For adding remote Kubernetes clusters to Spinnaker, the helper script `secrets/create-kubeconfig.sh` can be used to create a Kubernetes service account (with cluster admin role) and its corresponding `kubeconfig` file for spinnaker to use.
 
-* Namespace for the Spinnaker Operator is configured in script `deploy.sh`.
-* Namespace for Spinnaker and its infrastructure is configured in `kustomization.yml`.
-* Store secret literals in `secrets/secrets.env` and secret files in `secrets/files`.
-* Comment/uncomment patches from `kustomization.yml`.
-* Deploy everything with `deploy.sh`.
+### OSS Spinnaker or Armory Spinnaker
+
+All kustomize patch files in this repository are for Armory Spinnaker distribution. For using with OSS Spinnaker you need to change their `apiVersion` by removing `armory` from it. For example, 
+```
+apiVersion: spinnaker.armory.io/v1alpha2
+```
+changes to: 
+```
+apiVersion: spinnaker.io/v1alpha2
+```
+The script `deploy.sh` automatically does this to deploy OSS Spinnaker when run with the `SPIN_FLAVOR` environment variable:
+```bash
+SPIN_FLAVOR=oss ./deploy.sh
+```

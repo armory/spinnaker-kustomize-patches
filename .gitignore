@@ -6,4 +6,4 @@ secrets.env
 *-local.yaml
 *-local.env
 operator
-log.txt
+deploy_log.txt
