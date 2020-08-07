@@ -50,6 +50,7 @@ patchesStrategicMerge:
 
   # Customizations to spinnaker pods in Kubernetes
 #  - deploymentEnvironment/patch-volumes.yml
+  - deploymentEnvironment/patch-sizing.yml
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml

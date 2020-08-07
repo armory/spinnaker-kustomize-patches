@@ -1,0 +1,17 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      deploymentEnvironment:
+        customSizing:
+          spin-clouddriver:
+            replicas: 1       # Set the number of replicas (pods) to be created for this service.
+            requests:
+              cpu: 1          # Set the kubernetes CPU requests for each pod. For reference a m5.xlarge EC2 instance has a capacity of 4 cpu.
+              memory: 2Gi     # Set the kubernetes memory requests for each pod. For reference a m5.xlarge EC2 instance has a capacity of 16Gi of memory.
+            limits:
+              cpu: 1          # Set the kubernetes CPU limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 4 cpu.
+              memory: 2Gi     # Set the kubernetes memory limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 16Gi of memory.
