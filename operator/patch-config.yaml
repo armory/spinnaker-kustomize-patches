@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spinnaker-operator
+spec:
+  template:
+    spec:
+      containers:
+        - name: spinnaker-operator
+          volumeMounts:
+            - mountPath: /opt/spinnaker/config/halyard.yml
+              name: operator-config
+              subPath: halyard-local.yml
+        - name: halyard
+          volumeMounts:
+            - mountPath: /opt/spinnaker/config/halyard-local.yml
+              name: operator-config
+              subPath: halyard-local.yml
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: operator-config
+          name: operator-config

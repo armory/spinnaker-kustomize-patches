@@ -13,7 +13,6 @@
 #--------------------------------------------------------------------------------------------------------------------------
 
 SPIN_FLAVOR=${SPIN_FLAVOR:-armory}
-OPERATOR_NS=${OPERATOR_NS:-spinnaker-operator}
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -104,6 +103,7 @@ function check_prerequisites() {
 }
 
 function assert_operator_crd() {
+  OPERATOR_NS=$(grep "^namespace:" "$ROOT_DIR"/operator/kustomization.yml | awk '{print $2}')
   info "Resolved operator namespace: $OPERATOR_NS\n"
   if [[ $(kubectl get crd | grep "$CRD" 2>>"$OUT") == "" ]]; then
     CRD_READY=0
@@ -123,28 +123,27 @@ function assert_operator_crd() {
 
 function check_operator_status() {
   {
-    OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}')
-  } >>"$OUT" 2>&1
+    OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}' 2>/dev/null)
+  } >> "$OUT" 2>&1
 }
 
 function assert_operator() {
   assert_operator_crd
   check_operator_status
   if [[ $CRD_READY == 0 || "$OP_STATUS" != "2/2" ]]; then
-    info "Deploying $SPIN_FLAVOR operator from url $OP_URL."
+    info "Deploying $SPIN_FLAVOR operator."
     {
-      rm -rf "$ROOT_DIR/operator"
-      mkdir -p "$ROOT_DIR/operator" && cd "$ROOT_DIR/operator" || exit 1
+      rm -rf "$ROOT_DIR/operator/deploy"
+      cd "$ROOT_DIR/operator" || exit 1
       curl -L $OP_URL | tar -xz
       kubectl apply -f deploy/crds/
       if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
         kubectl create ns $OPERATOR_NS
       fi
-      sed "s|.*# edit if you want the operator to live somewhere besides here|  namespace: $OPERATOR_NS   # edit if you want the operator to live somewhere besides here|" \
-        "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml >"$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new
-      mv "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml.new "$ROOT_DIR"/operator/deploy/operator/cluster/role_binding.yaml
-      kubectl -n $OPERATOR_NS apply -f deploy/operator/cluster
     } >>"$OUT" 2>&1
+    DEPLOY_OUTPUT=$(kubectl -n $OPERATOR_NS apply -k . 2>&1)
+    [[ $? != 0 ]] && echo "" && error "Error deploying operator:\n$DEPLOY_OUTPUT\n"
+    echo -ne "$DEPLOY_OUTPUT" >> "$OUT"
     check_operator_status
     while [[ "$OP_STATUS" != "2/2" ]]; do
       echo -ne "."
