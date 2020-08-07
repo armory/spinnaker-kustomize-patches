@@ -1,0 +1,24 @@
+halyard:
+  halconfig:
+    directory: /home/spinnaker/.hal
+
+#spinnaker:
+#  config:
+#    # This section is used in air-gapped environments to specify an alternate location for spinnaker Bill Of Materials (BOM).
+#    input:
+#      gcs:
+#        enabled: false                   # If the BOM is stored in a GCS bucket, switch this to true.
+#      bucket: halconfig                  # Name of the bucket where spinnaker BOM is located.
+#      region: us-west-2                  # Bucket region (region does not matter for Minio).
+#      enablePathStyleAccess: false       # If you are using a platform that does not support PathStyleAccess, such as Minio, switch this to true (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro).
+#      endpoint: https://minio.minio:9000 # For s3 like storage with custom endpoint, such as Minio.
+#      anonymousAccess: false
+
+#secrets:
+#  vault:
+#    enabled: true
+#    authMethod: KUBERNETES    # (Required). Method used to authenticate with the Vault endpoint. Must be either KUBERNETES for Kubernetes service account auth or TOKEN for Vault token auth.
+#    url: https://vault.url    # (Required). URL of the Vault endpoint from Spinnaker services.
+#    path: example             # (Default: kubernetes). Applies to KUBERNETES authentication method. Path of the kubernetes authentication backend mount.
+#    role: example             # Applies to KUBERNETES authentication method. Name of the role against which the login is being attempted.
+#    token: xxx

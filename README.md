@@ -17,7 +17,7 @@ Run `./deploy.sh`. It will deploy Spinnaker Operator to `spinnaker-operator` nam
 1. Store secret literals in `secrets/secrets.env` and secret files in `secrets/files`. They are ignored by source control.
 1. Run `./deploy.sh` to deploy spinnaker. 
 
-* Namespace for the Spinnaker Operator can be changed with the environment variable `OPERATOR_NS` when running `deploy.sh`.
+* Namespace for the Spinnaker Operator is configured in `operator/kustomization.yml`.
 * Namespace for Spinnaker and all its infrastructure is configured in `kustomization.yml`.
 * Spinnaker version is configured in `spinnakerservice.yml`.
 
