@@ -13,6 +13,7 @@ resources:
   - accounts/kubernetes/spin-sa.yml    # (Optional, needed by accounts/kubernetes/patch-kube.yml). Kubernetes service account for spinnaker to use in its own cluster
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
+#  - plugins/kubesvc                    # (Optional). Alternate provider for Kubernetes. Depends on plugins/kubesvc/patch-clouddriver.yaml
 
 patchesStrategicMerge:
   # (Mandatory). Persistence to store spinnaker applications and pipelines
@@ -54,6 +55,7 @@ patchesStrategicMerge:
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
+#  - plugins/kubesvc/patch-clouddriver.yaml  # Depends on kubesvc base
 
 # Mounting any custom files into spinnaker pods (see patch-volumes.yml)
 #generatorOptions:

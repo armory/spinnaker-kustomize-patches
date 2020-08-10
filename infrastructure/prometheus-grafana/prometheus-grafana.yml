@@ -284,13 +284,13 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: grafana
-                  key: admin-username
+                  name: spin-secrets
+                  key: grafanaDefaultUser
             - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: grafana
-                  key: admin-password
+                  name: spin-secrets
+                  key: grafanaDefaultPassword
             - name: GF_AUTH_ANONYMOUS_ENABLED
               value: "false"
           readinessProbe:

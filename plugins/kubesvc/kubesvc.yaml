@@ -1,0 +1,20 @@
+kubernetes:
+  accounts: []
+  # Add your accounts here, /kubeconfigfiles is the path where kubeconfig files added
+  # to kustomization.yaml are mounted.
+#  - kubeconfigFile: /kubeconfigfiles/kubecfg-test.yml
+#    name: account1
+#    metrics: false
+#    kinds: []
+#    omitKinds: []
+    # You can add all the other fields from clouddriver settings, they'll be ignored.
+
+clouddriver:
+  grpc: spin-clouddriver:9091
+
+server:
+  port: 8082
+  
+prometheus:
+  enabled: true
+  # port: 8008
