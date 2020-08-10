@@ -23,15 +23,18 @@ OUT="$ROOT_DIR/deploy_log.txt"
 function log() {
   RED='\033[0;31m'
   GREEN='\033[0;32m'
+  ORANGE='\033[0;33m'
+  CYAN='\033[0;36m'
   NC='\033[0m'
   LEVEL=$1
   MSG=$2
   case $LEVEL in
-  "INFO") COLOR=$GREEN ;;
-  "ERROR") COLOR=$RED ;;
+  "INFO") HEADER_COLOR=$GREEN MSG_COLOR=$NS ;;
+  "KUBE") HEADER_COLOR=$ORANGE MSG_COLOR=$CYAN ;;
+  "ERROR") HEADER_COLOR=$RED MSG_COLOR=$NS ;;
   esac
-  printf "${COLOR}[%-5.5s]${NC} %b" "${LEVEL}" "${MSG}"
-  printf "[%-5.5s] %b" "${LEVEL}" "${MSG}" >> "$OUT"
+  printf "${HEADER_COLOR}[%-5.5s]${NC} ${MSG_COLOR}%b${NC}" "${LEVEL}" "${MSG}"
+  printf "[%-5.5s] %b" "${LEVEL}" "${MSG}" >>"$OUT"
 }
 
 function info() {
@@ -42,8 +45,14 @@ function error() {
   log "ERROR" "$1" && exit 1
 }
 
+function exec_kubectl_mutating() {
+  log "KUBE" "$1\n"
+  ERR_OUTPUT=$({ $1 >>"$OUT"; } 2>&1)
+  EXIT_CODE=$?
+}
+
 function change_patch_flavor() {
-  if ! grep "^$API_VERSION" spinnakerservice.yml > /dev/null ; then
+  if ! grep "^$API_VERSION" spinnakerservice.yml >/dev/null; then
     info "Changing spinnaker flavor..."
     {
       echo "API_VERSION: $API_VERSION" >>"$OUT"
@@ -55,13 +64,13 @@ function change_patch_flavor() {
         sed "s|^apiVersion: spinnaker.\(armory.\)\{0,1\}io/v1alpha2|$API_VERSION|" "$f" >"$f".new
         mv "$f.new" "$f"
       done
-    } >> "$OUT" 2>&1
+    } >>"$OUT" 2>&1
     echo -ne "Done\n"
   fi
 }
 
 function check_prerequisites() {
-  date > "$OUT"
+  date >"$OUT"
   case $SPIN_FLAVOR in
   "oss")
     CRD=spinnakerservices.spinnaker.io
@@ -110,11 +119,9 @@ function assert_operator_crd() {
     EXISTING_CRD=$(kubectl get crd | grep "spinnakerservices.spinnaker" | awk '{print $1}' 2>>"$OUT")
     if [[ "$EXISTING_CRD" != "" ]]; then
       info "Expected operator flavor \"$SPIN_FLAVOR\" but detected a different one, uninstalling the other operator.\n"
-      {
-        kubectl delete crd "$EXISTING_CRD"
-        kubectl delete crd spinnakeraccounts.spinnaker.io
-        kubectl -n $OPERATOR_NS delete deployment spinnaker-operator
-      } >>"$OUT" 2>&1
+      exec_kubectl_mutating "kubectl delete crd \"$EXISTING_CRD\""
+      exec_kubectl_mutating "kubectl delete crd spinnakeraccounts.spinnaker.io"
+      exec_kubectl_mutating "kubectl -n $OPERATOR_NS delete deployment spinnaker-operator"
     fi
   else
     CRD_READY=1
@@ -124,26 +131,27 @@ function assert_operator_crd() {
 function check_operator_status() {
   {
     OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}' 2>/dev/null)
-  } >> "$OUT" 2>&1
+  } >>"$OUT" 2>&1
 }
 
 function assert_operator() {
   assert_operator_crd
   check_operator_status
   if [[ $CRD_READY == 0 || "$OP_STATUS" != "2/2" ]]; then
-    info "Deploying $SPIN_FLAVOR operator."
+    info "Deploying $SPIN_FLAVOR operator...\n"
     {
       rm -rf "$ROOT_DIR/operator/deploy"
       cd "$ROOT_DIR/operator" || exit 1
-      curl -L $OP_URL | tar -xz
-      kubectl apply -f deploy/crds/
-      if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
-        kubectl create ns $OPERATOR_NS
-      fi
     } >>"$OUT" 2>&1
-    DEPLOY_OUTPUT=$(kubectl -n $OPERATOR_NS apply -k . 2>&1)
-    [[ $? != 0 ]] && echo "" && error "Error deploying operator:\n$DEPLOY_OUTPUT\n"
-    echo -ne "$DEPLOY_OUTPUT" >> "$OUT"
+    info "Downloading operator from $OP_URL\n"
+    { curl -L $OP_URL | tar -xz; } >>"$OUT" 2>&1
+    exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/operator/deploy/crds/"
+    if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
+      exec_kubectl_mutating "kubectl create ns $OPERATOR_NS"
+    fi
+    exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -k $ROOT_DIR/operator"
+    [[ $EXIT_CODE != 0 ]] && echo "" && error "Error deploying operator:\n$ERR_OUTPUT\n"
+    info "Waiting for operator to start."
     check_operator_status
     while [[ "$OP_STATUS" != "2/2" ]]; do
       echo -ne "."
@@ -164,33 +172,39 @@ function deploy_secrets() {
   SPIN_NS=$(grep "^namespace:" "$ROOT_DIR"/kustomization.yml | awk '{print $2}')
   [[ "x$SPIN_NS" == "x" ]] && SPIN_NS=spinnaker
   info "Resolved spinnaker namespace: $SPIN_NS\n"
-  info "Deploying secrets..."
+  info "Deploying secrets...\n"
+  if ! kubectl get ns "$SPIN_NS" >/dev/null 2>&1; then
+    exec_kubectl_mutating "kubectl create ns $SPIN_NS"
+  fi
+  log "KUBE" "kubectl -n $SPIN_NS create secret generic spin-secrets --from-literal=... --from-file=...\n"
   {
-    if ! kubectl get ns "$SPIN_NS" >/dev/null 2>&1; then
-      kubectl create ns $SPIN_NS
-    fi
     "$ROOT_DIR"/secrets/create-secrets.sh
-  } >> "$OUT" 2>&1
-  echo -ne "Done\n"
+  } >>"$OUT" 2>&1
 }
 
 function deploy_dependency_crd() {
   if grep "^  - infrastructure/prometheus-grafana" kustomization.yml >/dev/null 2>&1; then
-    info "Deploying prometheus crds..."
-    DEPLOY_OUTPUT=$(kubectl apply -f "$ROOT_DIR"/infrastructure/prometheus-grafana/crd.yml 2>&1)
-    [[ $? != 0 ]] && echo "" && error "Error deploying prometheus crds:\n$DEPLOY_OUTPUT\n"
-    echo -ne "Done\n"
+    info "Deploying prometheus crds...\n"
+    exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/infrastructure/prometheus-grafana/crd.yml"
+    [[ $EXIT_CODE != 0 ]] && error "Error deploying prometheus crds:\n$ERR_OUTPUT\n"
   fi
 }
 
 function deploy_spinnaker() {
   deploy_dependency_crd
-  info "Deploying spinnaker..."
-  DEPLOY_OUTPUT=$(kubectl -n $SPIN_NS apply -k . 2>&1)
-  [[ $? != 0 ]] && echo "" && error "Error deploying spinnaker:\n$DEPLOY_OUTPUT\n"
-  echo -ne "$DEPLOY_OUTPUT" >> "$OUT"
-  sleep 5
-  echo -ne "Done\n"
+  info "Deploying spinnaker...\n"
+  exec_kubectl_mutating "kubectl -n $SPIN_NS apply -k $ROOT_DIR"
+  if [[ $EXIT_CODE != 0 ]]; then
+    echo -ne "$ERR_OUTPUT" >>"$OUT"
+    if echo "$ERR_OUTPUT" | grep "SpinnakerService validation failed" >/dev/null 2>&1; then
+      PRETTY_ERR=$(echo "$ERR_OUTPUT" | sed -n -e '/SpinnakerService validation failed/,$p' | sed -e '/):.*/,$d')
+    else
+      PRETTY_ERR=$ERR_OUTPUT
+    fi
+    echo ""
+    error "Error deploying spinnaker, see deploy_log.txt for full output:\n$PRETTY_ERR\n"
+  fi
+  info "Spinnaker deployed\n"
 }
 
 check_prerequisites
