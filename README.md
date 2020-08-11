@@ -1,6 +1,10 @@
-# spinnaker-patch-files
+# spinnaker-kustomize-patches
 
 This repository contains example [kustomize](https://kustomize.io) patch files to configure and deploy Spinnaker using the Spinnaker Operator.
+
+### Disclaimer
+
+The example configurations provided in this repository serve as a starting point for configuring Spinnaker, usually they may need to be adjusted to the environment where Spinnaker is running to work properly. It's possible that not all configurations work with all versions of Spinnaker. 
 
 ### Prerequisites
 
