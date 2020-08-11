@@ -97,13 +97,8 @@ function check_prerequisites() {
 
   change_patch_flavor
 
-  if ! command -v kustomize &>/dev/null; then
-    HAS_KUSTOMIZE=0
-  else
-    HAS_KUSTOMIZE=1
-    KUST_OUT=$(kustomize build . 2>&1)
-    [[ $? != 0 ]] && error "Kustomize build returned an error:\n$KUST_OUT\n"
-  fi
+  KUST_OUT=$(kubectl kustomize . 2>&1)
+  [[ $? != 0 ]] && error "\"kubectl kustomize .\" returned an error:\n$KUST_OUT\n"
   if ! command -v watch &>/dev/null; then
     HAS_WATCH=0
   else
