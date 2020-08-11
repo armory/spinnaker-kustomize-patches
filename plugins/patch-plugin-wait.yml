@@ -1,3 +1,6 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling a plugin into spinnaker
+#-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:

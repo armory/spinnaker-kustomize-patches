@@ -12,13 +12,16 @@ The example configurations provided in this repository serve as a starting point
 
 ### Quick start
 
-Run `./deploy.sh`. It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base Spinnaker instance to `spinnaker` namespace with some default integrations.
+Run `./deploy.sh`. 
+
+It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base Spinnaker instance to `spinnaker` namespace with some default integrations.
 
 ### General usage
 
-1. Comment or uncomment lines from the file `kustomization.yml` depending on what you want to be included in spinnaker. 
+1. Make a link from `kustomization.yml` to one of the example kustomization files in `recipes` folder depending on your use case.
+1. Comment or uncomment lines from `kustomization.yml` depending on what you want to be included in spinnaker. 
 1. Change any of the kustomize patch files to match your desired configuration. For example changing github username, aws account id, etc.
-1. Store secret literals in `secrets/secrets.env` and secret files in `secrets/files`. They are ignored by source control.
+1. Store secret literals in `secrets/secrets.env` and secret files in `secrets/files` if you want to store spinnaker secrets in Kubernetes. They are ignored by source control.
 1. Run `./deploy.sh` to deploy spinnaker. 
 
 * Namespace for the Spinnaker Operator is configured in `operator/kustomization.yml`.

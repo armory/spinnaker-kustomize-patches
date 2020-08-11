@@ -1,3 +1,31 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example configuration for loading Kubernetes accounts configuration from a git backend using spring cloud
+# config server.
+# Spring docs: https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.0.2.RELEASE/single/spring-cloud-config.html#_git_backend
+#
+# Example of clouddriver.yml stored in git:
+#
+# kubernetes:
+# enabled: true
+#  primaryAccount: account1
+#  accounts:
+#    - name: account1
+#      kubeconfigFile: # "encryptedFile" or "configserver" reference, or file mounted into clouddriver pod
+#      providerVersion: V2
+#      permissions: {}
+#      dockerRegistries: []
+#      cacheThreads: 1
+#      namespaces: []
+#      omitNamespaces: []
+#      kinds: []
+#      omitKinds: []
+#      customResources: []
+#      checkPermissionsOnStartup: true
+#      liveManifestCalls: false
+#      cachingPolicies: []
+#      oAuthScopes: []
+#      onlySpinnakerManaged: false
+#-----------------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
@@ -9,15 +37,15 @@ spec:
         spring:
           profiles:
             include: git
-          # Load kubernetes account from git using spring config server. Spring docs: https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.0.2.RELEASE/single/spring-cloud-config.html#_git_backend
+          # Load kubernetes account from git using spring config server.
           cloud:
             config:
               server:
                 git:
                   uri: https://github.com/myorg/myrepo                           # Git url of repository containing clouddriver.yml file
-#                  username: john.doe                                             # Username to authenticate to git
-#                  password: encrypted:k8s!n:spin-secrets!k:github-token          # (Secret). Password for authenticating to git
-                  searchPaths: config                                            # Path within the repo having clouddriver.yml file
+                  username: john.doe                                             # Username to authenticate to git
+                  password: encrypted:k8s!n:spin-secrets!k:github-token          # (Secret). Password for authenticating to git
+#                  searchPaths: config                                            # Path within the repo having clouddriver.yml file
                   refresh-rate: 10                                               # How often (seconds) to read changes from repo
     config:
       providers:
