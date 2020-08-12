@@ -1,3 +1,6 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for using SQL as a caching store for clouddriver
+#-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:

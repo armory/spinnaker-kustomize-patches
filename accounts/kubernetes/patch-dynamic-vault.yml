@@ -1,3 +1,38 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example configuration for loading Kubernetes accounts configuration from a vault backend using spring cloud
+# config server.
+# Spring docs: https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.0.2.RELEASE/single/spring-cloud-config.html#vault-backend
+#
+# Example of json entry stored in vault:
+#
+#  {
+#    "kubernetes": {
+#      "accounts": [
+#      {
+#        "name": "account1",
+#        "kubeconfigFile": <"encryptedFile" or "configserver" reference, or file mounted into clouddriver pod>
+#        "cacheIntervalSeconds": 30,
+#        "cacheThreads": 1,
+#        "cachingPolicies": [],
+#        "configureImagePullSecrets": true,
+#        "customResources": [],
+#        "dockerRegistries": [],
+#        "isAtomicFcr": true,
+#        "kinds": [],
+#        "metrics": false,
+#        "namespaces": [],
+#        "oAuthScopes": [],
+#        "omitKinds": [],
+#        "omitNamespaces": [
+#          "kube-public"
+#        ],
+#        "onlySpinnakerManaged": false,
+#        "permissions": {},
+#        "providerVersion": "V2",
+#        "requiredGroupMembership": [],
+#      }
+#  }
+#-----------------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:

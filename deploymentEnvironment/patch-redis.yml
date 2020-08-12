@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for enabling monitoring of spinnaker through prometheus endpoints
+# Example configuration for using an external redis instance instead of the one shipped with spinnaker
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
@@ -7,8 +7,7 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:
-    config:
-      metricStores:
-        prometheus:
-          enabled: true
-          add_source_metalabels: true
+    service-settings:
+      redis:
+        overrideBaseUrl: redis://abc.mycompany.com:6379   # External redis endpoint
+        skipLifeCycleManagement: true                     # Tell spinnaker to not manage the embedded spin-redis pod

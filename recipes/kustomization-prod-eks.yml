@@ -1,0 +1,57 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example recipe for installing a production Spinnaker instance in AWS EKS clusters.
+#
+# Features:
+# - S3 persistent storage
+# - Spinnaker exposed with internal ELB's
+# - Kubernetes account definitions loaded dynamically from git
+# - Spinnaker monitoring metrics exposed through prometheus compatible endpoints
+# - SQL storage backend for clouddriver (TODO: add sql configs for orca and front50)
+# - External redis usage
+# - CPU and memory requests and limits defined for clouddriver
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace where spinnaker and all its infrastructure will be installed.
+# NOTE: If changed, also change it in all ClusterRoleBinding namespace references.
+namespace: spinnaker
+
+resources:
+  - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
+
+patchesStrategicMerge:
+  # (Mandatory). Persistence to store spinnaker applications and pipelines.
+  # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or
+  # worker node level, so that AWS access/secret keys are not used in the config. Some auth options include
+  # kube2iam and assigning IAM roles to worker nodes in the cluster.
+  - persistentStorage/patch-s3.yml
+
+  # Automatically expose spinnaker with 2 internal ELB's with SSL.
+  # DNS entries must be configured to point to the ELB's and set in the patch file. Also an ACM certificate is used
+  # for SSL.
+  - expose/patch-lb-aws.yml
+
+  # Authentication and authorization using github groups.
+  - security/patch-github.yml
+
+  # Kubernetes accounts configuration taken from a git backend using spring cloud config server
+  - accounts/kubernetes/patch-dynamic-git.yml
+
+  # Docker accounts
+  - accounts/docker/patch-dockerhub.yml
+
+  # Git accounts
+  - accounts/git/patch-github.yml
+
+  # Spinnaker monitoring
+  - monitoring/patch-prometheus.yml
+
+  # SQL backend
+  - sql/patch-clouddriver.yml
+
+  # Service sizing
+  - deploymentEnvironment/patch-sizing.yml
+
+  # Use an external redis instead of the one provided by spinnaker
+  - deploymentEnvironment/patch-redis.yml
