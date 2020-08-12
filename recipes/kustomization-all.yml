@@ -52,6 +52,7 @@ patchesStrategicMerge:
   # Armory features
 #  - armory/patch-terraformer.yml
 #  - armory/patch-dinghy.yml
+#  - armory/patch-diagnostics.yml
 
   # Spinnaker monitoring
 #  - monitoring/patch-prometheus.yml
