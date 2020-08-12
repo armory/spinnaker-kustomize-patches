@@ -1,0 +1,16 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a GCS artifact account to spinnaker
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      artifacts:
+        gcs:
+          enabled: true
+          accounts:
+            - name: gcs
+              jsonPath: encryptedFile:k8s!n:spin-secrets!k:gcs.json # (Secret). The path to a JSON service account that Spinnaker will use as credentials. This is only needed if Spinnaker is not deployed on a Google Compute Engine VM, or needs permissions not afforded to the VM it is running on.
