@@ -1,0 +1,20 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a S3 artifact account to spinnaker
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      artifacts:
+        s3:
+          enabled: true
+          accounts:
+            - name: s3
+#              awsAccessKeyId: XXXXXXXXXXXXXXXXXXXX     # Your AWS Access Key ID. If not provided, Halyard/Spinnaker will try to find AWS credentials as described at http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html#credentials-default
+#              awsSecretAccessKey: encrypted:k8s!n:spin-secrets!k:aws-secret-key # (Secret). Your AWS Secret Key.
+#              region: us-west-2                        # S3 Region.
+#              apiRegion: us-west-2                     # S3 api region; only required when using an S3 clone such as Minio.
+#              apiEndpoint: https://minio:9000          # S3 api endpoint; only required when using an S3 clone such as Minio.

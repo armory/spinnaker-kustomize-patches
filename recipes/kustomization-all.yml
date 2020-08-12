@@ -40,13 +40,14 @@ patchesStrategicMerge:
 #  - accounts/aws/patch-aws.yml
 #  - accounts/aws/packer-templates.yml
 
-  # Docker accounts
+  # Artifact accounts
   - accounts/docker/patch-dockerhub.yml
 #  - accounts/docker/patch-gcr.yml
-
-  # Git accounts
 #  - accounts/git/patch-github.yml
 #  - accounts/git/patch-gitrepo.yml
+#  - accounts/s3/patch-s3.yml
+#  - accounts/gcs/patch-gcs.yml
+#  - accounts/http/patch-http.yml
 
   # Terraformer
 #  - armory/patch-terraformer.yml
