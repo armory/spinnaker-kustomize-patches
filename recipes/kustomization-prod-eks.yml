@@ -55,3 +55,6 @@ patchesStrategicMerge:
 
   # Use an external redis instead of the one provided by spinnaker
   - deploymentEnvironment/patch-redis.yml
+
+  # Store spinnaker pipelines as code under source control
+  - armory/patch-dinghy.yml
