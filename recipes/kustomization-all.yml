@@ -49,8 +49,9 @@ patchesStrategicMerge:
 #  - accounts/gcs/patch-gcs.yml
 #  - accounts/http/patch-http.yml
 
-  # Terraformer
+  # Armory features
 #  - armory/patch-terraformer.yml
+#  - armory/patch-dinghy.yml
 
   # Spinnaker monitoring
 #  - monitoring/patch-prometheus.yml
