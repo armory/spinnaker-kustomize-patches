@@ -1,0 +1,27 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for securing spinnaker with saml authentication.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      security:
+        authn:
+          saml:
+            enabled: true
+            keyStore: encryptedFile:k8s!n:spin-secrets!k:saml.jks              # (Secret). Path to the keystore that contains this server’s private key. This key is used to cryptographically sign SAML AuthNRequest objects.
+            keyStoreAliasName: saml                                            # The name of the alias under which this server’s private key is stored in the keyStore file.
+            keyStorePassword: encrypted:k8s!n:spin-secrets!k:saml-keystore-pwd # (Secret). The password used to access the file specified in keyStore.
+            metadataLocal: encryptedFile:k8s!n:spin-secrets!k:metadata.xml     # (Secret). The address to your identity provider’s metadata XML file.
+#            metadataRemote: https://org.com/spinnaker/metadata                 # The address to your identity provider’s metadata XML file. This is a URL.
+            issuerId: com.mycompany                                            # The identity of the Spinnaker application registered with the SAML provider.
+            serviceAddress: https://gate.org.com:8084                          # The address of the Gate server that will be accessible by the SAML identity provider. This should be the full URL, including port, e.g. https://gate.org.com:8084/. If deployed behind a load balancer, this would be the load balancer’s address.
+#            userAttributeMapping:
+#              firstName: firstname # The first name field returned from your SAML provider.
+#              lastName: lastname   # The last name field returned from your SAML provider.
+#              roles: roles         # The roles field returned from your SAML provider.
+#              username: username   # The username field returned from your SAML provider.
+#              email: email         # The email field returned from your SAML provider.
