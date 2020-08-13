@@ -1,0 +1,39 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for reading roles (groups) used by spinnaker from a file. This requires setting up
+# an authn provider which will provide the username coming from an external system.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      security:
+        authz:
+          enabled: true
+          groupMembership:
+            service: FILE  # One of EXTERNAL, FILE, GOOGLE, GITHUB, LDAP
+            file:
+              roleProviderType: FILE
+              path: rolemappings.yml # A path to a file describing the roles of each user.
+    files:
+      rolemappings.yml: |
+        #-----------------------------------------------------------------------------------------------------------------
+        # Example file mapping usernames to roles (groups).
+        # User names come from an external system configured as an authn provider.
+        # Roles don’t need to be defined elsewhere, they’re automatically created based on these mappings.
+        #-----------------------------------------------------------------------------------------------------------------
+        users:
+        - username: foo
+          roles:
+          - bar
+          - baz
+        - username: batman
+          roles:
+          - crimeFighter
+          - jokerJailer
+        - username: robin
+          roles: []
+        - username: joker
+        - username: john.doe@mycompany.com

@@ -1,14 +1,14 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# Example recipe for installing a production Spinnaker instance in AWS EKS clusters.
+# Example recipe for installing a production Spinnaker instance in AWS EKS clusters, deploying to Kubernetes.
 #
 # Features:
 # - S3 persistent storage
 # - Spinnaker exposed with internal ELB's
-# - Kubernetes account definitions loaded dynamically from git
 # - Spinnaker monitoring metrics exposed through prometheus compatible endpoints
 # - SQL storage backend for clouddriver (TODO: add sql configs for orca and front50)
 # - External redis usage
 # - CPU and memory requests and limits defined for clouddriver
+# - Pipelines as code stored in source control (dinghy)
 #-----------------------------------------------------------------------------------------------------------------------
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -35,8 +35,8 @@ patchesStrategicMerge:
   # Authentication and authorization using github groups.
   - security/patch-github.yml
 
-  # Kubernetes accounts configuration taken from a git backend using spring cloud config server
-  - accounts/kubernetes/patch-dynamic-git.yml
+  # Kubernetes accounts
+  - accounts/kubernetes/patch-kube.yml
 
   # Docker accounts
   - accounts/docker/patch-dockerhub.yml

@@ -30,6 +30,8 @@ patchesStrategicMerge:
 
   # Authentication and authorization
 #  - security/patch-github.yml
+#  - security/patch-saml.yml
+#  - security/patch-file-authz.yml
 
   # Kubernetes accounts
   - accounts/kubernetes/patch-kube.yml
@@ -45,6 +47,8 @@ patchesStrategicMerge:
 #  - accounts/docker/patch-gcr.yml
 #  - accounts/git/patch-github.yml
 #  - accounts/git/patch-gitrepo.yml
+#  - accounts/git/patch-gitlab.yml
+#  - accounts/git/patch-bitbucket.yml
 #  - accounts/s3/patch-s3.yml
 #  - accounts/gcs/patch-gcs.yml
 #  - accounts/http/patch-http.yml
