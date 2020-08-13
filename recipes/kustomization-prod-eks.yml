@@ -19,6 +19,8 @@ namespace: spinnaker
 
 resources:
   - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
+  - expose/spin-gate-expose.yml        # Service definition for gate for exposing spinnaker with maximum configurability
+  - expose/spin-deck-expose.yml        # Service definition for deck for exposing spinnaker with maximum configurability
 
 patchesStrategicMerge:
   # (Mandatory). Persistence to store spinnaker applications and pipelines.
@@ -27,10 +29,8 @@ patchesStrategicMerge:
   # kube2iam and assigning IAM roles to worker nodes in the cluster.
   - persistentStorage/patch-s3.yml
 
-  # Automatically expose spinnaker with 2 internal ELB's with SSL.
-  # DNS entries must be configured to point to the ELB's and set in the patch file. Also an ACM certificate is used
-  # for SSL.
-  - expose/patch-lb-aws.yml
+  # Spinnaker's public facing url's are configured here
+  - expose/patch-urls.yml
 
   # Authentication and authorization using github groups.
   - security/patch-github.yml
