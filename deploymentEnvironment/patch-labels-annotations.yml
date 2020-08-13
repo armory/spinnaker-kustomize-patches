@@ -1,0 +1,37 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding custom labels and annotations to spinnaker pods and services.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  kustomize:
+    gate:                       # Options: any of spinnaker service names (without "spin-" prefix)
+      deployment:               # Options: "deployment", "service"
+        patchesStrategicMerge:  # Options: "patches", "patchesStrategicMerge", "patchesJson6902"
+          - |
+            metadata:
+              labels:
+                custom-deployment-label: label-value
+              annotations:
+                my.deployment.annotation.1: 'some-value-1'
+                my.deployment.annotation.2: 'some-value-2'
+            spec:
+              template:
+                metadata:
+                  labels:
+                    custom-pod-label: label-value
+                  annotations:
+                    my.pod.annotation.1: 'some-value-1'
+                    my.pod.annotation.2: 'some-value-2'
+      # Gate and Deck service annotations are overridden by 'spec.expose.service.annotations' if expose type is set to 'service'
+      service:
+        patchesStrategicMerge:
+          - |
+            metadata:
+              labels:
+                custom-service-label: label-value
+              annotations:
+                my.service.annotation.1: 'some-value-1'
+                my.service.annotation.2: 'some-value-2'

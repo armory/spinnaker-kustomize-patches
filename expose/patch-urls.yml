@@ -1,0 +1,15 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for spinnaker public facing URLs.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      security:
+        apiSecurity:
+          overrideBaseUrl: https://spinnaker.mycompany.com/api  # Public API (Gate) url. Using the same hostname for deck and gate only works when exposing spinnaker with ingress.
+        uiSecurity:
+          overrideBaseUrl: https://spinnaker.mycompany.com      # Public UI (Deck) url.
