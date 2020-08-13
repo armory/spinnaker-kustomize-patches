@@ -69,6 +69,7 @@ patchesStrategicMerge:
 #  - deploymentEnvironment/patch-volumes.yml
 #  - deploymentEnvironment/patch-sizing.yml
 #  - deploymentEnvironment/patch-redis.yml
+#  - deploymentEnvironment/patch-labels-annotations.yml
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
