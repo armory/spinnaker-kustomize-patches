@@ -13,8 +13,8 @@ spec:
           enabled: true
           accounts:
           - name: github
-            token: encrypted:k8s!n:spin-secrets!k:github-token  # (Secret). GitHub token.
-#            tokenFile: token.txt             # (Secret). File containing a GitHub authentication token. File needs to be present on the machine running Spinnaker.
-#            username: abc                    # GitHub username.
-#            password: xyz                    # (Secret). GitHub password.
-#            usernamePasswordFile: creds.txt  # (Secret). File containing “username:password” to use for GitHub authentication. File needs to be present on the machine running Spinnaker.
+            token: encrypted:k8s!n:spin-secrets!k:github-token             # (Secret). GitHub token.
+#            tokenFile: encryptedFile:k8s!n:spin-secrets!k:github-tokenfile # (Secret). File containing a github authentication token.
+#            username: abc                                                  # GitHub username.
+#            password: encrypted:k8s!n:spin-secrets!k:github-password       # (Secret). GitHub password.
+#            usernamePasswordFile: encryptedFile:k8s!n:spin-secrets!k:github-creds.txt  # (Secret). File containing “username:password” to use for GitHub authentication.

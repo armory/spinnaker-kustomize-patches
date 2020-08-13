@@ -19,6 +19,7 @@ spec:
 #            metadataRemote: https://org.com/spinnaker/metadata                 # The address to your identity provider’s metadata XML file. This is a URL.
             issuerId: com.mycompany                                            # The identity of the Spinnaker application registered with the SAML provider.
             serviceAddress: https://gate.org.com:8084                          # The address of the Gate server that will be accessible by the SAML identity provider. This should be the full URL, including port, e.g. https://gate.org.com:8084/. If deployed behind a load balancer, this would be the load balancer’s address.
+#            signatureDigest: SHA1                                              # Default: SHA1. Digest algorithm to sign SAML messages (optional). Valid values include "SHA1", "SHA256", "SHA384", "SHA512", "RIPEMD160" and "MD5".
 #            userAttributeMapping:
 #              firstName: firstname # The first name field returned from your SAML provider.
 #              lastName: lastname   # The last name field returned from your SAML provider.
