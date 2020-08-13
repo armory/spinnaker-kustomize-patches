@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for adding AWS accounts to spinnaker
+# Example configuration for adding AWS accounts to spinnaker.
+#
+# Documentation: https://docs.armory.io/docs/spinnaker-install-admin-guides/add-aws-account/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

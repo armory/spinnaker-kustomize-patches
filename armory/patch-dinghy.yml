@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for enabling dinghy (pipelines as code stored in source control)
+# Example configuration for enabling dinghy (pipelines as code stored in source control).
+#
+# Feature documentation: https://docs.armory.io/docs/spinnaker/using-dinghy/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

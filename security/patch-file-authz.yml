@@ -1,6 +1,8 @@
 #-----------------------------------------------------------------------------------------------------------------
 # Example configuration for reading roles (groups) used by spinnaker from a file. This requires setting up
 # an authn provider which will provide the username coming from an external system.
+#
+# Documentation: https://kb.armory.io/s/article/Authorization-Configuration-with-File-Based-Role-Definitions
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

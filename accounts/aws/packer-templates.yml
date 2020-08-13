@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for mounting custom packer templates into spinnaker
+# Example configuration for mounting custom packer templates into spinnaker.
+#
+# Documentation: https://spinnaker.io/setup/bakery/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

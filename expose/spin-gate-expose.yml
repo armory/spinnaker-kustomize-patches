@@ -1,5 +1,6 @@
 #-----------------------------------------------------------------------------------------------------------------
 # Example configuration of an alternate service definition for gate. Offers maximum control and configurability.
+# This is often required in combination with "patch-urls.yml" to configure spinnaker's public facing urls.
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: v1
 kind: Service

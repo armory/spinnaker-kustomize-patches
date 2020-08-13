@@ -1,5 +1,8 @@
 #-----------------------------------------------------------------------------------------------------------------
 # Example configuration for securing spinnaker with saml authentication.
+#
+# SAML documentation: https://spinnaker.io/setup/security/authentication/saml/
+# Setting up okta: https://docs.armory.io/docs/spinnaker-install-admin-guides/okta/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

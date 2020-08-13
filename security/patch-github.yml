@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for securing spinnaker with github credentials and github teams group membership
+# Example configuration for securing spinnaker with github credentials and github teams group membership.
+#
+# Documentation: https://spinnaker.io/setup/security/authentication/oauth/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
