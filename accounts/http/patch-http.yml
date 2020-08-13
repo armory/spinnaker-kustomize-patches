@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for adding a generic HTTP artifact account to spinnaker
+# Example configuration for adding a generic HTTP artifact account to spinnaker.
+#
+# Documentation: https://spinnaker.io/reference/artifacts-with-artifactsrewrite/types/http-file/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

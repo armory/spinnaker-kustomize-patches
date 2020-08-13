@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for adding a S3 artifact account to spinnaker
+# Example configuration for adding a S3 artifact account to spinnaker.
+#
+# Documentation: https://docs.armory.io/docs/spinnaker-user-guides/s3-artifacts-use/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
