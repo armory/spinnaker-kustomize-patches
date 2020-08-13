@@ -1,0 +1,32 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for exposing spinnaker in AWS EKS with internal ELB's and SSL
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  expose:
+    type: service            # Spinnaker is exposed using kubernetes services
+    service:
+      type: LoadBalancer     # Kubernetes service type used to expose Spinnaker. Can be ClusterIP, NodePort or LoadBalancer.
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+        service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-west-2:XXXXXXXXXXXX:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  # ARN of an ACM certificate to terminate SSL at the load balancer
+#      overrides:
+#        gate:
+#          publicPort: 8084   # (Optional). Port used to expose Gate.
+#          annotations: {}
+#        deck:
+#          publicPort: 9000   # (Optional). Port used to expose Deck.
+#          annotations: {}
+
+  # Public-facing spinnaker urls. If not configured, load balancer urls will be used automatically.
+  spinnakerConfig:
+    config:
+      security:
+        apiSecurity:
+          overrideBaseUrl: https://spinnaker-api.mycompany.com
+        uiSecurity:
+          overrideBaseUrl: https://spinnaker.mycompany.com

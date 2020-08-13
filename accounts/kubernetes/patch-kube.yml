@@ -1,3 +1,6 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding kubernetes accounts to spinnaker
+#-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
@@ -27,7 +30,7 @@ spec:
             omitKinds: []                    # A list of resource kinds this Spinnaker account cannot deploy to or cache. This can only be set when –kinds is empty or not set.
             customResources: []              # List of Kubernetes custom resources to managed by clouddriver and made available for use in patch and delete manifest stages.
             checkPermissionsOnStartup: true  # When false, clouddriver will skip the permission checks for all Kubernetes Kinds at startup. This can save a great deal of time during clouddriver startup when you have many Kubernetes accounts configured. This disables the log messages at startup about missing permissions.
-            liveManifestCalls: false         # When true, clouddriver will query manifest status during pipeline executions using live data rather than the cache. This eliminates all time spent in the “force cache refresh” task in pipelines, greatly reducing execution time.
+            liveManifestCalls: false         # When true, clouddriver will query manifest status during pipeline executions using live data rather than the cache. This eliminates all time spent in the “force cache refresh” task in pipelines, greatly reducing execution time. However, turning on this setting has known bugs: https://github.com/spinnaker/spinnaker/issues/5607
             cachingPolicies: []
             oAuthScopes: []
             onlySpinnakerManaged: false      # When true, Spinnaker will only cache/display applications that have been created by Spinnaker; as opposed to attempting to configure applications for resources already present in Kubernetes.

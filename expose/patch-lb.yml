@@ -1,3 +1,6 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example generic configuration for exposing spinnaker with Kubernetes service load balancers
+#-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:

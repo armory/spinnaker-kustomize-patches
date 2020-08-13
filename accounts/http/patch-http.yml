@@ -1,0 +1,18 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a generic HTTP artifact account to spinnaker
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      artifacts:
+        http:
+          enabled: true
+          accounts:
+            - name: http-account
+#              username: john.doe                                                  # HTTP basic auth username
+#              password: encrypted:k8s!n:spin-secrets!k:http-password              # (Secret). HTTP basic auth password
+#              usernamePasswordFile: encryptedFile:k8s!n:spin-secrets!k:http-creds # (Secret). File containing “username:password” to use for HTTP basic auth. File needs to be present on the machine running Spinnaker

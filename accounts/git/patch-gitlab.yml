@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for enabling monitoring of spinnaker through datadog
+# Example configuration for adding a gitlab account to spinnaker
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
@@ -8,10 +8,10 @@ metadata:
 spec:
   spinnakerConfig:
     config:
-      metricStores:
-        datadog:
+      artifacts:
+        gitlab:
           enabled: true
-          api_key: encrypted:k8s!n:spin-secrets!k:datadog-apikey
-          app_key: encrypted:k8s!n:spin-secrets!k:datadog-appkey
-          tags: #  Your datadog custom tags. Please delimit the KVP with colons i.e. app:test env:dev
-          - env:dev
+          accounts:
+          - name: gitlab
+            token: encrypted:k8s!n:spin-secrets!k:gitlab-token  # (Secret). Gitlab token.
+#            tokenFile: encryptedFile:k8s!n:spin-secrets!k:gitlab-tokenfile # (Secret). File containing a gitlab authentication token.

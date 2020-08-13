@@ -1,0 +1,17 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling sending diagnostics information to Armory for support and troubleshooting
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      armory:
+        diagnostics:
+          enabled: true
+          uuid: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  # Enter uniquely Generated UUID. Used to identify individual spinnaker installations.
+          logging:
+            enabled: true                             # true/false to enable
+            endpoint: https://debug.armory.io/v1/logs # Spinnaker logs will be sent to this endpoint (e.g. https://debug.armory.io/v1/logs)
