@@ -12,6 +12,7 @@ resources:
   - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
   - infrastructure/minio.yml           # (Optional, not for production use). S3 compatible data store
   - infrastructure/mysql.yml           # (Optional, not for production use). MySQL server needed if using SQL backend in Spinnaker
+#  - infrastructure/opa.yml             # (Optional). OPA server for using with Armory's policy engine, for enforcing pipeline policies
 #  - infrastructure/debugging-tools.yml # (Optional). A pod with some tools for troubleshooting spinnaker (curl, kubectl, vault, etc.)
   - accounts/kubernetes/spin-sa.yml    # (Optional, needed by accounts/kubernetes/patch-kube.yml). Kubernetes service account for spinnaker to use in its own cluster
 #  - expose/ingress-nginx.yml          # (Optional). Spinnaker ingress definition
@@ -62,6 +63,7 @@ patchesStrategicMerge:
 #  - armory/patch-terraformer.yml
 #  - armory/patch-dinghy.yml
 #  - armory/patch-diagnostics.yml
+#  - armory/patch-policyengine.yml  # Requires spin-policies configmap
 
   # Spinnaker monitoring
 #  - monitoring/patch-prometheus.yml
@@ -86,3 +88,9 @@ patchesStrategicMerge:
 #  - name: custom-volume
 #    files:
 #      - deploymentEnvironment/custom-volume/file.txt
+
+#configMapGenerator:
+#  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
+#  - name: spin-policies
+#    files:
+#      - armory/policies/manual-judgement.rego
