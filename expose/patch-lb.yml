@@ -7,7 +7,7 @@ metadata:
   name: spinnaker
 spec:
   expose:
-    type: service            # Spinnaker is exposed using kubernetes services
+    type: service            # Spinnaker is exposed using kubernetes services. Available options: service, ingress
     service:
       type: LoadBalancer     # Kubernetes service type used to expose Spinnaker. Can be ClusterIP, NodePort or LoadBalancer.
       overrides:
