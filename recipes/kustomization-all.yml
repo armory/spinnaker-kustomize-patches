@@ -23,9 +23,11 @@ resources:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
 
 patchesStrategicMerge:
-  # (Mandatory). Persistence to store spinnaker applications and pipelines
-  - persistentStorage/patch-minio.yml
-#  - persistentStorage/patch-s3.yml
+  # Spinnaker persistence
+  - persistence/patch-minio.yml
+#  - persistence/patch-s3.yml
+  - persistence/patch-sql-clouddriver.yml
+#  - persistence/patch-redis.yml
 
   # Automatically expose spinnaker
   - expose/patch-lb.yml
@@ -66,17 +68,13 @@ patchesStrategicMerge:
 #  - armory/patch-policyengine.yml  # Requires spin-policies configmap
 
   # Spinnaker monitoring
-#  - monitoring/patch-prometheus.yml
-#  - monitoring/patch-datadog.yml
-
-  # SQL backend
-  - sql/patch-clouddriver.yml
+#  - accounts/prometheus/patch-prometheus.yml
+#  - accounts/datadog/patch-datadog.yml
 
   # Customizations to spinnaker pods in Kubernetes
-#  - deploymentEnvironment/patch-volumes.yml
-#  - deploymentEnvironment/patch-sizing.yml
-#  - deploymentEnvironment/patch-redis.yml
-#  - deploymentEnvironment/patch-labels-annotations.yml
+#  - spinnaker_deployment/patch-volumes.yml
+#  - spinnaker_deployment/patch-sizing.yml
+#  - spinnaker_deployment/patch-labels-annotations.yml
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
@@ -87,7 +85,7 @@ patchesStrategicMerge:
 #secretGenerator:
 #  - name: custom-volume
 #    files:
-#      - deploymentEnvironment/custom-volume/file.txt
+#      - spinnaker_deployment/custom-volume/file.txt
 
 #configMapGenerator:
 #  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
