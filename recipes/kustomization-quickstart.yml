@@ -25,7 +25,7 @@ resources:
   - accounts/kubernetes/spin-sa.yml  # Kubernetes service account needed by patch-kube.yml
 
 patchesStrategicMerge:
-  - persistentStorage/patch-minio.yml   # (Mandatory). Persistence to store spinnaker applications and pipelines
+  - persistence/patch-minio.yml   # (Mandatory). Persistence to store spinnaker applications and pipelines
   - expose/patch-lb.yml                 # Automatically expose spinnaker
   - accounts/kubernetes/patch-kube.yml  # Kubernetes accounts
   - accounts/docker/patch-dockerhub.yml # Docker accounts

@@ -27,6 +27,7 @@ It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base 
 * Namespace for the Spinnaker Operator is configured in `operator/kustomization.yml`.
 * Namespace for Spinnaker and all its infrastructure is configured in `kustomization.yml`.
 * Spinnaker version is configured in `spinnakerservice.yml`.
+* Environment variable `SPIN_OP_DEPLOY` can be passed to deploy script to manage operator (default) or not (i.e. `SPIN_OP_DEPLOY=0 ./deploy.sh`)
 
 For adding remote Kubernetes clusters to Spinnaker, the helper script `secrets/create-kubeconfig.sh` can be used to create a Kubernetes service account (with cluster admin role) and its corresponding `kubeconfig` file for spinnaker to use.
 

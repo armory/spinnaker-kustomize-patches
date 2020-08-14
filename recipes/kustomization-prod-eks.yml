@@ -22,11 +22,10 @@ resources:
   - expose/ingress-nginx.yml           # Spinnaker ingress definition
 
 patchesStrategicMerge:
-  # (Mandatory). Persistence to store spinnaker applications and pipelines.
-  # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or
-  # worker node level, so that AWS access/secret keys are not used in the config. Some auth options include
-  # kube2iam and assigning IAM roles to worker nodes in the cluster.
-  - persistentStorage/patch-s3.yml
+  # Spinnaker persistence
+  - persistence/patch-s3.yml               # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or worker node level, so that AWS access/secret keys are not used in the config. Some auth options include kube2iam and assigning IAM roles to worker nodes in the cluster.
+  - persistence/patch-redis.yml            # Use an external redis instead of the one provided by spinnaker
+  - persistence/patch-sql-clouddriver.yml  # MySQL compatible database
 
   # Read ingress definition to configure spinnaker public facing urls.
   - expose/patch-ingress.yml
@@ -44,16 +43,12 @@ patchesStrategicMerge:
   - accounts/git/patch-github.yml
 
   # Spinnaker monitoring
-  - monitoring/patch-prometheus.yml
-
-  # SQL backend
-  - sql/patch-clouddriver.yml
+  - accounts/prometheus/patch-prometheus.yml
 
   # Service sizing
-  - deploymentEnvironment/patch-sizing.yml
+  - spinnaker_deployment/patch-sizing.yml
 
-  # Use an external redis instead of the one provided by spinnaker
-  - deploymentEnvironment/patch-redis.yml
+
 
   # Store spinnaker pipelines as code under source control
   - armory/patch-dinghy.yml
