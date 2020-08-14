@@ -3,7 +3,7 @@
 #
 # Features:
 # - S3 persistent storage
-# - Spinnaker exposed with internal ELB's
+# - Spinnaker is exposed with ingress
 # - Spinnaker monitoring metrics exposed through prometheus compatible endpoints
 # - SQL storage backend for clouddriver (TODO: add sql configs for orca and front50)
 # - External redis usage
