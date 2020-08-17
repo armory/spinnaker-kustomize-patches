@@ -1,0 +1,16 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example configuration for adding Slack notifications for pipelines.
+#
+# Documentation: https://spinnaker.io/setup/features/notifications/#slack
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    notifications:
+      slack:
+        enabled: true
+        botName: my-bot-name                               # If you need to create one: https://api.slack.com/authentication/basics
+        token: encrypted:k8s!n:spin-secrets!k:slack-token  # Authentication token for your app.
