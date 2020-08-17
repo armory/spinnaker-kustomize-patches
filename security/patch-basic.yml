@@ -1,0 +1,40 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for securing spinnaker with github credentials and github teams group membership.
+#
+# Documentation: https://spinnaker.io/setup/security/authentication/oauth/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      security:
+        authn:
+          enabled: true
+          oauth2:
+            enabled: true
+            client:
+              clientId: xxxxxxxxxxxxxxxxxxxx                                   # The OAuth client ID you have configured with your OAuth provider.
+              clientSecret: encrypted:k8s!n:spin-secrets!k:oauth-client-secret # (Secret). The OAuth client secret you have configured with your OAuth provider.
+              accessTokenUri: https://github.com/login/oauth/access_token      # Used to get an access token.
+              userAuthorizationUri: https://github.com/login/oauth/authorize   # Used to get an authorization code.
+              scope: user:email                                                # The scope for your OAuth provider, e.g. user:email
+            resource:
+              userInfoUri: https://api.github.com/user                         # Used to the current user's profile.
+            userInfoMapping:
+              email: email                                                     # The email field returned from your OAuth provider.
+              firstName: name                                                  # The first name field returned from your OAuth provider.
+              lastName: ""                                                     # The last name field returned from your OAuth provider.
+              username: login                                                  # The username field returned from your OAuth provider.
+            provider: GITHUB                                                   # One of AZURE, GITHUB, ORACLE, OTHER, GOOGLE
+        authz:
+          enabled: true
+          groupMembership:
+            service: GITHUB                             # One of EXTERNAL, FILE, GOOGLE, GITHUB, LDAP
+            github:
+              roleProviderType: GITHUB
+              baseUrl: https://api.github.com           # Used if using GitHub enterprise or some other non github.com GitHub installation.
+              accessToken: encrypted:k8s!n:spin-secrets!k:github-token # (Secret). A personal access token of an account with access to your organization’s GitHub Teams structure. Supports encrypted value.
+              organization: myorg                       # The GitHub organization under which to query for GitHub Teams.

@@ -75,6 +75,7 @@ patchesStrategicMerge:
 #  - spinnaker_deployment/patch-volumes.yml
 #  - spinnaker_deployment/patch-sizing.yml
 #  - spinnaker_deployment/patch-labels-annotations.yml
+#  - spinnaker_deployment/patch-debug-jvm.yml
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
