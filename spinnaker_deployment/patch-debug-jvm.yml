@@ -1,0 +1,33 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling remote JVM debugging and profiling of spinnaker java services.
+#
+# After the service starts, you can forward the ports to localhost for connecting:
+# kubectl -n <spinnaker namespace> port-forward <pod name> 5005 --> for debugger
+# kubectl -n <spinnaker namespace> port-forward <pod name> 9010 --> for JMX
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  kustomize:
+    clouddriver:                # Options: any of spinnaker service names (without "spin-" prefix)
+      deployment:               # Options: "deployment", "service"
+        patchesStrategicMerge:  # Options: "patches", "patchesStrategicMerge", "patchesJson6902"
+          - |
+            spec:
+              template:
+                spec:
+                  containers:
+                  - name: clouddriver
+                    env:
+                    - name: JAVA_OPTS
+                      value: "-XX:MaxRAMPercentage=50.0 \
+                              -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
+                              -Dcom.sun.management.jmxremote \
+                              -Dcom.sun.management.jmxremote.port=9010 \
+                              -Dcom.sun.management.jmxremote.rmi.port=9010 \
+                              -Dcom.sun.management.jmxremote.authenticate=false \
+                              -Dcom.sun.management.jmxremote.ssl=false \
+                              -Dcom.sun.management.jmxremote.local.only=false \
+                              -Djava.rmi.server.hostname=127.0.0.1"
