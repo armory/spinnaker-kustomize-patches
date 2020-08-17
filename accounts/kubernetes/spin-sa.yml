@@ -12,8 +12,6 @@ rules:
   - pods
   - ingresses/status
   - endpoints
-  resourceNames:
-  - namespaces
   verbs:
   - get
   - list
