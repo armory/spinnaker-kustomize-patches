@@ -17,5 +17,5 @@ spec:
           basicform:
             enabled: true
           user:
-            name: username2replace                        # The basic auth username you want to use.
-            password: password2replace                    # The basic auth password you want to use.
+            name: username2replace                                        # The basic auth username you want to use.
+            password: encrypted:k8s!n:spin-secrets!k:spin-basic-pass      # The basic auth password you want to use.
