@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for using a S3 bucket as spinnaker persistent store
+# Example configuration for using a GCS bucket as spinnaker persistent store
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
