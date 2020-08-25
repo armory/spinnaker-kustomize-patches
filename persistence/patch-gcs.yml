@@ -1,0 +1,18 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for using a GCS bucket as spinnaker persistent store
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      persistentStorage:
+        persistentStoreType: gcs
+        gcs:
+          project: cloud-spinnaker                                # The name of the GCP project that contains the bucket.
+          jsonPath: encryptedFile:k8s!n:spin-secrets!k:gcs.json   # The path to a JSON service account that has read/write permissions for the bucket.
+          bucket: spinnaker                     # The name of an S3 bucket that Spinnaker will use to save information like applications and pipelines. Must be globally unique.
+          rootFolder: front50                   # The root folder in the chosen bucket to place all of Spinnaker's persistent data in.
+#          bucketLocation:  US-CENTRAL1          # (Optional). Only required if the bucket doesn't exist yet and you want it created. 

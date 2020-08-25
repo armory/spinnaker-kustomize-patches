@@ -3,7 +3,7 @@
 #
 # Features:
 # - S3 persistent storage
-# - Spinnaker exposed with internal ELB's
+# - Spinnaker is exposed with ingress
 # - Spinnaker monitoring metrics exposed through prometheus compatible endpoints
 # - SQL storage backend for clouddriver (TODO: add sql configs for orca and front50)
 # - External redis usage
@@ -19,18 +19,16 @@ namespace: spinnaker
 
 resources:
   - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
+  - expose/ingress-nginx.yml           # Spinnaker ingress definition
 
 patchesStrategicMerge:
-  # (Mandatory). Persistence to store spinnaker applications and pipelines.
-  # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or
-  # worker node level, so that AWS access/secret keys are not used in the config. Some auth options include
-  # kube2iam and assigning IAM roles to worker nodes in the cluster.
-  - persistentStorage/patch-s3.yml
+  # Spinnaker persistence
+  - persistence/patch-s3.yml               # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or worker node level, so that AWS access/secret keys are not used in the config. Some auth options include kube2iam and assigning IAM roles to worker nodes in the cluster.
+  - persistence/patch-redis.yml            # Use an external redis instead of the one provided by spinnaker
+  - persistence/patch-sql-clouddriver.yml  # MySQL compatible database
 
-  # Automatically expose spinnaker with 2 internal ELB's with SSL.
-  # DNS entries must be configured to point to the ELB's and set in the patch file. Also an ACM certificate is used
-  # for SSL.
-  - expose/patch-lb-aws.yml
+  # Read ingress definition to configure spinnaker public facing urls.
+  - expose/patch-ingress.yml
 
   # Authentication and authorization using github groups.
   - security/patch-github.yml
@@ -45,16 +43,12 @@ patchesStrategicMerge:
   - accounts/git/patch-github.yml
 
   # Spinnaker monitoring
-  - monitoring/patch-prometheus.yml
-
-  # SQL backend
-  - sql/patch-clouddriver.yml
+  - accounts/prometheus/patch-prometheus.yml
 
   # Service sizing
-  - deploymentEnvironment/patch-sizing.yml
+  - spinnaker_deployment/patch-sizing.yml
 
-  # Use an external redis instead of the one provided by spinnaker
-  - deploymentEnvironment/patch-redis.yml
+
 
   # Store spinnaker pipelines as code under source control
   - armory/patch-dinghy.yml

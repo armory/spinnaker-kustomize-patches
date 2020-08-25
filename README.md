@@ -4,7 +4,7 @@ This repository contains example [kustomize](https://kustomize.io) patch files t
 
 ### Disclaimer
 
-The example configurations provided in this repository serve as a starting point for configuring Spinnaker, usually they may need to be adjusted to the environment where Spinnaker is running to work properly. It's possible that not all configurations work with all versions of Spinnaker. 
+The example configurations provided in this repository serve as a starting point for configuring Spinnaker, usually they may need to be adjusted to the environment where Spinnaker is running to work properly. These examples are not exhaustive and don't showcase all available combinations of settings. It's possible that not all configurations work with all versions of Spinnaker. 
 
 ### Prerequisites
 
@@ -27,6 +27,7 @@ It will deploy Spinnaker Operator to `spinnaker-operator` namespace, and a base 
 * Namespace for the Spinnaker Operator is configured in `operator/kustomization.yml`.
 * Namespace for Spinnaker and all its infrastructure is configured in `kustomization.yml`.
 * Spinnaker version is configured in `spinnakerservice.yml`.
+* Environment variable `SPIN_OP_DEPLOY` can be passed to deploy script to manage operator (default) or not (i.e. `SPIN_OP_DEPLOY=0 ./deploy.sh`)
 
 For adding remote Kubernetes clusters to Spinnaker, the helper script `secrets/create-kubeconfig.sh` can be used to create a Kubernetes service account (with cluster admin role) and its corresponding `kubeconfig` file for spinnaker to use.
 

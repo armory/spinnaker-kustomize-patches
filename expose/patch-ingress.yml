@@ -1,0 +1,13 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for exposing spinnaker with ingress (requires ingress.yml).
+#
+# Operator populates automatically "overrideBaseUrl" settings taking the public spinnaker urls from the
+# ingress definition, and also adjusts gate's context path so that target rewrite is not required in the ingress.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  expose:
+    type: ingress  # Spinnaker is exposed using ingress. Available options: service, ingress

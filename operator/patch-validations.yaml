@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spinnaker-operator
+spec:
+  template:
+    spec:
+      containers:
+        - name: spinnaker-operator
+          args:
+            - --disable-admission-controller

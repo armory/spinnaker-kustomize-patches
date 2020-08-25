@@ -1,0 +1,18 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling policy agent to enforce rules in spinnaker pipelines.
+#
+# Feature documentation: https://docs.armory.io/docs/spinnaker/policy-engine/
+# Actual policies are defined in "policies" folder and loaded into a configmap.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      spinnaker:
+        armory:
+          opa:
+            enabled: true
+            url: http://opa:8181/v1   # There must be a trailing /v1 on the URL. The Policy Engine is only compatible with OPA’s v1 API.

@@ -12,21 +12,29 @@ resources:
   - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
   - infrastructure/minio.yml           # (Optional, not for production use). S3 compatible data store
   - infrastructure/mysql.yml           # (Optional, not for production use). MySQL server needed if using SQL backend in Spinnaker
+#  - infrastructure/opa.yml             # (Optional). OPA server for using with Armory's policy engine, for enforcing pipeline policies
 #  - infrastructure/debugging-tools.yml # (Optional). A pod with some tools for troubleshooting spinnaker (curl, kubectl, vault, etc.)
   - accounts/kubernetes/spin-sa.yml    # (Optional, needed by accounts/kubernetes/patch-kube.yml). Kubernetes service account for spinnaker to use in its own cluster
+#  - expose/ingress-nginx.yml          # (Optional). Spinnaker ingress definition
+#  - expose/spin-gate-expose.yml       # (Optional). Alternate service definition for gate for exposing spinnaker with maximum configurability
+#  - expose/spin-deck-expose.yml       # (Optional). Alternate service definition for deck for exposing spinnaker with maximum configurability
 
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
 
 patchesStrategicMerge:
-  # (Mandatory). Persistence to store spinnaker applications and pipelines
-  - persistentStorage/patch-minio.yml
-#  - persistentStorage/patch-s3.yml
+  # Spinnaker persistence
+  - persistence/patch-minio.yml
+#  - persistence/patch-s3.yml
+  - persistence/patch-sql-clouddriver.yml
+#  - persistence/patch-redis.yml
 
   # Automatically expose spinnaker
   - expose/patch-lb.yml
 #  - expose/patch-lb-aws.yml
 #  - expose/patch-nodeport.yml
+#  - expose/patch-ingress.yml
+#  - expose/patch-urls.yml
 
   # Authentication and authorization
 #  - security/patch-github.yml
@@ -57,18 +65,17 @@ patchesStrategicMerge:
 #  - armory/patch-terraformer.yml
 #  - armory/patch-dinghy.yml
 #  - armory/patch-diagnostics.yml
+#  - armory/patch-policyengine.yml  # Requires spin-policies configmap
 
   # Spinnaker monitoring
-#  - monitoring/patch-prometheus.yml
-#  - monitoring/patch-datadog.yml
-
-  # SQL backend
-  - sql/patch-clouddriver.yml
+#  - accounts/prometheus/patch-prometheus.yml
+#  - accounts/datadog/patch-datadog.yml
 
   # Customizations to spinnaker pods in Kubernetes
-#  - deploymentEnvironment/patch-volumes.yml
-#  - deploymentEnvironment/patch-sizing.yml
-#  - deploymentEnvironment/patch-redis.yml
+#  - spinnaker_deployment/patch-volumes.yml
+#  - spinnaker_deployment/patch-sizing.yml
+#  - spinnaker_deployment/patch-labels-annotations.yml
+#  - spinnaker_deployment/patch-debug-jvm.yml
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
@@ -79,4 +86,10 @@ patchesStrategicMerge:
 #secretGenerator:
 #  - name: custom-volume
 #    files:
-#      - deploymentEnvironment/custom-volume/file.txt
+#      - spinnaker_deployment/custom-volume/file.txt
+
+#configMapGenerator:
+#  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
+#  - name: spin-policies
+#    files:
+#      - armory/policies/manual-judgement.rego

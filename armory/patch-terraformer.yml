@@ -1,5 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
 # Example configuration for enabling terraformer stages in spinnaker
+#
+# Feature documentation: https://docs.armory.io/docs/spinnaker/terraform-use-integration/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

@@ -12,7 +12,8 @@
 # Full logs are redirected to deploy_log.txt
 #--------------------------------------------------------------------------------------------------------------------------
 
-SPIN_FLAVOR=${SPIN_FLAVOR:-armory}
+SPIN_FLAVOR=${SPIN_FLAVOR:-armory}    # Distribution of spinnaker to deploy (oss or armory)
+SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}   # Whether or not to deploy and manage operator (0 or 1)
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -30,6 +31,7 @@ function log() {
   MSG=$2
   case $LEVEL in
   "INFO") HEADER_COLOR=$GREEN MSG_COLOR=$NS ;;
+  "WARN") HEADER_COLOR=$ORANGE MSG_COLOR=$NS ;;
   "KUBE") HEADER_COLOR=$ORANGE MSG_COLOR=$CYAN ;;
   "ERROR") HEADER_COLOR=$RED MSG_COLOR=$NS ;;
   esac
@@ -41,14 +43,23 @@ function info() {
   log "INFO" "$1"
 }
 
+function warn() {
+  log "WARN" "$1"
+}
+
 function error() {
   log "ERROR" "$1" && exit 1
+}
+
+function handle_generic_kubectl_error() {
+  error "Error executing command:\n$ERR_OUTPUT"
 }
 
 function exec_kubectl_mutating() {
   log "KUBE" "$1\n"
   ERR_OUTPUT=$({ $1 >>"$OUT"; } 2>&1)
   EXIT_CODE=$?
+  [[ $EXIT_CODE != 0 ]] && $2
 }
 
 function change_patch_flavor() {
@@ -73,13 +84,15 @@ function check_prerequisites() {
   date >"$OUT"
   case $SPIN_FLAVOR in
   "oss")
-    CRD=spinnakerservices.spinnaker.io
+    OP_API_GROUP=spinnakerservices.spinnaker.io
     OP_URL=https://github.com/armory/spinnaker-operator/releases/latest/download/manifests.tgz
+    OP_IMAGE_BASE="armory/spinnaker-operator"
     API_VERSION="apiVersion: spinnaker.io/v1alpha2"
     ;;
   "armory")
-    CRD=spinnakerservices.spinnaker.armory.io
+    OP_API_GROUP=spinnakerservices.spinnaker.armory.io
     OP_URL=https://github.com/armory-io/spinnaker-operator/releases/latest/download/manifests.tgz
+    OP_IMAGE_BASE="armory/armory-operator"
     API_VERSION="apiVersion: spinnaker.armory.io/v1alpha2"
     ;;
   *) error "Invalid spinnaker flavor: $SPIN_FLAVOR. Valid values: armory, oss\n" ;;
@@ -106,61 +119,75 @@ function check_prerequisites() {
   fi
 }
 
-function assert_operator_crd() {
-  OPERATOR_NS=$(grep "^namespace:" "$ROOT_DIR"/operator/kustomization.yml | awk '{print $2}')
-  info "Resolved operator namespace: $OPERATOR_NS\n"
-  if [[ $(kubectl get crd | grep "$CRD" 2>>"$OUT") == "" ]]; then
-    CRD_READY=0
-    EXISTING_CRD=$(kubectl get crd | grep "spinnakerservices.spinnaker" | awk '{print $1}' 2>>"$OUT")
-    if [[ "$EXISTING_CRD" != "" ]]; then
-      info "Expected operator flavor \"$SPIN_FLAVOR\" but detected a different one, uninstalling the other operator.\n"
-      exec_kubectl_mutating "kubectl delete crd \"$EXISTING_CRD\""
-      exec_kubectl_mutating "kubectl delete crd spinnakeraccounts.spinnaker.io"
-      exec_kubectl_mutating "kubectl -n $OPERATOR_NS delete deployment spinnaker-operator"
-    fi
+function find_current_operator_details() {
+  kubectl get crd "$OP_API_GROUP" >>"$OUT" 2>&1 && CRD_READY=1 || CRD_READY=0
+  CURRENT_OP_NS=$({ kubectl get deployment --all-namespaces -o json | jq -r '.items[] | select(.metadata.name == "spinnaker-operator") | .metadata.namespace'; } 2>>"$OUT")
+  [[ $(echo "$CURRENT_OP_NS" | wc -l | awk '{print $1}') -gt 1 ]] && error "More than one deployment named \"spinnaker-operator\" found in the cluster"
+
+  if [[ "$CURRENT_OP_NS" != "" ]] ; then
+    CURRENT_OP_IMAGE=$(kubectl -n $CURRENT_OP_NS get deployment spinnaker-operator -o json | jq -r '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
   else
-    CRD_READY=1
+    CURRENT_OP_IMAGE=""
   fi
 }
 
-function check_operator_status() {
+function delete_operator() {
+  info "Deleting operator\n"
+  exec_kubectl_mutating "kubectl -n $OPERATOR_NS delete deployment spinnaker-operator" handle_generic_kubectl_error
+}
+
+function check_operator_deployment() {
+  OP_READY_REP=$({ kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.status.readyReplicas'; } 2>>"$OUT")
+  [[ "$OP_READY_REP" == "1" ]] && OP_READY=1 || OP_READY=0
+}
+
+function deploy_operator() {
+  info "Deploying $SPIN_FLAVOR operator...\n"
   {
-    OP_STATUS=$(kubectl -n $OPERATOR_NS get pods | grep spinnaker-operator | awk '{print $2}' 2>/dev/null)
+    rm -rf "$ROOT_DIR/operator/deploy"
+    cd "$ROOT_DIR/operator" || exit 1
   } >>"$OUT" 2>&1
+  info "Downloading operator from $OP_URL\n"
+  { curl -L $OP_URL | tar -xz; } >>"$OUT" 2>&1
+  exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/operator/deploy/crds/" handle_generic_kubectl_error
+  if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
+    exec_kubectl_mutating "kubectl create ns $OPERATOR_NS" handle_generic_kubectl_error
+  fi
+  exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -k $ROOT_DIR/operator" handle_generic_kubectl_error
+  info "Waiting for operator to start."
+  check_operator_deployment
+  while [[ $OP_READY != 1 ]]; do
+    echo -ne "."
+    sleep 2
+    check_operator_deployment
+  done
+  echo -ne "Done\n"
+  cd "$ROOT_DIR" || exit 1
 }
 
 function assert_operator() {
-  assert_operator_crd
-  check_operator_status
-  if [[ $CRD_READY == 0 || "$OP_STATUS" != "2/2" ]]; then
-    info "Deploying $SPIN_FLAVOR operator...\n"
-    {
-      rm -rf "$ROOT_DIR/operator/deploy"
-      cd "$ROOT_DIR/operator" || exit 1
-    } >>"$OUT" 2>&1
-    info "Downloading operator from $OP_URL\n"
-    { curl -L $OP_URL | tar -xz; } >>"$OUT" 2>&1
-    exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/operator/deploy/crds/"
-    if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
-      exec_kubectl_mutating "kubectl create ns $OPERATOR_NS"
-    fi
-    exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -k $ROOT_DIR/operator"
-    [[ $EXIT_CODE != 0 ]] && echo "" && error "Error deploying operator:\n$ERR_OUTPUT\n"
-    info "Waiting for operator to start."
-    check_operator_status
-    while [[ "$OP_STATUS" != "2/2" ]]; do
-      echo -ne "."
-      sleep 2
-      check_operator_status
-    done
-    echo -ne "Done\n"
-    OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
-    info "Operator version: $OP_IMAGE\n"
-    cd "$ROOT_DIR" || exit 1
-  else
-    OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
-    info "Operator version: $OP_IMAGE\n"
+  [[ $SPIN_OP_DEPLOY = 0 ]] && info "Not manging operator\n" && return
+
+  find_current_operator_details
+  OPERATOR_NS=$(grep "^namespace:" "$ROOT_DIR"/operator/kustomization.yml | awk '{print $2}')
+  info "Resolved operator namespace: $OPERATOR_NS\n"
+  check_operator_deployment
+
+  if [[ "$CURRENT_OP_NS" != "" && "$CURRENT_OP_NS" != "$OPERATOR_NS" ]]; then
+    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$OPERATOR_NS\". Change desired namespace in operator/kustomization.yml, or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
+
+  elif [[ $CURRENT_OP_IMAGE != "" && ${CURRENT_OP_IMAGE//:*/} != "$OP_IMAGE_BASE" ]]; then
+    warn "There is a different operator in namespace \"$OPERATOR_NS\" (expected: \"$OP_IMAGE_BASE\", actual: \"${CURRENT_OP_IMAGE//:*/}\"). Do you want to delete it? (y/n)\n"
+    read -r del_choice
+    [[ "$del_choice" != "y" ]] && exit 0
+    delete_operator
+    deploy_operator
+
+  elif [[ $CRD_READY == 0 || $OP_READY != 1 ]]; then
+    deploy_operator
   fi
+  OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
+  info "Operator version: $OP_IMAGE\n"
 }
 
 function deploy_secrets() {
@@ -169,9 +196,12 @@ function deploy_secrets() {
   info "Resolved spinnaker namespace: $SPIN_NS\n"
   info "Deploying secrets...\n"
   if ! kubectl get ns "$SPIN_NS" >/dev/null 2>&1; then
-    exec_kubectl_mutating "kubectl create ns $SPIN_NS"
+    exec_kubectl_mutating "kubectl create ns $SPIN_NS" handle_generic_kubectl_error
   fi
-  log "KUBE" "kubectl -n $SPIN_NS create secret generic spin-secrets --from-literal=... --from-file=...\n"
+  if kubectl -n "$SPIN_NS" get secret spin-secrets > /dev/null 2>&1 ; then
+    exec_kubectl_mutating "kubectl -n $SPIN_NS delete secret spin-secrets" handle_generic_kubectl_error
+  fi
+  log "KUBE" "kubectl -n $SPIN_NS create secret generic spin-secrets [REDACTED]\n"
   {
     "$ROOT_DIR"/secrets/create-secrets.sh
   } >>"$OUT" 2>&1
@@ -180,25 +210,24 @@ function deploy_secrets() {
 function deploy_dependency_crd() {
   if grep "^  - infrastructure/prometheus-grafana" kustomization.yml >/dev/null 2>&1; then
     info "Deploying prometheus crds...\n"
-    exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/infrastructure/prometheus-grafana/crd.yml"
-    [[ $EXIT_CODE != 0 ]] && error "Error deploying prometheus crds:\n$ERR_OUTPUT\n"
+    exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/infrastructure/prometheus-grafana/crd.yml" handle_generic_kubectl_error
   fi
+}
+
+function handle_spin_deploy_error {
+  echo -ne "$ERR_OUTPUT" >>"$OUT"
+  if echo "$ERR_OUTPUT" | grep "SpinnakerService validation failed" >/dev/null 2>&1; then
+    PRETTY_ERR=$(echo "$ERR_OUTPUT" | sed -n -e '/SpinnakerService validation failed/,$p' | sed -e '/):.*/,$d')
+  else
+    PRETTY_ERR=$ERR_OUTPUT
+  fi
+  error "Error deploying spinnaker, see deploy_log.txt for full output:\n$PRETTY_ERR\n"
 }
 
 function deploy_spinnaker() {
   deploy_dependency_crd
   info "Deploying spinnaker...\n"
-  exec_kubectl_mutating "kubectl -n $SPIN_NS apply -k $ROOT_DIR"
-  if [[ $EXIT_CODE != 0 ]]; then
-    echo -ne "$ERR_OUTPUT" >>"$OUT"
-    if echo "$ERR_OUTPUT" | grep "SpinnakerService validation failed" >/dev/null 2>&1; then
-      PRETTY_ERR=$(echo "$ERR_OUTPUT" | sed -n -e '/SpinnakerService validation failed/,$p' | sed -e '/):.*/,$d')
-    else
-      PRETTY_ERR=$ERR_OUTPUT
-    fi
-    echo ""
-    error "Error deploying spinnaker, see deploy_log.txt for full output:\n$PRETTY_ERR\n"
-  fi
+  exec_kubectl_mutating "kubectl -n $SPIN_NS apply -k $ROOT_DIR" handle_spin_deploy_error
   info "Spinnaker deployed\n"
 }
 

@@ -4,15 +4,29 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:
+    # ------- Main config section, equivalent to "~/.hal/config" from Halyard
     config:
-      version: 2.21.0
-      artifacts: {}
-      providers: {}
-      metricStores: {}
-      spinnaker: {}
+      version: 2.21.0            # Spinnaker version to deploy
+#      armory: {}                 # Features only available in Armory Spinnaker distribution.
+      artifacts: {}              # Artifacts are "things" that can be deployed or used within spinnaker: docker images, github files, etc.
+      canary: {}                 # Settings used for performing automated canary analysis.
+      ci: {}                     # Settings for continuous integration system like jenkins, google cloud build, etc.
+      deploymentEnvironment: {}  # Changes how spinnaker is deployed to kubernetes, like number of pods, memory, etc. Many of these settings have more flexible alternatives in "spec.kustomize".
+      features: {}               # Some flags to enable/disable features. Some of them are not needed anymore in newer versions of spinnaker.
+      metricStores: {}           # Monitoring of spinnaker itself using various metrics providers like prometheus, datadog, etc.
+      notifications: {}          # How spinnaker sends notifications about pipeline events.
+      persistentStorage: {}      # How spinnaker persists applications and pipelines.
+      pubsub: {}                 # Integration with pubsub providers.
+      providers: {}              # Cloud providers supported by spinnaker: kubernetes, aws, gcp, etc.
+      repository: {}             # Settings for artifact repositories.
+      security: {}               # Authentication and authorization.
+      spinnaker: {}              # Configurations for plugins
+
+    # ------- Service config overrides, equivalent to "~/.hal/default/profiles" from Halyard.
+    # ------- These settings override the ones in main config section.
     profiles:
-      spinnaker: {}
-      spinnakerconfig: {}
+      spinnaker: {}              # Settings in this section are applied to all spinnaker services. Equivalent of "spinnaker-local.yml"
+      spinnakerconfig: {}        # Settings in this section are applied to all spinnaker services. Equivalent of "spinnakerconfig.yml", which is in turn equivalent of "bootstrap.yml" of spring boot applications.
       gate: {}
       orca: {}
       rosco: {}
@@ -20,9 +34,12 @@ spec:
       igor: {}
       clouddriver: {}
       front50: {}
-      settings-local.js: {}
+      settings-local.js: {}      # Config overrides for deck
+
+    # ------- Changes some settings of how the manifests for spinnaker deployments and services are generated.
+    # ------- Section "spec.kustomize" gives greater control. Equivalent to "~/.hal/default/service-settings" from Halyard.
     service-settings:
-      spinnaker: {}
+      spinnaker: {}              # Configurations that apply to all services
       gate: {}
       orca: {}
       rosco: {}
@@ -30,7 +47,10 @@ spec:
       igor: {}
       clouddriver: {}
       front50: {}
-  kustomize:
+
+  expose: {}            # Controls how spinnaker is exposed outside of the cluster.
+  validation: {}        # Enabled/disables some validations done by the operator's admission webhook when deploying spinnaker.
+  kustomize:            # Free form kustomize patches for changing how spinnaker deployments and services are generated.
     deck: {}
     gate: {}
     orca: {}

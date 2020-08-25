@@ -12,7 +12,8 @@ resources:
   - deploy/operator/cluster/deployment.yaml
 
 patchesStrategicMerge:
-  - patch-config.yaml   # Support for custom operator configuration. Depends on operator-config.
+  - patch-config.yaml       # Support for custom operator configuration. Depends on operator-config.
+#  - patch-validations.yaml  # Disable all validations done by the operator globally.
 
 configMapGenerator:
   - name: operator-config

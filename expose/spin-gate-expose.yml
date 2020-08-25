@@ -1,0 +1,22 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration of an alternate service definition for gate. Offers maximum control and configurability.
+# This is often required in combination with "patch-urls.yml" to configure spinnaker's public facing urls.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    cluster: spin-gate-expose
+  name: spin-gate-expose
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8084
+      protocol: TCP
+      targetPort: 8084
+  selector:
+    app: spin
+    cluster: spin-gate
+  sessionAffinity: None
