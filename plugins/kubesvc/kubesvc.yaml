@@ -11,6 +11,7 @@ kubernetes:
 
 clouddriver:
   grpc: spin-clouddriver:9091
+  insecure: true
 
 server:
   port: 8082
