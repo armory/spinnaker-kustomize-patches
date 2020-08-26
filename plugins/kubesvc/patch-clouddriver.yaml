@@ -6,6 +6,9 @@ spec:
   spinnakerConfig:
     profiles:
       clouddriver:
+        kubernetes:
+          enabled: true
+
         sql:
           enabled: true
           taskRepository:
@@ -83,7 +86,7 @@ spec:
                 spec:
                   initContainers:
                   - name: kubesvc-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.4.0-rc.1
+                    image: docker.io/armory/kubesvc-plugin:0.4.0-rc.2
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: kubesvc-plugin-vol

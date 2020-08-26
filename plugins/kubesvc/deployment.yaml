@@ -21,6 +21,7 @@ spec:
         app.kubernetes.io/part-of: spinnaker
         cluster: spin-kubesvc
     spec:
+      serviceAccountName: spin-sa
       containers:
       - image: armory/kubesvc
         imagePullPolicy: IfNotPresent
