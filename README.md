@@ -20,7 +20,10 @@ The `deploy.sh` script automatically does this to deploy Spinnaker when you run 
 
 ```bash
 SPIN_FLAVOR=oss ./deploy.sh
+
 ```
+
+The advantage of using `deploy.sh` is one-click installation of the Armory Operator and Armory. You don't have to read several pages of documentation, configure a manifest, and execute several commands to install Armory - `deploy.sh` does it all! Additionally, this repo has many example patch files that you can easily modify to match your environment - no more creating YAML files from scratch!
 
 ## Disclaimer
 
