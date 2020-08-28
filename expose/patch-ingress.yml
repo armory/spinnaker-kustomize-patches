@@ -11,3 +11,17 @@ metadata:
 spec:
   expose:
     type: ingress  # Spinnaker is exposed using ingress. Available options: service, ingress
+  config:
+    security:
+      apiSecurity:
+        overrideBaseUrl: https://spinnaker.mycompany.com/api  # Public API (Gate) url. Using the same hostname for deck and gate only works when exposing spinnaker with ingress.
+      uiSecurity:
+        overrideBaseUrl: https://spinnaker.mycompany.com     # Public UI (Deck) url.
+  profiles:
+    gate:
+      server:
+        servlet:
+          context-path: /api
+  service-settings:
+    gate:
+      healthEndpoint: /api/health
