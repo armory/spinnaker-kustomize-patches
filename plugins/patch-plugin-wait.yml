@@ -7,21 +7,33 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:
-    config:
-      spinnaker:
-        extensibility:
-          plugins:
-            Armory.RandomWaitPlugin:
-              id: Armory.RandomWaitPlugin
+    # spec.spinnakerConfig.profiles - This section contains the YAML of each service's profile
+    profiles:
+      gate:
+        spinnaker:
+          extensibility:
+            deck-proxy: # you need this for plugins with a Deck component
               enabled: true
-              version: 1.1.11
-              extensions:
-                armory.randomWaitStage:
-                  id: armory.randomWaitStage
+              plugins:
+                Armory.RandomWaitPlugin:
                   enabled: true
-                  config:
-                    defaultMaxWaitTime: 3
-          repositories:
-            github-repository:
-              id: github-repository
-              url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json
+                  version: 1.1.14
+            repositories:
+              examplePluginsRepo:
+                url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json
+      orca:
+        spinnaker:
+          extensibility:
+    		   plugins:
+    		     Armory.RandomWaitPlugin:
+    			    enabled: true
+    			    version: 1.1.14
+    			    extensions:
+    				   id: armory.randomWaitStage
+    				   enabled: true
+    				   config:
+    				     defaultMaxWaitTime: 15
+    		   repositories:
+    		     examplePluginsRepo:
+    			    id: examplePluginsRepo
+    			    url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json

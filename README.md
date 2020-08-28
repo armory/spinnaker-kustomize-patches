@@ -4,7 +4,7 @@ This repository contains example [Kustomize](https://kustomize.io) patch files t
 
 The Armory Operator has a `basic` mode and a `cluster` mode. In `basic` mode, you configure Spinnaker in a single `spinnakerservice.yml` file. In `cluster` mode, though, you can configure with a single file **or** use Kustomize patch files. The advantage of using patch files is readability, consistency across environments, and maintenance manageability.  Instead of all the configuration sections in a very long `spinnakerservice.yml` file, each section is its own file, with a `kustomization.yml` file that uses the patch files to build a deployment file. See the [Managing Configuration](https://docs.armory.io/docs/installation/operator/#managing-configuration) section of the Spinnaker Operator docs for details and examples.
 
-You can use these patch files, with modification, to configure a Spinnaker instance installed using the the open source [Spinnaker Operator](https://github.com/armory/spinnaker-operator). You need to change the `apiVersion` by removing `armory` from it. For example,
+You can use these patch files, with modification, to configure a Spinnaker<sup>TM</sup> instance installed using the the open source [Spinnaker Operator](https://github.com/armory/spinnaker-operator). You need to change the `apiVersion` by removing `armory` from it. For example,
 
 ```
 apiVersion: spinnaker.armory.io/v1alpha2
