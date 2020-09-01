@@ -13,7 +13,7 @@ resources:
 
 patchesStrategicMerge:
   - patch-config.yaml       # Support for custom operator configuration. Depends on operator-config.
-#  - patch-validations.yaml  # Disable all validations done by the operator globally.
+#  - patch-validations.yaml  # Disable all validations done by the operator globally. After disabling validations you would need to manually delete the webhook configuration previously created by operator: "kubectl delete validatingwebhookconfiguration spinnakervalidatingwebhook"
 
 configMapGenerator:
   - name: operator-config
