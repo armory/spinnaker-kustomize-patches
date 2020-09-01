@@ -7,7 +7,7 @@ spec:
     profiles:
       clouddriver:
         kubernetes:
-          enabled: true
+          enabled: true    # This is not needed if spinnaker already has kubernetes V2 accounts enabled by other files
 
         sql:
           enabled: true
