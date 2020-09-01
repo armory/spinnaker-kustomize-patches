@@ -2,7 +2,22 @@
 
 This repository contains example [Kustomize](https://kustomize.io) patch files to configure and deploy Armory using the [Armory Operator](https://docs.armory.io/docs/installation/operator/), which is a Kubernetes Operator for installing Armory.
 
-The Armory Operator has a `basic` mode and a `cluster` mode. In `basic` mode, you configure Spinnaker in a single `spinnakerservice.yml` file. In `cluster` mode, though, you can configure with a single file **or** use Kustomize patch files. The advantage of using patch files is readability, consistency across environments, and maintenance manageability.  Instead of all the configuration sections in a very long `spinnakerservice.yml` file, each section is its own file, with a `kustomization.yml` file that uses the patch files to build a deployment file. See the [Managing Configuration](https://docs.armory.io/docs/installation/operator/#managing-configuration) section of the Spinnaker Operator docs for details and examples.
+The Armory Operator has a `basic` mode and a `cluster` mode.
+
+Functionality                                   | `basic` | `cluster`
+:-----------------------------------------------|:-------:|:--------:
+Can configure with single file                  |    Y    |     Y
+Can configure with kustomize patches            |    Y    |     Y
+Operator performs pre-flight checks/validations |    N    |     Y
+Requires Kubernetes 'cluster role'              |    N    |     Y
+
+Even though you can configure Armory in a single `SpinnakerService.yml` file, the advantage of using patch files is that each config section is its own file, with a `kustomization.yml` file that uses the patch files to build a deployment file. The Kustomize approach provides readability, consistency across environments, and maintenance manageability.  See the [Managing Configuration](https://docs.armory.io/docs/installation/operator/#managing-configuration) section of the Spinnaker Operator docs for details and examples.
+
+The advantage of using `deploy.sh` is one-click installation of the Armory Operator in `cluster` mode and Armory. You don't have to read several pages of documentation, configure a manifest, and execute several commands to install Armory - `deploy.sh` does it all! Additionally, this repo has many example patch files that you can easily modify to match your environment - no more creating YAML files from scratch!
+
+## Disclaimer
+
+The example configurations provided in this repository serve as a starting point for configuring Armory. You may need to modify the contents for the environment where Armory is running to work properly. These examples are not exhaustive and don't showcase all available combinations of settings. It's possible that not all configurations work with all versions of Armory.
 
 You can use these patch files, with modification, to configure a Spinnaker<sup>TM</sup> instance installed using the the open source [Spinnaker Operator](https://github.com/armory/spinnaker-operator). You need to change the `apiVersion` by removing `armory` from it. For example,
 
@@ -22,12 +37,6 @@ The `deploy.sh` script automatically does this to deploy Spinnaker when you run 
 SPIN_FLAVOR=oss ./deploy.sh
 
 ```
-
-The advantage of using `deploy.sh` is one-click installation of the Armory Operator and Armory. You don't have to read several pages of documentation, configure a manifest, and execute several commands to install Armory - `deploy.sh` does it all! Additionally, this repo has many example patch files that you can easily modify to match your environment - no more creating YAML files from scratch!
-
-## Disclaimer
-
-The example configurations provided in this repository serve as a starting point for configuring Spinnaker. You may need to modify the contents for the environment where Spinnaker is running to work properly. These examples are not exhaustive and don't showcase all available combinations of settings. It's possible that not all configurations work with all versions of Spinnaker.
 
 ## Prerequisites
 
