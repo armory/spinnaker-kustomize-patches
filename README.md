@@ -2,7 +2,7 @@
 
 This repository contains example [Kustomize](https://kustomize.io) patch files to configure and deploy Armory using the [Armory Operator](https://docs.armory.io/docs/installation/operator/), which is a Kubernetes Operator for installing Armory.
 
-The Armory Operator has a `basic` mode and a `cluster` mode.
+The Armory Operator has `basic` and a `cluster` modes.
 
 Functionality                                   | `basic` | `cluster`
 :-----------------------------------------------|:-------:|:--------:
@@ -13,7 +13,7 @@ Requires Kubernetes 'cluster role'              |    N    |     Y
 
 Even though you can configure Armory in a single `SpinnakerService.yml` file, the advantage of using patch files is that each config section is its own file, with a `kustomization.yml` file that uses the patch files to build a deployment file. The Kustomize approach provides readability, consistency across environments, and maintenance manageability.  See the [Managing Configuration](https://docs.armory.io/docs/installation/operator/#managing-configuration) section of the Spinnaker Operator docs for details and examples.
 
-The advantage of using `deploy.sh` is one-click installation of the Armory Operator in `cluster` mode and Armory. You don't have to read several pages of documentation, configure a manifest, and execute several commands to install Armory - `deploy.sh` does it all! Additionally, this repo has many example patch files that you can easily modify to match your environment - no more creating YAML files from scratch!
+This repo provides one-click installation of the Armory Operator (`cluster` mode) and Armory via the `deploy.sh` script. You don't have to read the Armory Operator documentation before you start, configure a manifest, or execute several commands to install Armory - `deploy.sh` does it all! Additionally, this repo has many example patch files that you can easily modify to match your environment - no more creating YAML files from scratch!
 
 ## Disclaimer
 
@@ -63,4 +63,9 @@ This will deploy the Armory Operator to the `spinnaker-operator` namespace, and 
 
 For adding remote Kubernetes clusters to Spinnaker, the helper script `secrets/create-kubeconfig.sh` can be used to create a Kubernetes service account (with cluster admin role) and its corresponding `kubeconfig` file for spinnaker to use.
 
+## Resources
+
+* [Armory Operator](https://docs.armory.io/docs/installation/operator/)
+* [Armory Operator Configuration](https://docs.armory.io/docs/installation/operator-reference/operator-config/)
+* [Kustomize](https://kustomize.io)
 
