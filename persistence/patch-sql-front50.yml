@@ -1,0 +1,32 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for using SQL as a caching store for front50.
+#
+# Documentation: https://spinnaker.io/setup/productionize/persistence/front50-sql/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      front50:
+        sql:
+          enabled: true
+          connectionPools:
+            default:
+            # additional connection pool parameters are available here,
+            # for more detail and to view defaults, see:
+            # https://github.com/spinnaker/kork/blob/master/kork-sql/src/main/kotlin/com/netflix/spinnaker/kork/sql/config/ConnectionPoolProperties.kt
+              default: true
+              jdbcUrl: jdbc:mysql://mysql:3306/front50?useSSL=false&useUnicode=true&characterEncoding=utf8 # useUnicode and utf8 makes sure the database can store an emoji if one is ever added to the database
+              user: front50_service
+              password: encrypted:k8s!n:spin-secrets!k:mysqlF50Password
+          migration:
+            user: front50_migrate
+            password: encrypted:k8s!n:spin-secrets!k:mysqlF50MigratePassword
+            jdbcUrl: jdbc:mysql://mysql:3306/front50?useSSL=false&useUnicode=true&characterEncoding=utf8 # useUnicode and utf8 makes sure the database can store an emoji if one is ever added to the database
+
+        spinnaker:
+          gcs:
+            enabled: false # (optional) disable gcs if no longer needed, after optional migration is complete

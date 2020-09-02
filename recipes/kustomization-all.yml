@@ -26,7 +26,9 @@ patchesStrategicMerge:
   # Spinnaker persistence
   - persistence/patch-minio.yml
 #  - persistence/patch-s3.yml
-  - persistence/patch-sql-clouddriver.yml
+  - persistence/patch-sql-clouddriver.yml          ## setup clouddriver to use SQL for storage
+  - persistence/patch-sql-front50.yml              ## setup front50 to use SQL for storage
+  - persistence/patch-sql-orca.yml                 ## setup orca to use SQL for storage
 #  - persistence/patch-redis.yml
 
   # Automatically expose spinnaker
