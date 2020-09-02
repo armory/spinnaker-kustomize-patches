@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for using SQL as a caching store for clouddriver.
+# Example configuration for using SQL as a caching store for ocra.
 #
-# Documentation: https://spinnaker.io/setup/productionize/persistence/clouddriver-sql/
+# Documentation: https://spinnaker.io/setup/productionize/persistence/orca-sql/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService

@@ -53,8 +53,8 @@ spec:
           previousClass: com.netflix.spinnaker.clouddriver.data.task.jedis.RedisTaskRepository
         
         redis:
-          enabled: true
-          connection: redis://redis:6379 # only required if using externally managed redis AND Google CloudSQL or Amazon Managed RDS SQL
+          enabled: true                   # only required if using externally managed redis AND Google CloudSQL or Amazon Managed RDS SQL
+          # connection: redis://redis:6379  # only required if using externally managed redis AND Google CloudSQL or Amazon Managed RDS SQL
           cache:
             enabled: false
           scheduler:
