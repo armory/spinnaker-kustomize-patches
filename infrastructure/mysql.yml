@@ -51,7 +51,17 @@ data:
       CREATE USER IF NOT EXISTS 'clouddriver_service'@'%' IDENTIFIED BY '${MYSQL_CD_PASSWORD}'; \
       CREATE USER IF NOT EXISTS 'clouddriver_migrate'@'%' IDENTIFIED BY '${MYSQL_CD_MIGRATE_PASSWORD}'; \
       GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, EXECUTE, SHOW VIEW ON clouddriver.* TO 'clouddriver_service'@'%'; \
-      GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, LOCK TABLES, EXECUTE, SHOW VIEW ON clouddriver.* TO clouddriver_migrate@'%';"
+      GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, LOCK TABLES, EXECUTE, SHOW VIEW ON clouddriver.* TO clouddriver_migrate@'%'; \
+      CREATE SCHEMA IF NOT EXISTS orca DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; \
+      CREATE USER IF NOT EXISTS 'orca_service'@'%' IDENTIFIED BY '${MYSQL_ORCA_PASSWORD}'; \
+      CREATE USER IF NOT EXISTS 'orca_migrate'@'%' IDENTIFIED BY '${MYSQL_ORCA_MIGRATE_PASSWORD}'; \
+      GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, EXECUTE, SHOW VIEW ON orca.* TO 'orca_service'@'%'; \
+      GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, LOCK TABLES, EXECUTE, SHOW VIEW ON orca.* TO orca_migrate@'%'; \
+      CREATE SCHEMA IF NOT EXISTS front50 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; \
+      CREATE USER IF NOT EXISTS 'front50_service'@'%' IDENTIFIED BY '${MYSQL_F50_PASSWORD}'; \
+      CREATE USER IF NOT EXISTS 'front50_migrate'@'%' IDENTIFIED BY '${MYSQL_F50_MIGRATE_PASSWORD}'; \
+      GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, EXECUTE, SHOW VIEW ON front50.* TO 'front50_service'@'%'; \
+      GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, LOCK TABLES, EXECUTE, SHOW VIEW ON front50.* TO front50_migrate@'%';"
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: StatefulSet
@@ -87,6 +97,26 @@ spec:
                 secretKeyRef:
                   name: spin-secrets
                   key: mysqlCdMigratePassword
+            - name: MYSQL_ORCA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spin-secrets
+                  key: mysqlOrcaPassword
+            - name: MYSQL_ORCA_MIGRATE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spin-secrets
+                  key: mysqlOrcaMigratePassword
+            - name: MYSQL_F50_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spin-secrets
+                  key: mysqlF50Password
+            - name: MYSQL_F50_MIGRATE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: spin-secrets
+                  key: mysqlF50MigratePassword
           args:
             - "--ignore-db-dir=lost+found"
           ports:
