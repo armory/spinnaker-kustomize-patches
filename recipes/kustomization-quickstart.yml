@@ -8,7 +8,6 @@
 # - One Kubernetes account (Spinnaker's own cluster) for deployment targets
 # - One dockerhub account for public repositories
 # - Spinnaker authentication disabled
-# - Spinnaker exposed out of the cluster using 2 public Kubernetes service load balancers
 # - Self hosted minio as a persistent storage
 # - Self hosted redis backend for caching and temporal storage of services
 #-----------------------------------------------------------------------------------------------------------------------
@@ -26,6 +25,5 @@ resources:
 
 patchesStrategicMerge:
   - persistence/patch-minio.yml   # (Mandatory). Persistence to store spinnaker applications and pipelines
-  - expose/patch-lb.yml                 # Automatically expose spinnaker
   - accounts/kubernetes/patch-kube.yml  # Kubernetes accounts
   - accounts/docker/patch-dockerhub.yml # Docker accounts
