@@ -1,0 +1,18 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a gitlab account to spinnaker
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      artifacts:
+        helm:
+          enabled: true
+          accounts:
+          - name: helm
+            username: john.doe
+            repository: https://myhelmrepo.com
+            password: encrypted:k8s!n:spin-secrets!k:helm-token        
