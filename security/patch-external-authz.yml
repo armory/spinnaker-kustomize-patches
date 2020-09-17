@@ -1,0 +1,19 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      features:
+        fiat: true
+      security:
+        authz:
+          enabled: true
+          groupMembership:
+            service: EXTERNAL
+    profiles:
+      fiat:
+        admin:
+          roles:
+            - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
