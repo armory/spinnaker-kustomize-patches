@@ -7,6 +7,12 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:
+    profiles:
+      # Adding the required gate setting per https://spinnaker.io/setup/productionize/caching/externalize-redis/#externalize-redis
+      gate:
+        redis:
+          configuration:
+            secure: true
     service-settings:
       redis:
         overrideBaseUrl: redis://abc.mycompany.com:6379   # External redis endpoint

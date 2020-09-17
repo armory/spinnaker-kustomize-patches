@@ -1,0 +1,36 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      spinnaker:
+        # These lines are spring-boot configuration to allow access to the metrics
+        # endpoints.  This plugin adds the "aop-prometheus" endpoint on the
+        # "<service>:<port>/aop-prometheus" path.
+        management:
+          endpoints:
+            web:
+						  # READ WARNING at https://github.com/armory-plugins/armory-observability-plugin#what-does-this-plugin-do
+              exposure.include: health,info,aop-prometheus
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.ObservabilityPlugin:
+                # THIS Is absolutely required, though potentially redundant, otherwise the plugin won't start
+                enabled: true
+                version: 1.0.0
+                # This is the basic configuration for prometheus to be enabled
+                config.metrics:
+                  prometheus:
+                    enabled: true
+            repositories:
+              armory-observability-plugin-releases:
+                url: https://raw.githubusercontent.com/armory-plugins/armory-observability-plugin-releases/master/repositories.json
+    service-settings:
+      spinnaker:
+        kubernetes:
+          podAnnotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/path: "armory-observability/metrics"
