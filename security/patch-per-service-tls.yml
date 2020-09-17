@@ -1,0 +1,39 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling TLS for each of the Spinnaker Services.
+#
+# Prerequisites:
+#   - Certificates and keys should be generated and loaded into secrets for each of the services.
+#   - All of the certificates for the services should be signed by the same CA.
+#   - The CA certificate should be loaded into an already existing truststore (from the Java install) and loaded
+#     into a secret.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    service-settings:
+      front50:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: front50-cert
+            type: secret
+            mountPath: /front50-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+    profiles:
+      front50:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /front50-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: front50 # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
