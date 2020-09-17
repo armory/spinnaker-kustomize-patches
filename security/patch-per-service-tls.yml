@@ -151,7 +151,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:front50-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -165,7 +165,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:clouddriver-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -179,7 +179,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:orca-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -193,7 +193,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:echo-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -207,7 +207,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:fiat-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -221,7 +221,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:gate-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -235,7 +235,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:igor-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -249,7 +249,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:kayenta-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
@@ -263,7 +263,7 @@ spec:
             # This should match the password set when the keystore was created
             key-store-password: encrypted:k8s!n:spin-secrets!k:rosco-keystore-password
             # This should match the alias used when adding the cert to the keystore
-            key-alias: front50
+            key-alias: certificate
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
