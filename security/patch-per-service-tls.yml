@@ -24,6 +24,100 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+      clouddriver:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: clouddriver-cert
+            type: secret
+            mountPath: /clouddriver-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      orca:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: orca-cert
+            type: secret
+            mountPath: /orca-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      echo:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: echo-cert
+            type: secret
+            mountPath: /echo-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      fiat:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: fiat-cert
+            type: secret
+            mountPath: /fiat-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      gate:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: gate-cert
+            type: secret
+            mountPath: /gate-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      igor:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: igor-cert
+            type: secret
+            mountPath: /igor-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      kayenta:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: kayenta-cert
+            type: secret
+            mountPath: /kayenta-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      rosco:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: rosco-cert
+            type: secret
+            mountPath: /rosco-cert
+          - id: truststore
+            type: secret
+            mountPath: /truststore
+      dinghy:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: dinghy-cert
+            type: secret
+            mountPath: /dinghy-cert
+      terraformer:
+        # Mount the keystore and truststore secrets to the container
+        kubernetes:
+          volumes:
+          - id: terraformer-cert
+            type: secret
+            mountPath: /terraformer-cert
     profiles:
       front50:
         server:
@@ -37,3 +131,115 @@ spec:
             trust-store: /truststore/truststore.jks
             trust-store-type: jks
             trust-store-password: changeit
+      clouddriver:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /clouddriver-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: clouddriver # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      orca:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /orca-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: orca # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      echo:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /echo-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: echo # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      fiat:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /fiat-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: fiat # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      gate:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /gate-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: gate # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      igor:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /igor-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: igor # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      kayenta:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /kayenta-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: kayenta # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      rosco:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: /rosco-cert/keystore.jks
+            key-store-type: jks
+            key-store-password: changeit # This should match the password set when the keystore was created
+            key-alias: rosco # This should match the alias used when adding the cert to the keystore
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      dinghy:
+        server:
+          ssl:
+            enabled: true
+            certFile: /dinghy-cert/tls.crt
+            keyFile: /dinghy-cert/tls.key
+            keyPassword: password # This should match the password set when the certificate/private key was created
+            cacertFile: /dinghy-cert/ca.crt
+      terraformer:
+        server:
+          ssl:
+            enabled: true
+            certFile: /terraformer-cert/tls.crt
+            keyFile: /terraformer-cert/tls.key
+            keyPassword: password # This should match the password set when the certificate/private key was created
+            cacertFile: /terraformer-cert/ca.crt
