@@ -2,8 +2,8 @@
 # Example configuration for enabling TLS for each of the Spinnaker Services.
 #
 # Prerequisites:
-#   - Certificates and keys should be generated and loaded into secrets for each of the services.
-#   - All of the certificates for the services should be signed by the same CA.
+#   - Certificate, key, and CA certificate should be generated and loaded into a secret for each of the services.
+#   - All of the certificates for the services should be signed by the same CA.  This can be a self-signed CA.
 #   - The CA certificate should be loaded into an already existing truststore (from the Java install) and loaded
 #     into a secret.
 #-----------------------------------------------------------------------------------------------------------------
@@ -105,14 +105,14 @@ spec:
             type: secret
             mountPath: /truststore
       dinghy:
-        # Mount the keystore and truststore secrets to the container
+        # Mount the certs to the container.  The Truststore is not needed as this is a GoLang Service.
         kubernetes:
           volumes:
           - id: dinghy-cert
             type: secret
             mountPath: /dinghy-cert
       terraformer:
-        # Mount the keystore and truststore secrets to the container
+        # Mount the certs to the container.  The Truststore is not needed as this is a GoLang Service.
         kubernetes:
           volumes:
           - id: terraformer-cert
@@ -230,6 +230,7 @@ spec:
       dinghy:
         server:
           ssl:
+            # Enable TLS and set the certificate, key, and CA.  This is different as it's a GoLang based service.
             enabled: true
             certFile: /dinghy-cert/tls.crt
             keyFile: /dinghy-cert/tls.key
@@ -238,6 +239,7 @@ spec:
       terraformer:
         server:
           ssl:
+            # Enable TLS and set the certificate, key, and CA.  This is different as it's a GoLang based service.
             enabled: true
             certFile: /terraformer-cert/tls.crt
             keyFile: /terraformer-cert/tls.key
