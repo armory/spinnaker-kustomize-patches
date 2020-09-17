@@ -24,6 +24,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       clouddriver:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -34,6 +36,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       orca:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -44,6 +48,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       echo:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -54,6 +60,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       fiat:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -64,6 +72,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       gate:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -74,6 +84,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       igor:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -84,6 +96,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       kayenta:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -94,6 +108,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       rosco:
         # Mount the keystore and truststore secrets to the container
         kubernetes:
@@ -104,6 +120,8 @@ spec:
           - id: truststore
             type: secret
             mountPath: /truststore
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       dinghy:
         # Mount the certs to the container.  The Truststore is not needed as this is a GoLang Service.
         kubernetes:
@@ -111,6 +129,8 @@ spec:
           - id: dinghy-cert
             type: secret
             mountPath: /dinghy-cert
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
       terraformer:
         # Mount the certs to the container.  The Truststore is not needed as this is a GoLang Service.
         kubernetes:
@@ -118,6 +138,8 @@ spec:
           - id: terraformer-cert
             type: secret
             mountPath: /terraformer-cert
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
     profiles:
       front50:
         server:
