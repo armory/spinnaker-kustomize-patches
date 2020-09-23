@@ -1,0 +1,19 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for tuning Fiat's polling
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker  # name doesn't matter since this is a patch
+spec:
+  # spec.spinnakerConfig - This section is how to specify configuration spinnaker
+  spinnakerConfig:
+    # spec.spinnakerConfig.profiles - This section contains the YAML of each service's profile
+    profiles:
+      fiat:
+        writeMode:
+          # Poll cycle interval, "check if a user belongs to a group every X ms"
+          syncDelayMs: 600000    # the default 600000 (10 mins) is usually fine
+
+          # If sync fails, how much time to wait before retrying
+          retryIntervalMs: 10000 # the default is 10000 (10s)
