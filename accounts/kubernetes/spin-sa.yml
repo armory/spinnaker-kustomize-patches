@@ -36,6 +36,17 @@ rules:
   - watch
   - patch
 - apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+  - patch
+- apiGroups:
   - apps
   - extensions
   resources:
