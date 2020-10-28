@@ -9,8 +9,9 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:
-    notifications:
-      slack:
-        enabled: true
-        botName: my-bot-name                               # If you need to create one: https://api.slack.com/authentication/basics
-        token: encrypted:k8s!n:spin-secrets!k:slack-token  # Authentication token for your app.
+    config:
+       notifications:
+         slack:
+           enabled: true
+           botName: my-bot-name                               # If you need to create one: https://api.slack.com/authentication/basics
+           token: encrypted:k8s!n:spin-secrets!k:slack-token  # Authentication token for your app.
