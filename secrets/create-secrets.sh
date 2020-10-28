@@ -38,11 +38,11 @@ SEC_FILE=$CWD/secrets.env
 [[ ! -f $SEC_FILE  ]] && echo "WARNING: Missing file $SEC_FILE, loading sample secrets from $CWD/secrets-example.env instead" && SEC_FILE=$CWD/secrets-example.env
 while IFS='=' read -r literalsLine; 
 do
-    echo "Including secret literal \"$(echo $literalsLine)\""
+    #echo "Including secret literal \"$(echo $literalsLine)\""
     literalsKey="${literalsLine%%=*}"
-    echo "key is ${literalsKey}"
+    #echo "key is ${literalsKey}"
     literalsValue="${literalsLine#*=}"
-    echo "val is ${literalsValue}"
+    #echo "val is ${literalsValue}"
     if [[ $literalsValue =~ $quoteRequiredRegex ]]; then
         echo "space(s) detected inside value for ${literalsKey}, so wrapping with double quotes"
         LITERALS+="--from-literal=${literalsKey}=\"${literalsValue}\" "
