@@ -1,0 +1,54 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding sidecars to spinnaker pods (In this case, to enable Google CloudSQL Proxy)
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      deploymentEnvironment:
+        sidecars:
+          spin-orca:
+          - name: cloudsql-proxy
+            dockerImage: gcr.io/cloudsql-docker/gce-proxy:1.13
+            port: 3306
+            command:
+            - '''/cloud_sql_proxy'''
+            - '''--dir=/cloudsql'''
+            - '''-instances=my-gcp-project:us-east1:my-spinnaker-cloudsql-instance=tcp:3306'''
+            - '''-credential_file=/secrets/cloudsql/spinnaker-cloudsql-account.json'''                # change to file name that has the google service account with the 'Cloud SQL Client' permissions
+            secretVolumeMounts:
+            - secretName: spin-secrets
+              mountPath: /secrets/cloudsql
+            mountPath: /cloudsql
+          spin-clouddriver:
+          - name: cloudsql-proxy
+            dockerImage: gcr.io/cloudsql-docker/gce-proxy:1.13
+            port: 3306
+            command:
+            - '''/cloud_sql_proxy'''
+            - '''--dir=/cloudsql'''
+            - '''-instances=my-gcp-project:us-east1:my-spinnaker-cloudsql-instance=tcp:3306'''
+            - '''-credential_file=/secrets/cloudsql/spinnaker-cloudsql-account.json'''                # change to file name that has the google service account with the 'Cloud SQL Client' permissions
+            secretVolumeMounts:
+            - secretName: spin-secrets
+              mountPath: /secrets/cloudsql
+            mountPath: /cloudsql
+          - name: token-refresh
+            dockerImage: armory/gcloud-auth-helper:stable                                             # Sidecar to help with gcloud authentication token timeouts https://github.com/armory-io/gcloud-auth-helper
+            mountPath: /tmp/gcloud
+          spin-front50:
+          - name: cloudsql-proxy
+            dockerImage: gcr.io/cloudsql-docker/gce-proxy:1.13
+            port: 3306
+            command:
+            - '''/cloud_sql_proxy'''
+            - '''--dir=/cloudsql'''
+            - '''-instances=my-gcp-project:us-east1:my-spinnaker-cloudsql-instance=tcp:3306'''
+            - '''-credential_file=/secrets/cloudsql/spinnaker-cloudsql-account.json'''                # change to file name that has the google service account with the 'Cloud SQL Client' permissions
+            secretVolumeMounts:
+            - secretName: spin-secrets
+              mountPath: /secrets/cloudsql
+            mountPath: /cloudsql

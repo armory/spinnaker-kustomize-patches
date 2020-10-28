@@ -82,6 +82,7 @@ patchesStrategicMerge:
 #  - spinnaker_deployment/patch-sizing.yml
 #  - spinnaker_deployment/patch-labels-annotations.yml
 #  - spinnaker_deployment/patch-debug-jvm.yml
+#  - spinnaker_deployment/patch-cloudsql-sidecars.yml    ## (Optional) Google Cloud Proxy Sidecars for CloudSQL
 
   # Customization to core configuration
   - core_config/patch-timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
