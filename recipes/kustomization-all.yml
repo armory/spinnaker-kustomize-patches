@@ -42,6 +42,8 @@ patchesStrategicMerge:
 #  - security/patch-github.yml
 #  - security/patch-saml.yml
 #  - security/patch-file-authz.yml
+#  - security/patch-external-authz.yml                  ## (Optional) enable external AuthZ and set spinnaker admin roles
+#  - security/patch-fiat-create-app-roles.yml           ## (Optional) enable external AuthZ and set spinnaker admin roles
 
   # Kubernetes accounts
   - accounts/kubernetes/patch-kube.yml
