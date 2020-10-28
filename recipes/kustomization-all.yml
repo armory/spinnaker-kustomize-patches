@@ -18,6 +18,7 @@ resources:
 #  - expose/ingress-nginx.yml          # (Optional). Spinnaker ingress definition
 #  - expose/spin-gate-expose.yml       # (Optional). Alternate service definition for gate for exposing spinnaker with maximum configurability
 #  - expose/spin-deck-expose.yml       # (Optional). Alternate service definition for deck for exposing spinnaker with maximum configurability
+#  - expose/patch-lb-static-ip.yml     # (Optional). Expose spinnaker services through static IP load balancers 
 
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
