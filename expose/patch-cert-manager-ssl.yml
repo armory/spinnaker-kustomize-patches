@@ -44,7 +44,7 @@ spec:
             type: secret
             mountPath: /cert-manager
         env:
-          JAVA_OPTS: -XX:MaxRAMPercentage=50.0 -Dserver.ssl.enabled=true -Dserver.ssl.key-store-type=jks -Dserver.ssl.key-store=/cert-manager/keystore.jks -Dserver.ssl.key-store-password=my-super-secret-keystore -Dserver.ssl.key-alias=certificate
+          JAVA_OPTS: -XX:MaxRAMPercentage=50.0 -Dserver.ssl.enabled=true -Dserver.ssl.key-store-type=jks -Dserver.ssl.key-store=/cert-manager/keystore.jks -Dserver.ssl.key-alias=certificate -Dserver.ssl.key-store-password=my-super-secret-keystore   # the keystore password needs to be set here directly as well as inside spin-secrets at the tlsKeyStorePassword key
         scheme: https
   kustomize:
     deck:
@@ -60,5 +60,5 @@ spec:
                   - name: PASSPHRASE
                     valueFrom:
                       secretKeyRef:
-                        key: keystorePassword
+                        key: tlsKeyStorePassword
                         name: spin-secrets
