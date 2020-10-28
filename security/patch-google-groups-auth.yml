@@ -1,0 +1,43 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for securing spinnaker with Google Group memberships.
+#
+# Documentation: https://spinnaker.io/setup/security/authorization/google-groups/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      security:
+        authn:
+          enabled: true
+          oauth2:
+            enabled: true
+            client:
+              clientId: encrypted:k8s!n:spin-secrets!k:googleOauthClientId             # oauth client ID (added to secrets/secrets.env)
+              clientSecret: encrypted:k8s!n:spin-secrets!k:googleOauthClientSecret     # oauth client secret (added to secrets/secrets.env)
+              accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+              userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+              scope: profile email
+              preEstablishedRedirectUri: https://api.spinnaker.mycompany.com/login     # url of gate with /login added at the end for authentication
+              useCurrentUri: false
+            userInfoRequirements:
+              hd: mycompany.com                                                        # base domain that all users must belong to in order to authenticate (was setup during oauth configuration)
+            resource:
+              userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+            userInfoMapping:
+              email: email
+              firstName: given_name
+              lastName: family_name
+            provider: GOOGLE
+        authz:
+          groupMembership:
+            service: GOOGLE
+            google:
+              roleProviderType: GOOGLE
+              credentialPath: encryptedFile:k8s!n:spin-secrets!k:spinnaker-fiat.json   # credentials path to Google Service Account with admin group access (added spinnaker-fiat.json to secrets/files directory from the root)
+              adminUsername: cool_admin_girl@mycompany.com                             # Email address of GSuite admin with group read access (Fiat will "assume" that person to get the list of groups for the user)
+              domain: mycompany.com                                                    # base domain that all users must belong to in order to authenticate
+          enabled: true
