@@ -79,6 +79,11 @@ patchesStrategicMerge:
 #  - spinnaker_deployment/patch-labels-annotations.yml
 #  - spinnaker_deployment/patch-debug-jvm.yml
 
+  # Customization to core configuration
+  - core_config/patch-timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
+  - core_config/patch-features.yml                      ## (Optional) adjust features of the deployment {sometimes new features are locked behind feature flags}
+  - core_config/patch-version.yml                       ## Set the deployed Spinnaker version
+
   # Plugins
 #  - plugins/patch-plugin-wait.yml
 
