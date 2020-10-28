@@ -1,0 +1,8 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      timezone: America/New_York  # must come from this list https://en.wikipedia.org/wiki/List_of_tz_database_time_zones (TZ database name)
