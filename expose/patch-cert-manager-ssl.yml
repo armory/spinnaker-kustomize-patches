@@ -1,0 +1,64 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for configuring spinnaker to utilize cert manager ssl certs (stored in a secret and mounted and refreshed automatically)
+#
+# Note: default key alias for cert-manager is certificate
+#-----------------------------------------------------------------------------------------------------------------
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  # Public-facing spinnaker urls. If not configured, load balancer urls will be used automatically
+  spinnakerConfig:
+    config:
+      security:
+        apiSecurity:
+          ssl:
+            enabled: false                                        # Required to disable SSL validation during deployment
+          overrideBaseUrl: https://api.spinnaker.mycomany.com     # Change this to your Gate url
+        uiSecurity:
+          ssl:
+            enabled: false                                        # Required to disable SSL validation during deployment
+          overrideBaseUrl: https://spinnaker.mycomany.com         # Change this to your Deck url
+    service-settings:
+      deck:
+        kubernetes:
+          podAnnotations:
+            reloader.stakater.com/auto: "true"                    # (Optional) Can trigger pod to rolling restart when certs get updated if reloader is installed https://github.com/stakater/Reloader
+          useExecHealthCheck: false
+          volumes:
+          - id: my-spinnaker-prod-tls                             # secret that is managed by cert-manager to always have up to date SSL certificates from Let's Encrypt
+            type: secret
+            mountPath: /cert-manager
+        env:
+          DECK_CERT: /cert-manager/tls.crt
+          DECK_KEY: /cert-manager/tls.key
+        scheme: https
+      gate:
+        kubernetes:
+          podAnnotations:
+            reloader.stakater.com/auto: "true"                    # (Optional) Can trigger pod to rolling restart when certs get updated if reloader is installed https://github.com/stakater/Reloader
+          useExecHealthCheck: false
+          volumes:
+          - id: my-spinnaker-prod-tls                             # secret that is managed by cert-manager to always have up to date SSL certificates from Let's Encrypt
+            type: secret
+            mountPath: /cert-manager
+        env:
+          JAVA_OPTS: -XX:MaxRAMPercentage=50.0 -Dserver.ssl.enabled=true -Dserver.ssl.key-store-type=jks -Dserver.ssl.key-store=/cert-manager/keystore.jks -Dserver.ssl.key-alias=certificate -Dserver.ssl.key-store-password=my-super-secret-keystore   # the keystore password needs to be set here directly as well as inside spin-secrets at the tlsKeyStorePassword key
+        scheme: https
+  kustomize:
+    deck:
+      deployment:
+        patchesStrategicMerge:
+        - |-
+          spec:
+            template:
+              spec:
+                containers:
+                - name: deck
+                  env:
+                  - name: PASSPHRASE
+                    valueFrom:
+                      secretKeyRef:
+                        key: tlsKeyStorePassword
+                        name: spin-secrets

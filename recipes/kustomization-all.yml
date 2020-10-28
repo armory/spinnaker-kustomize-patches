@@ -38,6 +38,7 @@ patchesStrategicMerge:
 #  - expose/patch-nodeport.yml
 #  - expose/patch-ingress.yml
 #  - expose/patch-urls.yml
+#  - expose/patch-cert-manager-ssl.yml                   ## (Optional) Enable SSL certificates to be pulled from a secret updated by cert-manager
 
   # Authentication and authorization
 #  - security/patch-github.yml
