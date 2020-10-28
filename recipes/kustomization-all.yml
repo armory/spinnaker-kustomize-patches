@@ -68,6 +68,7 @@ patchesStrategicMerge:
 #  - armory/patch-dinghy.yml
 #  - armory/patch-diagnostics.yml
 #  - armory/patch-policyengine.yml  # Requires spin-policies configmap
+#  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
 
   # Spinnaker monitoring
 #  - accounts/prometheus/patch-prometheus.yml
