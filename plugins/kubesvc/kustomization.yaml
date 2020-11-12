@@ -3,7 +3,7 @@ kind: Kustomization
 
 images:
   - name: armory/kubesvc
-    newTag: 0.2.0-rc.40    # Version of the agent to use
+    newTag: 0.3.0    # Version of the agent to use
 
 resources:
 - deployment.yaml
