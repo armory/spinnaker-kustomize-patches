@@ -65,9 +65,6 @@ if [[ -d "$CWD"/files && -n "$(ls -A "$CWD"/files)" ]]; then
   FILES=${FILES::${#FILES}-1}
 fi
 
-echo "$LITERALS"
-echo "$FILES"
-
 # Create the secrets
 if ! kubectl -n "$NAMESPACE" create secret generic spin-secrets $LITERALS $FILES ; then exit 1 ; fi
 
