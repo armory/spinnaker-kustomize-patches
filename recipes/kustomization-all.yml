@@ -57,6 +57,9 @@ patchesStrategicMerge:
 #  - accounts/aws/patch-aws.yml
 #  - accounts/aws/packer-templates.yml
 
+  # CloudFoundry accounts
+  - accounts/cloudfoundry/patch-cloudfoundry.yml
+
   # Artifact accounts
   - accounts/docker/patch-dockerhub.yml
 #  - accounts/docker/patch-gcr.yml
