@@ -1,0 +1,39 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for using SQL as a caching store for ocra.
+#
+# Documentation: https://spinnaker.io/setup/productionize/persistence/orca-sql/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      orca:
+        sql:
+          enabled: true
+          connectionPool:
+            jdbcUrl: jdbc:mysql://mysql:3306/orca?useSSL=false&useUnicode=true&characterEncoding=utf8 # useUnicode and utf8 makes sure the database can store an emoji if one is ever added to the database
+            user: orca_service
+            password: encrypted:k8s!n:spin-secrets!k:mysqlOrcaPassword
+            connectionTimeout: 5000
+            maxLifetime: 30000
+            # MariaDB-specific:
+            maxPoolSize: 50
+          migration:
+            jdbcUrl: jdbc:mysql://mysql:3306/orca?useSSL=false&useUnicode=true&characterEncoding=utf8 # useUnicode and utf8 makes sure the database can store an emoji if one is ever added to the database
+            user: orca_migrate
+            password: encrypted:k8s!n:spin-secrets!k:mysqlOrcaMigratePassword
+
+        # Ensure we're only using SQL for accessing execution state
+        executionRepository:
+          sql:
+            enabled: true
+          redis:
+            enabled: false
+
+        # Reporting on active execution metrics will be handled by SQL
+        monitor:
+          activeExecutions:
+            redis: false

@@ -18,6 +18,7 @@ resources:
 #  - expose/ingress-nginx.yml          # (Optional). Spinnaker ingress definition
 #  - expose/spin-gate-expose.yml       # (Optional). Alternate service definition for gate for exposing spinnaker with maximum configurability
 #  - expose/spin-deck-expose.yml       # (Optional). Alternate service definition for deck for exposing spinnaker with maximum configurability
+#  - expose/patch-lb-static-ip.yml     # (Optional). Expose spinnaker services through static IP load balancers 
 
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
@@ -27,7 +28,9 @@ patchesStrategicMerge:
   # Spinnaker persistence
   - persistence/patch-minio.yml
 #  - persistence/patch-s3.yml
-  - persistence/patch-sql-clouddriver.yml
+  - persistence/patch-sql-clouddriver.yml          ## setup clouddriver to use SQL for storage
+  - persistence/patch-sql-front50.yml              ## setup front50 to use SQL for storage
+  - persistence/patch-sql-orca.yml                 ## setup orca to use SQL for storage
 #  - persistence/patch-redis.yml
 
   # Automatically expose spinnaker
@@ -36,11 +39,15 @@ patchesStrategicMerge:
 #  - expose/patch-nodeport.yml
 #  - expose/patch-ingress.yml
 #  - expose/patch-urls.yml
+#  - expose/patch-cert-manager-ssl.yml                   ## (Optional) Enable SSL certificates to be pulled from a secret updated by cert-manager
 
   # Authentication and authorization
 #  - security/patch-github.yml
 #  - security/patch-saml.yml
 #  - security/patch-file-authz.yml
+#  - security/patch-google-groups-auth.yml              ## (Optional) Enable and configure Google Groups for AuthN and AuthZ https://spinnaker.io/setup/security/authorization/
+#  - security/patch-external-authz.yml                  ## (Optional) enable external AuthZ and set spinnaker admin roles
+#  - security/patch-fiat-create-app-roles.yml           ## (Optional) configure fiat fine grain permissions like application creation by role
 
   # Kubernetes accounts
   - accounts/kubernetes/patch-kube.yml
@@ -67,6 +74,7 @@ patchesStrategicMerge:
 #  - armory/patch-dinghy.yml
 #  - armory/patch-diagnostics.yml
 #  - armory/patch-policyengine.yml  # Requires spin-policies configmap
+#  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
 
   # Spinnaker monitoring
 #  - accounts/prometheus/patch-prometheus.yml
@@ -77,6 +85,12 @@ patchesStrategicMerge:
 #  - spinnaker_deployment/patch-sizing.yml
 #  - spinnaker_deployment/patch-labels-annotations.yml
 #  - spinnaker_deployment/patch-debug-jvm.yml
+#  - spinnaker_deployment/patch-cloudsql-sidecars.yml    ## (Optional) Google Cloud Proxy Sidecars for CloudSQL
+
+  # Customization to core configuration
+  - core_config/patch-timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
+  - core_config/patch-features.yml                      ## (Optional) adjust features of the deployment {sometimes new features are locked behind feature flags}
+  - core_config/patch-version.yml                       ## Set the deployed Spinnaker version
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml

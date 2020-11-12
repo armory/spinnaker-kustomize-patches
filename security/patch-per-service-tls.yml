@@ -1,0 +1,192 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling TLS for each of the Spinnaker Services.
+#
+# Prerequisites:
+#
+#   - Certificate, key, and CA certificate should be generated and loaded into a secret for each of the services.
+#     This can be made easier using the cert manager.
+#
+#   - The CA certificate should be loaded into an already existing truststore (from the Java install) and loaded
+#     into a secret.
+#
+#   - All of the certificates should be signed by a CA that chains back to a public root certificate.  A self signed
+#     CA can be used instead, but this requires extra setup for the trust stores.  Please contact Armory support for
+#     using a self signed CA.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    service-settings:
+      front50:
+        # Update the scheme to let Halyard know to configure this service with HTTPS URLs
+        scheme: https
+      clouddriver:
+        scheme: https
+      orca:
+        scheme: https
+      echo:
+        scheme: https
+      fiat:
+        scheme: https
+      gate:
+        scheme: https
+      igor:
+        scheme: https
+      kayenta:
+        scheme: https
+      rosco:
+        scheme: https
+      dinghy:
+        scheme: https
+      terraformer:
+        scheme: https
+    profiles:
+      front50:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:front50-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:front50-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      clouddriver:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:clouddriver-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:clouddriver-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      orca:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:orca-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:orca-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      echo:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:echo-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:echo-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      fiat:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:fiat-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:fiat-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      gate:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:gate-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:gate-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      igor:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:igor-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:igor-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      kayenta:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:kayenta-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:kayenta-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: encryptedFile:k8s!n:truststore!k:truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      rosco:
+        server:
+          ssl:
+            # Enable TLS and set the keystore, certs, and trustore for the Server component of the service
+            enabled: true
+            key-store: encryptedFile:k8s!n:rosco-cert!k:keystore.jks
+            key-store-type: jks
+            # This should match the password set when the keystore was created
+            key-store-password: encrypted:k8s!n:spin-secrets!k:rosco-keystore-password
+            # This should match the alias used when adding the cert to the keystore
+            key-alias: certificate
+            trust-store: /truststore/truststore.jks
+            trust-store-type: jks
+            trust-store-password: changeit
+      dinghy:
+        server:
+          ssl:
+            # Enable TLS and set the certificate, key, and CA.  This is different as it's a GoLang based service.
+            enabled: true
+            certFile: encryptedFile:k8s!n:dinghy-cert!k:tls.crt
+            keyFile: encryptedFile:k8s!n:dinghy-cert!k:tls.key
+            # This should match the password set when the certificate/private key was created
+            keyPassword: encrypted:k8s!n:spin-secrets!k:dinghy-key-password
+            cacertFile: encryptedFile:k8s!n:dinghy-cert!k:ca.crt
+      terraformer:
+        server:
+          ssl:
+            # Enable TLS and set the certificate, key, and CA.  This is different as it's a GoLang based service.
+            enabled: true
+            certFile: encryptedFile:k8s!n:terraformer-cert!k:tls.crt
+            keyFile: encryptedFile:k8s!n:terraformer-cert!k:tls.key
+            # This should match the password set when the certificate/private key was created
+            keyPassword: encrypted:k8s!n:spin-secrets!k:terraformer-key-password
+            cacertFile: encryptedFile:k8s!n:terraformer-cert!k:ca.crt

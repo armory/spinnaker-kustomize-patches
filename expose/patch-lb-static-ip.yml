@@ -1,0 +1,32 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for exposing spinnaker with Kubernetes service load balancers to a static IP
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  expose: {}
+  kustomize:
+    gate:
+      service:
+        patches:
+        - |
+          spec:
+            type: LoadBalancer
+            loadBalancerIP: 55.55.55.55                      # External static IP address that DNS points to for gate (change to yours)
+            ports:
+            - name: http
+              port: 443
+              targetPort: 8084
+    deck:
+      service:
+        patches:
+        - |
+          spec:
+            type: LoadBalancer
+            loadBalancerIP: 55.55.55.55                      # External static IP address that DNS points to for deck (change to yours)
+            ports:
+            - name: http
+              port: 443
+              targetPort: 9000

@@ -15,6 +15,7 @@ spec:
           enabled: true
           templateOrg: my-org                                      # SCM organization or namespace where application and template repositories are located
           templateRepo: dinghy-templates                           # SCM repository where module templates are located
+#           fiatUser: dinghy-sa                                     # Service account for dinghy to use, required if fiat is enabled
           # --- github settings
           githubToken: encrypted:k8s!n:spin-secrets!k:github-token # (Secret). GitHub token
 #          githubEndpoint: https://api.github.com                   # (Default: https://api.github.com) Github API endpoint. Useful if you’re using Github Enterprise

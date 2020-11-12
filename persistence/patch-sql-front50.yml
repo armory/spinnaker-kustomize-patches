@@ -1,0 +1,46 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for using SQL as a caching store for front50.
+#
+# Documentation: https://spinnaker.io/setup/productionize/persistence/front50-sql/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      front50:
+        sql:
+          enabled: true
+          connectionPools:
+            default:
+            # additional connection pool parameters are available here,
+            # for more detail and to view defaults, see:
+            # https://github.com/spinnaker/kork/blob/master/kork-sql/src/main/kotlin/com/netflix/spinnaker/kork/sql/config/ConnectionPoolProperties.kt
+              default: true
+              jdbcUrl: jdbc:mysql://mysql:3306/front50?useSSL=false&useUnicode=true&characterEncoding=utf8 # useUnicode and utf8 makes sure the database can store an emoji if one is ever added to the database
+              user: front50_service
+              password: encrypted:k8s!n:spin-secrets!k:mysqlF50Password
+          migration:                # this migration user is required even if you do not plan to migrate any data from an exisiting persistentStorage location
+            user: front50_migrate
+            password: encrypted:k8s!n:spin-secrets!k:mysqlF50MigratePassword
+            jdbcUrl: jdbc:mysql://mysql:3306/front50?useSSL=false&useUnicode=true&characterEncoding=utf8 # useUnicode and utf8 makes sure the database can store an emoji if one is ever added to the database
+
+        spinnaker:
+          s3:             # change this to the persistenStoreType you have defined below, s3/gcs/redis/aze for example
+            enabled: false # disable the use of persistentStoreType by front50 if no longer needed, after optional migration is complete
+
+    # even though you are telling front50 to use sql, you must have a persistentStoreType defined. See the other patch files for examples for gcs or redis
+    config:
+      persistentStorage:
+        persistentStoreType: s3
+        s3:
+          bucket: spinnaker                     # The name of an S3 bucket that Spinnaker will use to save information like applications and pipelines. Must be globally unique.
+          rootFolder: front50                   # The root folder in the chosen bucket to place all of Spinnaker's persistent data in.
+#          region: us-west-2                     # (Optional). Used when Spinnaker creates the S3 bucket automatically.
+#          accessKeyId: XXXXXXXXXXXXXXXXXXXX     # (Optional). Your AWS Access Key ID. If not provided, Operator/Spinnaker will try to find AWS credentials as described at http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html#credentials-default
+#          secretAccessKey: encrypted:k8s!n:spin-secrets!k:aws-secret-key # (Secret, Optional). Your AWS Secret Key.
+#          pathStyleAccess: true                 # (Optional). When true, use path-style to access bucket; when false, use virtual hosted-style to access bucket.
+#          endpoint: http://domain.com:9000      # (Optional). An alternate endpoint that your S3-compatible storage can be found at. This is intended for self-hosted storage services with S3-compatible APIs, e.g. Minio. If supplied, this storage type cannot be validated.
+#          serverSideEncryption: AES256         # (Optional). Use Amazon Server-Side Encryption ('x-amz-server-side-encryption' header). Supports 'AES256' (for Amazon S3-managed encryption keys, equivalent to a header value of 'AES256') and 'AWSKMS' (for AWS KMS-managed encryption keys, equivalent to a header value of 'aws:kms'.
