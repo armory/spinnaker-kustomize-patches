@@ -34,10 +34,15 @@ then
 fi
 
 quoteRequiredRegex="[[:space:]]+"
+commentedLineRegex="^[[:space:]]*#"
+emptyLineRegex="^[[:space:]]*$"
 SEC_FILE=$CWD/secrets.env
 [[ ! -f $SEC_FILE  ]] && echo "WARNING: Missing file $SEC_FILE, loading sample secrets from $CWD/secrets-example.env instead" && SEC_FILE=$CWD/secrets-example.env
 while IFS='=' read -r literalsLine; 
 do
+    if [[ $literalsLine =~ $commentedLineRegex || $literalsLine =~ $emptyLineRegex ]] ; then
+        continue
+    fi
     #echo "Including secret literal \"$(echo $literalsLine)\""
     literalsKey="${literalsLine%%=*}"
     #echo "key is ${literalsKey}"
@@ -59,6 +64,9 @@ if [[ -d "$CWD"/files && -n "$(ls -A "$CWD"/files)" ]]; then
   done
   FILES=${FILES::${#FILES}-1}
 fi
+
+echo "$LITERALS"
+echo "$FILES"
 
 # Create the secrets
 if ! kubectl -n "$NAMESPACE" create secret generic spin-secrets $LITERALS $FILES ; then exit 1 ; fi
