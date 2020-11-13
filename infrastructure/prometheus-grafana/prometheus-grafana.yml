@@ -1,201 +1,12 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: v0.40.0
-  name: prometheus-operator
-rules:
-  - apiGroups:
-      - monitoring.coreos.com
-    resources:
-      - alertmanagers
-      - alertmanagers/finalizers
-      - prometheuses
-      - prometheuses/finalizers
-      - thanosrulers
-      - thanosrulers/finalizers
-      - servicemonitors
-      - podmonitors
-      - prometheusrules
-    verbs:
-      - '*'
-  - apiGroups:
-      - apps
-    resources:
-      - statefulsets
-    verbs:
-      - '*'
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-      - secrets
-    verbs:
-      - '*'
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-    verbs:
-      - list
-      - delete
-  - apiGroups:
-      - ""
-    resources:
-      - services
-      - services/finalizers
-      - endpoints
-    verbs:
-      - get
-      - create
-      - update
-      - delete
-  - apiGroups:
-      - ""
-    resources:
-      - nodes
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - namespaces
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - authentication.k8s.io
-    resources:
-      - tokenreviews
-    verbs:
-      - create
-  - apiGroups:
-      - authorization.k8s.io
-    resources:
-      - subjectaccessreviews
-    verbs:
-      - create
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: v0.40.0
-  name: prometheus-operator
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: prometheus-operator
-subjects:
-  - kind: ServiceAccount
-    name: prometheus-operator
-    namespace: spinnaker
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: v0.40.0
-  name: prometheus-operator
-  namespace: monitoring
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/component: controller
-      app.kubernetes.io/name: prometheus-operator
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/component: controller
-        app.kubernetes.io/name: prometheus-operator
-        app.kubernetes.io/version: v0.40.0
-    spec:
-      containers:
-        - args:
-            - --kubelet-service=kube-system/kubelet
-            - --logtostderr=true
-            - --config-reloader-image=jimmidyson/configmap-reload:v0.3.0
-            - --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:v0.40.0
-          image: quay.io/coreos/prometheus-operator:v0.40.0
-          name: prometheus-operator
-          ports:
-            - containerPort: 8080
-              name: http
-          resources:
-            limits:
-              cpu: 200m
-              memory: 200Mi
-            requests:
-              cpu: 100m
-              memory: 100Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-        - args:
-            - --logtostderr
-            - --secure-listen-address=:8443
-            - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
-            - --upstream=http://127.0.0.1:8080/
-          image: quay.io/coreos/kube-rbac-proxy:v0.4.1
-          name: kube-rbac-proxy
-          ports:
-            - containerPort: 8443
-              name: https
-          securityContext:
-            runAsUser: 65534
-      nodeSelector:
-        beta.kubernetes.io/os: linux
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-      serviceAccountName: prometheus-operator
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: v0.40.0
-  name: prometheus-operator
-  namespace: monitoring
-spec:
-  clusterIP: None
-  ports:
-    - name: https
-      port: 8443
-      targetPort: https
-  selector:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: prometheus-operator
-
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/name: prometheus-operator
-    app.kubernetes.io/version: v0.40.0
-  name: prometheus-operator
-  namespace: monitoring
-
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: prometheus
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-state-metrics
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -211,6 +22,8 @@ rules:
       - services
       - endpoints
       - pods
+      - ingresses
+      - configmaps
     verbs: ["get", "list", "watch"]
   - apiGroups:
       - extensions
@@ -219,6 +32,122 @@ rules:
     verbs: ["get", "list", "watch"]
   - nonResourceURLs: ["/metrics"]
     verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-state-metrics
+rules:
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - ''
+    resources:
+      - configmaps
+      - secrets
+      - nodes
+      - pods
+      - services
+      - resourcequotas
+      - replicationcontrollers
+      - limitranges
+      - persistentvolumeclaims
+      - persistentvolumes
+      - namespaces
+      - endpoints
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - extensions
+    resources:
+      - daemonsets
+      - deployments
+      - replicasets
+      - ingresses
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - apps
+    resources:
+      - statefulsets
+      - daemonsets
+      - deployments
+      - replicasets
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - jobs
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+  - verbs:
+      - create
+    apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+  - verbs:
+      - create
+    apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - certificates.k8s.io
+    resources:
+      - certificatesigningrequests
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+      - volumeattachments
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+  - verbs:
+      - list
+      - watch
+    apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -232,6 +161,1168 @@ subjects:
   - kind: ServiceAccount
     name: prometheus
     namespace: spinnaker
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-state-metrics
+subjects:
+  - kind: ServiceAccount
+    name: kube-state-metrics
+    namespace: spinnaker
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: data-prometheus-0
+  labels:
+    name: prometheus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20G
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yaml: |
+    # Global config
+    global:
+      scrape_interval: 15s
+
+    # Scrape configs for running Prometheus on a Kubernetes cluster.
+    # This uses separate scrape configs for cluster components (i.e. API server, node)
+    # and services to allow each to use different authentication configs.
+    #
+    # Kubernetes labels will be added as Prometheus labels on metrics via the
+    # `labelmap` relabeling action.
+    scrape_configs:
+
+    # Scrape config for API servers.
+    # Kubernetes exposes API servers as endpoints to the default/kubernetes
+    # service so this uses `endpoints` role and uses relabelling to only keep
+    # the endpoints associated with the default/kubernetes service using the
+    # default named port `https`. This works for single API server deployments as
+    # well as HA API server deployments.
+    - job_name: 'kubernetes-apiservers'
+      kubernetes_sd_configs:
+      - role: endpoints
+
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        # Using endpoints to discover kube-apiserver targets finds the pod IP
+        # (host IP since apiserver uses host network) which is not used in
+        # the server certificate.
+        insecure_skip_verify: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+      # Keep only the default/kubernetes service endpoints for the https port. This
+      # will add targets for each API server which Kubernetes adds an endpoint to
+      # the default/kubernetes service.
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: default;kubernetes;https
+      - replacement: apiserver
+        action: replace
+        target_label: job
+
+    # Scrape config for node (i.e. kubelet) /metrics (e.g. 'kubelet_'). Explore
+    # metrics from a node by scraping kubelet (127.0.0.1:10250/metrics).
+    - job_name: 'kubelet'
+      kubernetes_sd_configs:
+      - role: node
+
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        # Kubelet certs don't have any fixed IP SANs
+        insecure_skip_verify: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      - replacement: 'lens-metrics'
+        target_label: kubernetes_namespace
+
+      metric_relabel_configs:
+      - source_labels:
+          - namespace
+        action: replace
+        regex: (.+)
+        target_label: kubernetes_namespace
+
+    # Scrape config for Kubelet cAdvisor. Explore metrics from a node by
+    # scraping kubelet (127.0.0.1:10250/metrics/cadvisor).
+    - job_name: 'kubernetes-cadvisor'
+      kubernetes_sd_configs:
+      - role: node
+
+      scheme: https
+      metrics_path: /metrics/cadvisor
+      tls_config:
+        # Kubelet certs don't have any fixed IP SANs
+        insecure_skip_verify: true
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      metric_relabel_configs:
+      - source_labels:
+          - namespace
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels:
+        - pod
+        regex: (.*)
+        replacement: $1
+        action: replace
+        target_label: pod_name
+      - source_labels:
+        - container
+        regex: (.*)
+        replacement: $1
+        action: replace
+        target_label: container_name
+
+    # Scrap etcd metrics from masters via etcd-scraper-proxy
+    - job_name: 'etcd'
+      kubernetes_sd_configs:
+      - role: pod
+      scheme: http
+      relabel_configs:
+        - source_labels: [__meta_kubernetes_namespace]
+          action: keep
+          regex: 'kube-system'
+        - source_labels: [__meta_kubernetes_pod_label_component]
+          action: keep
+          regex: 'etcd-scraper-proxy'
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+
+    # Scrape config for service endpoints.
+    # The relabeling allows the actual service scrape endpoint to be configured
+    # via the following annotations:
+    # * `prometheus.io/scrape`: Only scrape services that have a value of `true`
+    # * `prometheus.io/scheme`: If the metrics endpoint is secured then you will need
+    # to set this to `https` & most likely set the `tls_config` of the scrape config.
+    # * `prometheus.io/path`: If the metrics path is not `/metrics` override this.
+    # * `prometheus.io/port`: If the metrics are exposed on a different port to the
+    # service then set this appropriately.
+    - job_name: 'kubernetes-service-endpoints'
+
+      kubernetes_sd_configs:
+      - role: endpoints
+
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+        action: replace
+        target_label: __scheme__
+        regex: (https?)
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: job
+      - action: replace
+        source_labels:
+        - __meta_kubernetes_pod_node_name
+        target_label: kubernetes_node
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      metric_relabel_configs:
+      - source_labels:
+          - namespace
+        action: replace
+        regex: (.+)
+        target_label: kubernetes_namespace
+
+    # Example scrape config for probing services via the Blackbox Exporter.
+    # The relabeling allows the actual service scrape endpoint to be configured
+    # via the following annotations:
+    # * `prometheus.io/probe`: Only probe services that have a value of `true`
+    - job_name: 'kubernetes-services'
+
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+
+      kubernetes_sd_configs:
+      - role: service
+
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
+        action: keep
+        regex: true
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: blackbox
+      - source_labels: [__param_target]
+        target_label: instance
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_service_name]
+        target_label: job
+      metric_relabel_configs:
+      - source_labels:
+          - namespace
+        action: replace
+        regex: (.+)
+        target_label: kubernetes_namespace
+
+    # Example scrape config for pods
+    # The relabeling allows the actual pod scrape endpoint to be configured via the
+    # following annotations:
+    # * `prometheus.io/scrape`: Only scrape pods that have a value of `true`
+    # * `prometheus.io/path`: If the metrics path is not `/metrics` override this.
+    # * `prometheus.io/port`: Scrape the pod on the indicated port instead of the
+    # pod's declared ports (default is a port-free target if none are declared).
+    - job_name: 'kubernetes-pods'
+
+      kubernetes_sd_configs:
+      - role: pod
+
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: kubernetes_pod_name
+      metric_relabel_configs:
+      - source_labels:
+          - namespace
+        action: replace
+        regex: (.+)
+        target_label: kubernetes_namespace
+
+    # Rule files
+
+    rule_files:
+      - "/etc/prometheus/rules/*.rules"
+      - "/etc/prometheus/rules/*.yaml"
+      - "/etc/prometheus/rules/*.yml"
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus-rules
+data:
+  alertmanager.rules.yaml: |
+    groups:
+    - name: alertmanager.rules
+      rules:
+      - alert: AlertmanagerConfigInconsistent
+        expr: count_values("config_hash", alertmanager_config_hash) BY (service) / ON(service)
+          GROUP_LEFT() label_replace(prometheus_operator_alertmanager_spec_replicas, "service",
+          "alertmanager-$1", "alertmanager", "(.*)") != 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: The configuration of the instances of the Alertmanager cluster
+            `{{$labels.service}}` are out of sync.
+      - alert: AlertmanagerDownOrMissing
+        expr: label_replace(prometheus_operator_alertmanager_spec_replicas, "job", "alertmanager-$1",
+          "alertmanager", "(.*)") / ON(job) GROUP_RIGHT() sum(up) BY (job) != 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: An unexpected number of Alertmanagers are scraped or Alertmanagers
+            disappeared from discovery.
+      - alert: AlertmanagerFailedReload
+        expr: alertmanager_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Reloading Alertmanager's configuration has failed for {{ $labels.namespace
+            }}/{{ $labels.pod}}.
+  etcd3.rules.yaml: |
+    groups:
+    - name: ./etcd3.rules
+      rules:
+      - alert: InsufficientMembers
+        expr: count(up{job="etcd"} == 0) > (count(up{job="etcd"}) / 2 - 1)
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          description: If one more etcd member goes down the cluster will be unavailable
+          summary: etcd cluster insufficient members
+      - alert: NoLeader
+        expr: etcd_server_has_leader{job="etcd"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: etcd member {{ $labels.instance }} has no leader
+          summary: etcd member has no leader
+      - alert: HighNumberOfLeaderChanges
+        expr: increase(etcd_server_leader_changes_seen_total{job="etcd"}[1h]) > 3
+        labels:
+          severity: warning
+        annotations:
+          description: etcd instance {{ $labels.instance }} has seen {{ $value }} leader
+            changes within the last hour
+          summary: a high number of leader changes within the etcd cluster are happening
+      - alert: GRPCRequestsSlow
+        expr: histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job="etcd",grpc_type="unary"}[5m])) by (grpc_service, grpc_method, le))
+          > 0.15
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: on etcd instance {{ $labels.instance }} gRPC requests to {{ $labels.grpc_method
+            }} are slow
+          summary: slow gRPC requests
+      - alert: HighNumberOfFailedHTTPRequests
+        expr: sum(rate(etcd_http_failed_total{job="etcd"}[5m])) BY (method) / sum(rate(etcd_http_received_total{job="etcd"}[5m]))
+          BY (method) > 0.01
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $value }}% of requests for {{ $labels.method }} failed on etcd
+            instance {{ $labels.instance }}'
+          summary: a high number of HTTP requests are failing
+      - alert: HighNumberOfFailedHTTPRequests
+        expr: sum(rate(etcd_http_failed_total{job="etcd"}[5m])) BY (method) / sum(rate(etcd_http_received_total{job="etcd"}[5m]))
+          BY (method) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $value }}% of requests for {{ $labels.method }} failed on etcd
+            instance {{ $labels.instance }}'
+          summary: a high number of HTTP requests are failing
+      - alert: HTTPRequestsSlow
+        expr: histogram_quantile(0.99, rate(etcd_http_successful_duration_seconds_bucket[5m]))
+          > 0.15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: on etcd instance {{ $labels.instance }} HTTP requests to {{ $labels.method
+            }} are slow
+          summary: slow HTTP requests
+      - alert: EtcdMemberCommunicationSlow
+        expr: histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket[5m]))
+          > 0.15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: etcd instance {{ $labels.instance }} member communication with
+            {{ $labels.To }} is slow
+          summary: etcd member communication is slow
+      - alert: HighNumberOfFailedProposals
+        expr: increase(etcd_server_proposals_failed_total{job="etcd"}[1h]) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: etcd instance {{ $labels.instance }} has seen {{ $value }} proposal
+            failures within the last hour
+          summary: a high number of proposals within the etcd cluster are failing
+      - alert: HighFsyncDurations
+        expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m]))
+          > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: etcd instance {{ $labels.instance }} fync durations are high
+          summary: high fsync durations
+      - alert: HighCommitDurations
+        expr: histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket[5m]))
+          > 0.25
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: etcd instance {{ $labels.instance }} commit durations are high
+          summary: high commit durations
+  general.rules.yaml: |
+    groups:
+    - name: general.rules
+      rules:
+      - alert: TargetDown
+        expr: 100 * (count(up == 0) BY (job) / count(up) BY (job)) > 10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $value }}% of {{ $labels.job }} targets are down.'
+          summary: Targets are down
+      - record: fd_utilization
+        expr: process_open_fds / process_max_fds
+      - alert: FdExhaustionClose
+        expr: predict_linear(fd_utilization[1h], 3600 * 4) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $labels.job }}: {{ $labels.namespace }}/{{ $labels.pod }} instance
+            will exhaust in file/socket descriptors within the next 4 hours'
+          summary: file descriptors soon exhausted
+      - alert: FdExhaustionClose
+        expr: predict_linear(fd_utilization[10m], 3600) > 1
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.job }}: {{ $labels.namespace }}/{{ $labels.pod }} instance
+            will exhaust in file/socket descriptors within the next hour'
+          summary: file descriptors soon exhausted
+  kube-state-metrics.rules.yaml: |
+    groups:
+    - name: kube-state-metrics.rules
+      rules:
+      - alert: DeploymentGenerationMismatch
+        expr: kube_deployment_status_observed_generation != kube_deployment_metadata_generation
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Observed deployment generation does not match expected one for
+            deployment {{$labels.namespaces}}/{{$labels.deployment}}
+          summary: Deployment is outdated
+      - alert: DeploymentReplicasNotUpdated
+        expr: ((kube_deployment_status_replicas_updated != kube_deployment_spec_replicas)
+          or (kube_deployment_status_replicas_available != kube_deployment_spec_replicas))
+          unless (kube_deployment_spec_paused == 1)
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Replicas are not updated and available for deployment {{$labels.namespaces}}/{{$labels.deployment}}
+          summary: Deployment replicas are outdated
+      - alert: DaemonSetRolloutStuck
+        expr: kube_daemonset_status_number_ready / kube_daemonset_status_desired_number_scheduled
+          * 100 < 100
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Only {{$value}}% of desired pods scheduled and ready for daemon
+            set {{$labels.namespaces}}/{{$labels.daemonset}}
+          summary: DaemonSet is missing pods
+      - alert: K8SDaemonSetsNotScheduled
+        expr: kube_daemonset_status_desired_number_scheduled - kube_daemonset_status_current_number_scheduled
+          > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: A number of daemonsets are not scheduled.
+          summary: Daemonsets are not scheduled correctly
+      - alert: DaemonSetsMissScheduled
+        expr: kube_daemonset_status_number_misscheduled > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: A number of daemonsets are running where they are not supposed
+            to run.
+          summary: Daemonsets are not scheduled correctly
+      - alert: PodFrequentlyRestarting
+        expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Pod {{$labels.namespaces}}/{{$labels.pod}} restarted {{$value}}
+            times within the last hour
+          summary: Pod is restarting frequently
+  kubelet.rules.yaml: |
+    groups:
+    - name: kubelet.rules
+      rules:
+      - alert: K8SNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          description: The Kubelet on {{ $labels.node }} has not checked in with the API,
+            or has set itself to NotReady, for more than an hour
+          summary: Node status is NotReady
+      - alert: K8SManyNodesNotReady
+        expr: count(kube_node_status_condition{condition="Ready",status="true"} == 0)
+          > 1 and (count(kube_node_status_condition{condition="Ready",status="true"} ==
+          0) / count(kube_node_status_condition{condition="Ready",status="true"})) > 0.2
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $value }}% of Kubernetes nodes are not ready'
+      - alert: K8SKubeletDown
+        expr: count(up{job="kubelet"} == 0) / count(up{job="kubelet"}) * 100 > 3
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          description: Prometheus failed to scrape {{ $value }}% of kubelets.
+      - alert: K8SKubeletDown
+        expr: (absent(up{job="kubelet"} == 1) or count(up{job="kubelet"} == 0) / count(up{job="kubelet"}))
+          * 100 > 10
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          description: Prometheus failed to scrape {{ $value }}% of kubelets, or all Kubelets
+            have disappeared from service discovery.
+          summary: Many Kubelets cannot be scraped
+      - alert: K8SKubeletTooManyPods
+        expr: kubelet_running_pod_count > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Kubelet {{$labels.instance}} is running {{$value}} pods, close
+            to the limit of 110
+          summary: Kubelet is close to pod limit
+  kubernetes.rules.yaml: |
+    groups:
+    - name: kubernetes.rules
+      rules:
+      - record: pod_name:container_memory_usage_bytes:sum
+        expr: sum(container_memory_usage_bytes{container_name!="POD",pod_name!=""}) BY
+          (pod_name)
+      - record: pod_name:container_spec_cpu_shares:sum
+        expr: sum(container_spec_cpu_shares{container_name!="POD",pod_name!=""}) BY (pod_name)
+      - record: pod_name:container_cpu_usage:sum
+        expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD",pod_name!=""}[5m]))
+          BY (pod_name)
+      - record: pod_name:container_fs_usage_bytes:sum
+        expr: sum(container_fs_usage_bytes{container_name!="POD",pod_name!=""}) BY (pod_name)
+      - record: namespace:container_memory_usage_bytes:sum
+        expr: sum(container_memory_usage_bytes{container_name!=""}) BY (namespace)
+      - record: namespace:container_spec_cpu_shares:sum
+        expr: sum(container_spec_cpu_shares{container_name!=""}) BY (namespace)
+      - record: namespace:container_cpu_usage:sum
+        expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD"}[5m]))
+          BY (namespace)
+      - record: cluster:memory_usage:ratio
+        expr: sum(container_memory_usage_bytes{container_name!="POD",pod_name!=""}) BY
+          (cluster) / sum(machine_memory_bytes) BY (cluster)
+      - record: cluster:container_spec_cpu_shares:ratio
+        expr: sum(container_spec_cpu_shares{container_name!="POD",pod_name!=""}) / 1000
+          / sum(machine_cpu_cores)
+      - record: cluster:container_cpu_usage:ratio
+        expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD",pod_name!=""}[5m]))
+          / sum(machine_cpu_cores)
+      - record: apiserver_latency_seconds:quantile
+        expr: histogram_quantile(0.99, rate(apiserver_request_latencies_bucket[5m])) /
+          1e+06
+        labels:
+          quantile: "0.99"
+      - record: apiserver_latency:quantile_seconds
+        expr: histogram_quantile(0.9, rate(apiserver_request_latencies_bucket[5m])) /
+          1e+06
+        labels:
+          quantile: "0.9"
+      - record: apiserver_latency_seconds:quantile
+        expr: histogram_quantile(0.5, rate(apiserver_request_latencies_bucket[5m])) /
+          1e+06
+        labels:
+          quantile: "0.5"
+      - alert: APIServerLatencyHigh
+        expr: apiserver_latency_seconds:quantile{quantile="0.99",subresource!="log",verb!~"^(?:WATCH|WATCHLIST|PROXY|CONNECT)$"}
+          > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: the API server has a 99th percentile latency of {{ $value }} seconds
+            for {{$labels.verb}} {{$labels.resource}}
+      - alert: APIServerLatencyHigh
+        expr: apiserver_latency_seconds:quantile{quantile="0.99",subresource!="log",verb!~"^(?:WATCH|WATCHLIST|PROXY|CONNECT)$"}
+          > 4
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: the API server has a 99th percentile latency of {{ $value }} seconds
+            for {{$labels.verb}} {{$labels.resource}}
+      - alert: APIServerErrorsHigh
+        expr: rate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / rate(apiserver_request_count[5m])
+          * 100 > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: API server returns errors for {{ $value }}% of requests
+      - alert: APIServerErrorsHigh
+        expr: rate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / rate(apiserver_request_count[5m])
+          * 100 > 5
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: API server returns errors for {{ $value }}% of requests
+      - alert: K8SApiserverDown
+        expr: absent(up{job="apiserver"} == 1)
+        for: 20m
+        labels:
+          severity: critical
+        annotations:
+          description: No API servers are reachable or all have disappeared from service
+            discovery
+
+      - alert: K8sCertificateExpirationNotice
+        labels:
+          severity: warning
+        annotations:
+          description: Kubernetes API Certificate is expiring soon (less than 7 days)
+        expr: sum(apiserver_client_certificate_expiration_seconds_bucket{le="604800"}) > 0
+
+      - alert: K8sCertificateExpirationNotice
+        labels:
+          severity: critical
+        annotations:
+          description: Kubernetes API Certificate is expiring in less than 1 day
+        expr: sum(apiserver_client_certificate_expiration_seconds_bucket{le="86400"}) > 0
+  node.rules.yaml: |
+    groups:
+    - name: node.rules
+      rules:
+      - record: instance:node_cpu:rate:sum
+        expr: sum(rate(node_cpu{mode!="idle",mode!="iowait",mode!~"^(?:guest.*)$"}[3m]))
+          BY (instance)
+      - record: instance:node_filesystem_usage:sum
+        expr: sum((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"}))
+          BY (instance)
+      - record: instance:node_network_receive_bytes:rate:sum
+        expr: sum(rate(node_network_receive_bytes[3m])) BY (instance)
+      - record: instance:node_network_transmit_bytes:rate:sum
+        expr: sum(rate(node_network_transmit_bytes[3m])) BY (instance)
+      - record: instance:node_cpu:ratio
+        expr: sum(rate(node_cpu{mode!="idle"}[5m])) WITHOUT (cpu, mode) / ON(instance)
+          GROUP_LEFT() count(sum(node_cpu) BY (instance, cpu)) BY (instance)
+      - record: cluster:node_cpu:sum_rate5m
+        expr: sum(rate(node_cpu{mode!="idle"}[5m]))
+      - record: cluster:node_cpu:ratio
+        expr: cluster:node_cpu:rate5m / count(sum(node_cpu) BY (instance, cpu))
+      - alert: NodeExporterDown
+        expr: absent(up{job="node-exporter"} == 1)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Prometheus could not scrape a node-exporter for more than 10m,
+            or node-exporters have disappeared from discovery
+      - alert: NodeDiskRunningFull
+        expr: predict_linear(node_filesystem_free[6h], 3600 * 24) < 0
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          description: device {{$labels.device}} on node {{$labels.instance}} is running
+            full within the next 24 hours (mounted at {{$labels.mountpoint}})
+      - alert: NodeDiskRunningFull
+        expr: predict_linear(node_filesystem_free[30m], 3600 * 2) < 0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: device {{$labels.device}} on node {{$labels.instance}} is running
+            full within the next 2 hours (mounted at {{$labels.mountpoint}})
+      - alert: InactiveRAIDDisk
+        expr: node_md_disks - node_md_disks_active > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$value}} RAID disk(s) on node {{$labels.instance}} are inactive'
+  prometheus.rules.yaml: |
+    groups:
+    - name: prometheus.rules
+      rules:
+      - alert: PrometheusConfigReloadFailed
+        expr: prometheus_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Reloading Prometheus' configuration has failed for {{$labels.namespace}}/{{$labels.pod}}
+      - alert: PrometheusNotificationQueueRunningFull
+        expr: predict_linear(prometheus_notifications_queue_length[5m], 60 * 30) > prometheus_notifications_queue_capacity
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Prometheus' alert notification queue is running full for {{$labels.namespace}}/{{
+            $labels.pod}}
+      - alert: PrometheusErrorSendingAlerts
+        expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m])
+          > 0.01
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{
+            $labels.pod}} to Alertmanager {{$labels.Alertmanager}}
+      - alert: PrometheusErrorSendingAlerts
+        expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m])
+          > 0.03
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{
+            $labels.pod}} to Alertmanager {{$labels.Alertmanager}}
+      - alert: PrometheusNotConnectedToAlertmanagers
+        expr: prometheus_notifications_alertmanagers_discovered < 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Prometheus {{ $labels.namespace }}/{{ $labels.pod}} is not connected
+            to any Alertmanagers
+      - alert: PrometheusTSDBReloadsFailing
+        expr: increase(prometheus_tsdb_reloads_failures_total[2h]) > 0
+        for: 12h
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$labels.job}} at {{$labels.instance}} had {{$value | humanize}}
+            reload failures over the last four hours.'
+          summary: Prometheus has issues reloading data blocks from disk
+      - alert: PrometheusTSDBCompactionsFailing
+        expr: increase(prometheus_tsdb_compactions_failed_total[2h]) > 0
+        for: 12h
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$labels.job}} at {{$labels.instance}} had {{$value | humanize}}
+            compaction failures over the last four hours.'
+          summary: Prometheus has issues compacting sample blocks
+      - alert: PrometheusTSDBWALCorruptions
+        expr: tsdb_wal_corruptions_total > 0
+        for: 4h
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$labels.job}} at {{$labels.instance}} has a corrupted write-ahead
+            log (WAL).'
+          summary: Prometheus write-ahead log is corrupted
+      - alert: PrometheusNotIngestingSamples
+        expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: "Prometheus {{ $labels.namespace }}/{{ $labels.pod}} isn't ingesting samples."
+          summary: "Prometheus isn't ingesting samples"
+
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: prometheus
+  template:
+    metadata:
+      labels:
+        name: prometheus
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+            defaultMode: 420
+        - name: rules
+          configMap:
+            name: prometheus-rules
+            defaultMode: 420
+      initContainers:
+        - name: chown
+          image: 'docker.io/alpine:3.9'
+          command:
+            - chown
+            - '-R'
+            - '65534:65534'
+            - /var/lib/prometheus
+          resources: {}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/prometheus
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      containers:
+        - name: prometheus
+          image: 'docker.io/prom/prometheus:v2.17.2'
+          args:
+            - '--web.listen-address=0.0.0.0:9090'
+            - '--config.file=/etc/prometheus/prometheus.yaml'
+            - '--storage.tsdb.path=/var/lib/prometheus'
+            - '--storage.tsdb.retention.time=2d'
+            - '--storage.tsdb.retention.size=5GB'
+            - '--storage.tsdb.min-block-duration=2h'
+            - '--storage.tsdb.max-block-duration=2h'
+          ports:
+            - name: web
+              containerPort: 9090
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: rules
+              mountPath: /etc/prometheus/rules
+            - name: data
+              mountPath: /var/lib/prometheus
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: prometheus
+      securityContext: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+              - matchExpressions:
+                  - key: beta.kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+      schedulerName: default-scheduler
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20G
+        volumeMode: Filesystem
+  serviceName: prometheus
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  revisionHistoryLimit: 10
+
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: node-exporter
+  annotations:
+    deprecated.daemonset.template.generation: '1'
+spec:
+  selector:
+    matchLabels:
+      name: node-exporter
+      phase: prod
+  template:
+    metadata:
+      labels:
+        name: node-exporter
+        phase: prod
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: docker/default
+    spec:
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+            type: ''
+        - name: sys
+          hostPath:
+            path: /sys
+            type: ''
+        - name: root
+          hostPath:
+            path: /
+            type: ''
+      containers:
+        - name: node-exporter
+          image: 'docker.io/prom/node-exporter:v1.0.0-rc.0'
+          args:
+            - '--path.procfs=/host/proc'
+            - '--path.sysfs=/host/sys'
+            - '--path.rootfs=/host/root'
+            - >-
+              --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker|var/lib/containers/.+)($|/)
+            - >-
+              --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
+          ports:
+            - name: metrics
+              containerPort: 9100
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 24Mi
+          volumeMounts:
+            - name: proc
+              readOnly: true
+              mountPath: /host/proc
+            - name: sys
+              readOnly: true
+              mountPath: /host/sys
+            - name: root
+              readOnly: true
+              mountPath: /host/root
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      hostPID: true
+      securityContext:
+        runAsUser: 65534
+        runAsNonRoot: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+              - matchExpressions:
+                  - key: beta.kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+      schedulerName: default-scheduler
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  revisionHistoryLimit: 10
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kube-state-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        name: kube-state-metrics
+    spec:
+      containers:
+        - name: kube-state-metrics
+          image: 'quay.io/coreos/kube-state-metrics:v1.9.5'
+          ports:
+            - name: metrics
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 150Mi
+            requests:
+              cpu: 10m
+              memory: 150Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: kube-state-metrics
+      securityContext: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              - matchExpressions:
+                  - key: beta.kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+                  - key: beta.kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kube-state-metrics
+  labels:
+    name: kube-state-metrics
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    name: kube-state-metrics
+  type: ClusterIP
+  sessionAffinity: None
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: node-exporter
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 80
+      targetPort: 9100
+  selector:
+    name: node-exporter
+    phase: prod
+  clusterIP: None
+  type: ClusterIP
+  sessionAffinity: None
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: web
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+  selector:
+    name: prometheus
+  type: ClusterIP
+  sessionAffinity: None
 
 ---
 apiVersion: v1
@@ -284,13 +1375,13 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: grafana
-                  key: admin-username
+                  name: spin-secrets
+                  key: grafanaDefaultUser
             - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: grafana
-                  key: admin-password
+                  name: spin-secrets
+                  key: grafanaDefaultPassword
             - name: GF_AUTH_ANONYMOUS_ENABLED
               value: "false"
           readinessProbe:
@@ -340,7 +1431,7 @@ data:
                 "name": "prometheus",
                 "orgId": 1,
                 "type": "prometheus",
-                "url": "http://prometheus-operated:9090",
+                "url": "http://prometheus:9090",
                 "version": 1
             }
         ]
@@ -371,16 +1462,6 @@ data:
 
 ---
 apiVersion: v1
-kind: Secret
-type: Opaque
-data:
-  admin-password: YWRtaW4=
-  admin-username: YWRtaW4=
-metadata:
-  name: grafana
-  namespace: monitoring
----
-apiVersion: v1
 kind: Service
 metadata:
   name: grafana
@@ -394,37 +1475,3 @@ spec:
   selector:
     app: grafana
     component: core
-
----
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: prometheus
-  labels:
-    prometheus: prometheus
-spec:
-  replicas: 1
-  serviceAccountName: prometheus
-  serviceMonitorNamespaceSelector: {}
-  serviceMonitorSelector:
-    matchLabels:
-      app: spin
-
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: spinnaker-metrics-monitor
-  labels:
-    app: spin
-    release: prometheus-operator
-spec:
-  namespaceSelector:
-    any: true
-  selector:
-    matchLabels:
-      app: spin
-  endpoints:
-    - targetPort: 8008
-      interval: 10s
-      path: "/prometheus_metrics"

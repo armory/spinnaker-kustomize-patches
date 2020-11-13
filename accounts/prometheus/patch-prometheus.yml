@@ -12,3 +12,12 @@ spec:
         prometheus:
           enabled: true
           add_source_metalabels: true
+
+#    # Config used if prometheus server discover pods through annotations
+#    service-settings:
+#      spinnaker:
+#        kubernetes:
+#          podAnnotations:
+#            prometheus.io/scrape: true
+#            prometheus.io/path: /prometheus_metrics
+#            prometheus.io/port: 8008

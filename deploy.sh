@@ -207,13 +207,6 @@ function deploy_secrets() {
   } >>"$OUT" 2>&1
 }
 
-function deploy_dependency_crd() {
-  if grep "^  - infrastructure/prometheus-grafana" kustomization.yml >/dev/null 2>&1; then
-    info "Deploying prometheus crds...\n"
-    exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/infrastructure/prometheus-grafana/crd.yml" handle_generic_kubectl_error
-  fi
-}
-
 function handle_spin_deploy_error {
   echo -ne "$ERR_OUTPUT" >>"$OUT"
   if echo "$ERR_OUTPUT" | grep "SpinnakerService validation failed" >/dev/null 2>&1; then
@@ -225,7 +218,6 @@ function handle_spin_deploy_error {
 }
 
 function deploy_spinnaker() {
-  deploy_dependency_crd
   info "Deploying spinnaker...\n"
   exec_kubectl_mutating "kubectl -n $SPIN_NS apply -k $ROOT_DIR" handle_spin_deploy_error
   info "Spinnaker deployed\n"
