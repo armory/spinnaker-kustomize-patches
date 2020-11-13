@@ -5,6 +5,7 @@ secrets.env
 *-local.yml
 *-local.yaml
 *-local.env
+*-local.json
 !halyard-local.yml
 operator/deploy
 deploy_log.txt
