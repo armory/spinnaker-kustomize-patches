@@ -1,0 +1,22 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a Jenkins account to spinnaker.
+#
+# Documentation: https://docs.armory.io/docs/armory-admin/jenkins-connect/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      ci:
+        jenkins:
+          enabled: true
+          masters:
+          - name: mymaster
+            address: https://jenkins.mycompany.com                  # (Required). The address your jenkins master is reachable at.
+            username: john.doe                                      # The username of the jenkins user to authenticate as.
+            password: encrypted:k8s!n:spin-secrets!k:jenkins-token  # The password of the jenkins user to authenticate as.
+            csrf: false                                             # (Default: false). Whether or not to negotiate CSRF tokens when calling Jenkins.
+            permissions: {}                                         # Set read/write permissions to this resource
