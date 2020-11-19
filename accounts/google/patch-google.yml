@@ -1,0 +1,38 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding Google (GCP) accounts to spinnaker.
+#
+# Documentation: https://spinnaker.io/setup/install/providers/gce/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        google:
+          enabled: true
+          primaryAccount: gcp-dev                                 # Must be one of the configured Google accounts
+          accounts:
+          - name: gcp-dev
+            requiredGroupMembership: []                           # A user must be a member of at least one specified group in order to make changes to this account’s cloud resources.
+            permissions: {}                                       # Set read/write permissions to this resource
+            project: google-project-id                            # (Required). The Google Cloud Platform project this Spinnaker account will manage.
+            jsonPath: encryptedFile:k8s!n:spin-secrets!k:gcp-json # (Secret). The path to a JSON service account that Spinnaker will use as credentials. This is only needed if Spinnaker is not deployed on a Google Compute Engine VM, or needs permissions not afforded to the VM it is running on.
+            alphaListed: false                                    # (Default: false). Enable this flag if your project has access to alpha features and you want Spinnaker to take advantage of them.
+            imageProjects: []                                     # A list of Google Cloud Platform projects Spinnaker will be able to cache and deploy images from. When this is omitted, it defaults to the current project.
+            consul:
+              enabled: false
+              agentEndpoint: localhost
+              agentPort: 8500
+              datacenters: []
+#            userDataFile: /home/spinnaker/userdata                # (Optional). The path to user data template file
+#            regions:                                              # (Optional). A list of regions for caching and mutating calls. This overwrites any default-regions set on the provider.
+#            - us-central1
+          bakeryDefaults:
+            templateFile: gce.json
+            baseImages: []
+            zone: us-central1-f
+            network: default
+            useInternalIp: false
