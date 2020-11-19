@@ -1,0 +1,36 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for securing spinnaker with OAuth/OIDC group membership.
+#
+# Documentation: https://spinnaker.io/setup/security/authentication/oauth/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      gate:
+        security:
+          oauth2:
+            enabled: true
+            client:
+              accessTokenUri: $PROVIDER/oauth/token                                 # (Required). URI to get access token from OAuth/OIDC provider.
+              clientId: YOURCLIENTID                                                # (Required). Client id from OAuth/OIDC provider.
+              clientSecret: encrypted:k8s!n:spin-secrets!k:oidc-client-secret       # (Secret). Client id's secret from OAuth/OIDC provider.
+              #preEstablishedRedirectUri: $GATE_URL/login                            # (Optional). Manually set the redirect URI. When set useCurrentUri should be set to false
+              userAuthorizationUri: $PROVIDER/authorize                             # (Required). URI to authorize user from OAuth/OIDC provider.
+              #useCurrentUri: false                                                  # (Optional). Set to false when setting preEstablishedRedirectUri
+              scope: openid,profile,email                                           # (Required). Scope of OAuth/OIDC token.
+            resource:
+              userInfoUri: $PROVIDER/userinfo                                       # (Required). URI to get userinfo from OAuth/OIDC provider.
+            userInfoMapping:
+              email: email                                                          # (Required). The email field returned from your OAuth/OIDC provider. Cannot be null.
+              #firstName: ''                                                         # (Optional). The first name field returned from your OAuth/OIDC provider.
+              #lastName: ''                                                          # (Optional). The last name field returned from your OAuth/OIDC provider.
+              username: email                                                       # (Required). The username/name field returned from your OAuth/OIDC provider. Cannot be null.
+              #roles:                                                                # (Optional). The roles field returned from your OAuth/OIDC provider
+            #userInfoRequirements:                                                   # (Optional). Enables restricting login to users from a specific domain or having a specific attribute. Map of key/value pairs
+            #  hd: your-org.net
+            #  batz: /^Sample.*Regex/
+            #  foo: bar
