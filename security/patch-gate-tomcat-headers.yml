@@ -1,0 +1,17 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for configuring Gate Tomcat Headers
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      gate:
+        server:
+          tomcat:
+            httpsServerPort: X-Forwarded-Port
+            internalProxies: .*
+            protocolHeader: X-Forwarded-Proto
+            remoteIpHeader: X-Forwarded-For
