@@ -1,0 +1,36 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding Google AppEngine accounts to spinnaker.
+#
+# Documentation: https://spinnaker.io/reference/providers/appengine/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        appengine:
+          enabled: true
+          primaryAccount: appengine-dev                                                # Must be one of the configured AppEngine accounts
+          accounts:
+          - name: appengine-dev
+            requiredGroupMembership: []                                                # A user must be a member of at least one specified group in order to make changes to this account’s cloud resources.
+            permissions: {}                                                            # Set read/write permissions to this resource
+            project: google-project-id                                                 # (Required). The Google Cloud Platform project this Spinnaker account will manage.
+            jsonPath: encryptedFile:k8s!n:spin-secrets!k:gcp-json                      # (Secret). The path to a JSON service account that Spinnaker will use as credentials. This is only needed if Spinnaker is not deployed on a Google Compute Engine VM, or needs permissions not afforded to the VM it is running on.
+            localRepositoryDirectory: /var/tmp/clouddriver                             # (Default: /var/tmp/clouddriver). A local directory to be used to stage source files for App Engine deployments within Spinnaker’s Clouddriver microservice.
+            sshTrustUnknownHosts: false                                                # (Default: false). Enabling this flag will allow Spinnaker to connect with a remote git repository over SSH without verifying the server’s IP address against a known_hosts file.
+           # sshPrivateKeyFilePath: /home/spinnaker/.ssh/id_rsa                         # The path to an SSH private key to be used when connecting with a remote git repository over SSH.
+           # sshPrivateKeyPassphrase: encrypted:k8s!n:spin-secrets!k:ssh-pk-passphrase  # (Secret). The passphrase to an SSH private key to be used when connecting with a remote git repository over SSH.
+           # sshKnownHostsFilePath: /home/spinnaker/.ssh/known_hosts                    # The path to a known_hosts file to be used when connecting with a remote git repository over SSH.
+           # gitHttpsUsername: john.doe                                                 # A username to be used when connecting with a remote git repository server over HTTPS.
+           # gitHttpsPassword: encrypted:k8s!n:spin-secrets!k:git-https-password        # (Secret). A password to be used when connecting with a remote git repository server over HTTPS.
+           # githubOAuthAccessToken: encrypted:k8s!n:spin-secrets!k:github-oauth-token  # (Secret). An OAuth token provided by Github for connecting to a git repository over HTTPS.
+           # gcloudReleaseTrack: STABLE                                                 # The gcloud release track (ALPHA, BETA, or STABLE) that Spinnaker will use when deploying to App Engine.
+           # services:                                                                  # A list of regular expressions. Any service matching one of these regexes will be indexed by Spinnaker.
+           # - svc-*
+           # versions:                                                                  # A list of regular expressions. Any version matching one of these regexes will be indexed by Spinnaker.
+           # - version-*
+           # cachingIntervalSeconds: 10                                                 # The interval in seconds at which Spinnaker will poll for updates in your AppEngine clusters.
