@@ -1,0 +1,38 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a dockerhub account to spinnaker.
+#
+# Documentation: https://docs.armory.io/docs/spinnaker-user-guides/docker/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  validation:
+    providers:
+      docker:
+        enabled: true    # Default: true. Indicate if operator should do connectivity checks to configured docker accounts before applying the manifest
+  spinnakerConfig:
+    config:
+      providers:
+        dockerRegistry:
+          enabled: true
+          primaryAccount: ecr          # Must be one of the configured docker accounts
+          accounts:
+          - name: ecr
+            providerVersion: V1
+            address:                          # (Required). The ECR registry address you want to pull and deploy images from
+            email: fake.email@spinnaker.io    # Your docker registry email (often this only needs to be well-formed, rather than be a real address)
+            username: AWS
+            passwordCommand: aws --region us-east-1 ecr get-authorization-token --output text --query 'authorizationData[].authorizationToken' | base64 -d | sed 's/^AWS://'
+            cacheIntervalSeconds: 30          # (Default: 30). How many seconds elapse between polling your docker registry. Certain registries are sensitive to over-polling, and larger intervals (e.g. 10 minutes = 600 seconds) are desirable if you’re seeing rate limiting.
+            cacheThreads: 1                   # (Default: 1). How many threads to cache all provided repos on. Really only useful if you have a ton of repos.
+            clientTimeoutMillis: 60000        # (Default: 60000). Timeout time in milliseconds for this repository.
+            insecureRegistry: false           # (Default: false). Treat the docker registry as insecure (don’t validate the ssl cert).
+            paginateSize: 100                 # (Default: 100). Paginate size for the docker repository _catalog endpoint.
+            permissions: {}
+            repositories:                     # (Default: []). An optional list of repositories to cache images from. If not provided, Spinnaker will attempt to read accessible repositories from the registries _catalog endpoint
+              - ecr-test
+            requiredGroupMembership: []
+            sortTagsByDate: false             # (Default: false). Sort tags by creation date.
+            trackDigests: false               # (Default: false). Track digest changes. This is not recommended as it consumes a high QPM, and most registries are flaky.
