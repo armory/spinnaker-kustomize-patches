@@ -13,7 +13,7 @@ spec:
       providers:
         aws:
           enabled: true
-          primaryAccount: aws-dev
+          primaryAccount: aws-dev                # Must be one of the configured AWS accounts
           accounts:
           - name: aws-dev
             accountId: "XXXXXXXXXXXX"            # (Required). Your AWS account ID to manage. See the AWS IAM User Guide for more information.
@@ -41,6 +41,15 @@ spec:
           features:
             cloudFormation:
               enabled: true                       # (Default: false). Enable cloudformation support on this AWS account.
+        ecs:
+          enabled: true
+          accounts:
+          - name: aws-dev-ecs
+            requiredGroupMembership: []
+            providerVersion: V1
+            permissions: {}
+            awsAccount: aws-dev                   # Must be one of the configured AWS accounts
+          primaryAccount: aws-dev-ecs             # Must be one of the configured AWS ECS accounts
 
     # Only needed if spinnaker is not running in AWS and will deploy to AWS accounts
 #    service-settings:
