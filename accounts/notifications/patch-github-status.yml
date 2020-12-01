@@ -1,0 +1,16 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example configuration for adding GitHub Status notifications for pipelines.
+#
+# Documentation: https://spinnaker.io/setup/features/notifications/
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+       notifications:
+         github-status:
+           enabled: true
+           token: encrypted:k8s!n:spin-secrets!k:github-token # (Secret). Github authentication token.
