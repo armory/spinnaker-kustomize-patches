@@ -1,0 +1,16 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling Google Stackdriver metrics
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      metricStores:
+        stackdriver:
+          enabled: true
+          project: google-project-id                                     # (Required). The project Spinnaker’s metrics should be published to.
+          zone: us-east1-b                                               # (Required). The zone Spinnaker’s metrics should be associated with.
+          credentials_path: encryptedFile:k8s!n:spin-secrets!k:gcp-json  # (Secret). A path to a Google JSON service account that has permission to publish metrics.
