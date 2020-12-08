@@ -14,6 +14,7 @@
 
 SPIN_FLAVOR=${SPIN_FLAVOR:-armory}    # Distribution of spinnaker to deploy (oss or armory)
 SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}   # Whether or not to deploy and manage operator (0 or 1)
+SPIN_WATCH=${SPIN_WATCH:-1}           # Whether or not to watch/wait for Spinnaker to come up (0 or 1)
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -227,9 +228,14 @@ check_prerequisites
 assert_operator
 deploy_secrets
 deploy_spinnaker
-if [[ $HAS_WATCH == 1 ]]; then
-  watch "kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods"
+
+if [[ $SPIN_WATCH == 1 ]]; then
+  if [[ $HAS_WATCH == 1 ]]; then
+    watch "kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods"
+  else
+    info "=== Consider installing \"watch\" command to monitor installation progress"
+    kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods
+  fi
 else
-  info "=== Consider installing \"watch\" command to monitor installation progress"
-  kubectl -n $SPIN_NS get spinsvc && echo "" && kubectl -n $SPIN_NS get pods
+  info "Skipping watch of Spinnaker "
 fi
