@@ -13,9 +13,7 @@ spec:
         settings-local.js: |
           window.spinnakerSettings.authEnabled = true;
       gate:
-        security:
-          basicform:
-            enabled: true
+        security.basicform.enabled: true
           user:
             name: username2replace                                        # The basic auth username you want to use.
             password: encrypted:k8s!n:spin-secrets!k:spin-basic-pass      # The basic auth password you want to use.
