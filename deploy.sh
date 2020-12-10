@@ -12,9 +12,10 @@
 # Full logs are redirected to deploy_log.txt
 #--------------------------------------------------------------------------------------------------------------------------
 
-SPIN_FLAVOR=${SPIN_FLAVOR:-armory}    # Distribution of spinnaker to deploy (oss or armory)
-SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}   # Whether or not to deploy and manage operator (0 or 1)
-SPIN_WATCH=${SPIN_WATCH:-1}           # Whether or not to watch/wait for Spinnaker to come up (0 or 1)
+SPIN_FLAVOR=${SPIN_FLAVOR:-armory}         # Distribution of spinnaker to deploy (oss or armory)
+SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}        # Whether or not to deploy and manage operator (0 or 1)
+SPIN_OP_VERSION=${SPIN_OP_VERSION:-latest} # Spinnaker operator version
+SPIN_WATCH=${SPIN_WATCH:-1}                # Whether or not to watch/wait for Spinnaker to come up (0 or 1)
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -86,19 +87,22 @@ function check_prerequisites() {
   case $SPIN_FLAVOR in
   "oss")
     OP_API_GROUP=spinnakerservices.spinnaker.io
-    OP_URL=https://github.com/armory/spinnaker-operator/releases/latest/download/manifests.tgz
+    if [[ $SPIN_OP_VERSION == "latest" ]]; then SPIN_OP_VERSION=`curl -s https://github.com/armory/spinnaker-operator/releases/latest | cut -d'"' -f2 | awk '{gsub(".*/v","")}1'`; fi
+    OP_URL=https://github.com/armory/spinnaker-operator/releases/download/v${SPIN_OP_VERSION}/manifests.tgz
     OP_IMAGE_BASE="armory/spinnaker-operator"
     API_VERSION="apiVersion: spinnaker.io/v1alpha2"
     ;;
   "armory")
     OP_API_GROUP=spinnakerservices.spinnaker.armory.io
-    OP_URL=https://github.com/armory-io/spinnaker-operator/releases/latest/download/manifests.tgz
+    if [[ $SPIN_OP_VERSION == "latest" ]]; then SPIN_OP_VERSION=`curl -s https://github.com/armory-io/spinnaker-operator/releases/latest | cut -d'"' -f2 | awk '{gsub(".*/v","")}1'`; fi
+    OP_URL=https://github.com/armory-io/spinnaker-operator/releases/download/v${SPIN_OP_VERSION}/manifests.tgz
     OP_IMAGE_BASE="armory/armory-operator"
     API_VERSION="apiVersion: spinnaker.armory.io/v1alpha2"
     ;;
   *) error "Invalid spinnaker flavor: $SPIN_FLAVOR. Valid values: armory, oss\n" ;;
   esac
 
+  info "Spinnaker Operator Version: $SPIN_OP_VERSION\n"
   info "Spinnaker flavor: $SPIN_FLAVOR\n"
 
   if ! kubectl get ns >/dev/null 2>&1; then
