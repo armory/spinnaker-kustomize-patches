@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------------------------------------------
 # Example configuration for adding AWS Lambda plugin to spinnaker.
-#
+# Requires Spinnaker Version: 1.23+ (Armory 2.23+)
 # Documentation: https://github.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
