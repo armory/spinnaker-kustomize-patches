@@ -8,7 +8,14 @@ kind: SpinnakerService
 metadata:
   name: spinnaker
 spec:
-  spinnakerConfig:
+  spinnakerConfig:  
+    profiles:  
+      deck:                                     # Enables Lambda Functions UI
+        settings-local.js: |
+          window.spinnakerSettings.feature.functions = true
+      clouddriver:                              # Enables Lambda Functions in "Infrastructure"
+        lambda:
+          enbaled: true  
     config:
       providers:
         aws:
