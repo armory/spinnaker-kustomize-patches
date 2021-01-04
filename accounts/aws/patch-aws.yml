@@ -56,3 +56,6 @@ spec:
 #      clouddriver:
 #        env:
 #          EC2_REGION: us-west-2
+#      rosco:
+#        env:
+#          AWS_REGION: us-west-2
