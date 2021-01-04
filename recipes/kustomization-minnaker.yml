@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# Quick Start recipe
+# Minnaker recipe
 #
 # Self contained Spinnaker installation with no external dependencies and no additional configuration needed.
 # Not for production use.
@@ -30,7 +30,6 @@ resources:
 patchesStrategicMerge:
   - persistence/patch-minio.yml             # (Mandatory). Persistence to store spinnaker applications and pipelines
   - expose/patch-ingress.yml                # Automatically expose spinnaker
-  - expose/patch-urls.yml                   # Deck and Gate URLs
   - security/patch-basic-auth.yml           # Enable Basic Auth
   - security/patch-gate-tomcat-headers.yml  # Add headers to Tomcat for Gate
   - accounts/kubernetes/patch-kube.yml      # Kubernetes accounts
