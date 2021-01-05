@@ -1,0 +1,17 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling Spinnaker telemetry
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      stats:
+        enabled: true
+        endpoint: https://stats.spinnaker.io
+        instanceId: ULID                         # Generate one at https://ulidgenerator.com
+        deploymentMethod: {}
+        connectionTimeoutMillis: 3000
+        readTimeoutMillis: 5000
