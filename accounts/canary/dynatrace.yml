@@ -1,0 +1,23 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling canary through dynatrace endpoints
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker  # name doesn't matter since this is a patch
+spec:
+  # spec.spinnakerConfig - This section is how to specify configuration spinnaker
+  spinnakerConfig:
+    # spec.spinnakerConfig.profiles - This section contains the YAML of each service's profile
+    profiles:
+      kayenta: # is the contents of ~/.hal/default/profiles/kayenta.yml
+        kayenta:
+          dynatrace:
+            enabled: true
+            accounts:
+            - name: my-dynatrace-account
+              endpoint:
+                baseUrl: https://YOUR_ACCOUNT.live.dynatrace.com  # (Required). The base URL to you Dynatrace account.
+              apiKey: apiKey                                      # (Required). You apiKey from dynatrace.
+              supportedTypes:
+              - METRICS_STORE
