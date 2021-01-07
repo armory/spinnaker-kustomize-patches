@@ -14,8 +14,12 @@ spec:
         settings-local.js: |
           window.spinnakerSettings.feature.functions = true
       clouddriver:                              # Enables Lambda Functions in "Infrastructure"
-        lambda:
-          enabled: true  
+        aws:
+          lambda:
+            enabled: true
+          accounts:
+          - name: aws-dev
+            lambdaEnabled: true
     config:
       providers:
         aws:
