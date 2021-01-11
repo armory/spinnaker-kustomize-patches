@@ -15,8 +15,9 @@ spec:
           window.spinnakerSettings.feature.functions = true
       clouddriver:                              # Enables Lambda Functions in "Infrastructure"
         aws:
-          lambda:
-            enabled: true
+          features:
+            lambda:
+              enabled: true
           accounts:
           - name: aws-dev                        # NOTE: profiles.clouddriver.aws.accounts is merged with config.provider.aws.accounts by INDEX not accounts.name
             lambdaEnabled: true
