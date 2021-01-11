@@ -18,8 +18,10 @@ spec:
           lambda:
             enabled: true
           accounts:
-          - name: aws-dev
+          - name: aws-dev                        # NOTE: profiles.clouddriver.aws.accounts is merged with config.provider.aws.accounts by INDEX not accounts.name
             lambdaEnabled: true
+            accountId: "XXXXXXXXXXXX"            # (Required). Your AWS account ID to manage. See the AWS IAM User Guide for more information.
+            assumeRole: role/spinnaker           # (Required). If set, will configure a credentials provider that uses AWS Security Token Service to assume the specified role. Example: “user/spinnaker” or “role/spinnakerManaged”
     config:
       providers:
         aws:
