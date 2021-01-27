@@ -51,6 +51,13 @@ spec:
             awsAccount: aws-dev                   # Must be one of the configured AWS accounts
           primaryAccount: aws-dev-ecs             # Must be one of the configured AWS ECS accounts
 
+    # Rate Limiting Configuration See: https://docs.armory.io/docs/armory-admin/rate-limit/
+    profiles:
+      clouddriver:
+        serviceLimits:
+          defaults:
+            rateLimit: 10.0   # default max req/second
+            
     # Only needed if spinnaker is not running in AWS and will deploy to AWS accounts
 #    service-settings:
 #      clouddriver:
