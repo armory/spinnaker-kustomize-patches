@@ -9,8 +9,8 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:  
+    profiles:  
     # Enable this setting under core_config/patch-deck.yml
-    # profiles:  
     #   deck:                                     # Enables Lambda Functions UI
     #     settings-local.js: |
     #       window.spinnakerSettings.feature.functions = true
