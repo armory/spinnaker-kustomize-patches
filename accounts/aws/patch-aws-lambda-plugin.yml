@@ -11,6 +11,20 @@ metadata:
 spec:
   spinnakerConfig:
     profiles:
+      # # Enable this setting under core_config/patch-deck.yml
+      # deck:                                     # Enables Lambda Functions UI
+      #   settings-local.js: |
+      #     window.spinnakerSettings.feature.functions = true
+      clouddriver:                              # Enables Lambda Functions in "Infrastructure"
+        aws:
+          features:
+            lambda:
+              enabled: true
+          accounts:
+          - name: aws-dev                        # NOTE: profiles.clouddriver.aws.accounts is merged with config.provider.aws.accounts by INDEX not accounts.name
+            lambdaEnabled: true
+            accountId: "XXXXXXXXXXXX"            # (Required). Your AWS account ID to manage. See the AWS IAM User Guide for more information.
+            assumeRole: role/spinnaker  
       gate:
         spinnaker:
           extensibility:
