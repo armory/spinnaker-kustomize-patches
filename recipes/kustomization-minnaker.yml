@@ -24,14 +24,46 @@ namespace: spinnaker
 resources:
   - spinnakerservice.yml                    # (Mandatory). Base spinnaker manifest
   - infrastructure/minio.yml                # Self hosted minio, a S3 compatible data store
+  - infrastructure/mysql.yml                # MySQL server needed for using SQL backend in Spinnaker
+  - infrastructure/opa.yml                  # OPA server for using with Armory's policy engine, for enforcing pipeline policies
   - accounts/kubernetes/spin-sa.yml         # Kubernetes service account needed by patch-kube.yml
   - expose/ingress-traefik.yml              # Use Traefik for Ingress
+  # - infrastructure/prometheus-grafana/kustomization.yml  # TODO - investigate what changes (if necessary) need to be made to support canarying
 
 patchesStrategicMerge:
   - persistence/patch-minio.yml             # (Mandatory). Persistence to store spinnaker applications and pipelines
+  - persistence/patch-sql-clouddriver.yml   # setup clouddriver to use SQL for storage
+  - persistence/patch-sql-front50.yml       # setup front50 to use SQL for storage
+  - persistence/patch-sql-orca.yml          # setup orca to use SQL for storage
+
   - expose/patch-ingress.yml                # Automatically expose spinnaker
+
   - security/patch-basic-auth.yml           # Enable Basic Auth
   - security/patch-gate-tomcat-headers.yml  # Add headers to Tomcat for Gate
+  
+  # Artifacts & Accounts
   - accounts/kubernetes/patch-kube.yml      # Kubernetes accounts
   - accounts/docker/patch-dockerhub.yml     # Docker accounts
   - accounts/http/patch-http.yml            # HTTP accounts
+  - accounts/git/patch-github.yml           # Public GitHub Repos
+  - accounts/git/patch-gitrepo.yml          # Public Git Repos
+  # - accounts/canary/prometheus.yml         # TODO - need to add CONFIG STORE 
+
+  # Armory features
+  - armory/patch-terraformer.yml
+  # - armory/patch-dinghy.yml
+  - armory/patch-diagnostics.yml
+  - armory/patch-policyengine.yml           # Requires spin-policies configmap
+  # - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
+
+  # Core configurations
+  - core_config/patch-timezone.yml          ## (Optional) adjust the display timezone visible to the user within deck
+  - core_config/patch-features.yml          ## (Optional) adjust features of the deployment {sometimes new features are locked behind feature flags}
+  - core_config/patch-version.yml
+  - core_config/patch-deck.yml      
+
+configMapGenerator:
+ # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
+ - name: spin-policies
+   files:
+     - armory/policies/manual-judgement.rego
