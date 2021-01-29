@@ -1,0 +1,50 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding AWS Lambda plugin to spinnaker.
+# Requires Spinnaker Version: 1.23+ (Armory 2.23+)
+# Documentation: https://github.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker
+# Note: In order to use the plugin, please also enable lambda settings under patch-aws.yml
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      # # Enable this setting under core_config/patch-deck.yml
+      # deck:                                     # Enables Lambda Functions UI
+      #   settings-local.js: |
+      #     window.spinnakerSettings.feature.functions = true
+      clouddriver:                              # Enables Lambda Functions in "Infrastructure"
+        aws:
+          features:
+            lambda:
+              enabled: true
+          accounts:
+          - name: aws-dev                        # NOTE: profiles.clouddriver.aws.accounts is merged with config.provider.aws.accounts by INDEX not accounts.name
+            lambdaEnabled: true
+            accountId: "XXXXXXXXXXXX"            # (Required). Your AWS account ID to manage. See the AWS IAM User Guide for more information.
+            assumeRole: role/spinnaker  
+      gate:
+        spinnaker:
+          extensibility:
+              deck-proxy:
+                enabled: true
+                plugins:
+                  Aws.LambdaDeploymentPlugin:
+                    enabled: true
+                    version: 1.0.1
+              repositories:
+                awsLambdaDeploymentPluginRepo:
+                  url: https://raw.githubusercontent.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker/master/plugins.json  
+      orca:
+        spinnaker:
+          extensibility:
+            plugins:
+              Aws.LambdaDeploymentPlugin:
+                enabled: true
+                version: 1.0.1
+            repositories:
+              awsLambdaDeploymentPluginRepo:
+                id: awsLambdaDeploymentPluginRepo
+                url: https://raw.githubusercontent.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker/master/plugins.json

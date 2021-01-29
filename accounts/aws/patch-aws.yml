@@ -8,7 +8,7 @@ kind: SpinnakerService
 metadata:
   name: spinnaker
 spec:
-  spinnakerConfig:
+  spinnakerConfig:  
     config:
       providers:
         aws:
