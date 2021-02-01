@@ -9,9 +9,9 @@ metadata:
 spec:
   spinnakerConfig:
     profiles:
-      deck:
-        settings-local.js: |
-          window.spinnakerSettings.authEnabled = true;
+      # deck: # Enable this setting under core_config/patch-deck.yml
+      #   settings-local.js: |
+      #     window.spinnakerSettings.authEnabled = true;
       gate:
         security.basicform.enabled: true
         spring:
