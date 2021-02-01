@@ -30,6 +30,12 @@ resources:
   - expose/ingress-traefik.yml              # Use Traefik for Ingress
   # - infrastructure/prometheus-grafana/kustomization.yml  # TODO - investigate what changes (if necessary) need to be made to support canarying
 
+configMapGenerator:
+ # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
+ - name: spin-policies
+   files:
+     - armory/policies/manual-judgement.rego
+
 patchesStrategicMerge:
   - persistence/patch-minio.yml             # (Mandatory). Persistence to store spinnaker applications and pipelines
   - persistence/patch-sql-clouddriver.yml   # setup clouddriver to use SQL for storage
@@ -49,21 +55,15 @@ patchesStrategicMerge:
   - accounts/git/patch-gitrepo.yml          # Public Git Repos
   # - accounts/canary/prometheus.yml         # TODO - need to add CONFIG STORE 
 
-  # Armory features
-  - armory/patch-terraformer.yml
-  # - armory/patch-dinghy.yml
-  - armory/patch-diagnostics.yml
-  - armory/patch-policyengine.yml           # Requires spin-policies configmap
-  # - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
-
   # Core configurations
   - core_config/patch-timezone.yml          ## (Optional) adjust the display timezone visible to the user within deck
   - core_config/patch-features.yml          ## (Optional) adjust features of the deployment {sometimes new features are locked behind feature flags}
   - core_config/patch-version.yml
   - core_config/patch-deck.yml      
 
-configMapGenerator:
- # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
- - name: spin-policies
-   files:
-     - armory/policies/manual-judgement.rego
+  # Armory features
+  # - armory/patch-dinghy.yml
+  # - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
+  # - armory/patch-terraformer.yml
+  # - armory/patch-diagnostics.yml
+  # - armory/patch-policyengine.yml           # Requires spin-policies configmap
