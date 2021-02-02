@@ -7,7 +7,7 @@ spec:
   - port: 3306
   selector:
     app: mysql
-  clusterIP: None
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -32,8 +32,8 @@ data:
     socket          = /var/run/mysqld/mysqld.sock
     datadir         = /var/lib/mysql
     #log-error      = /var/log/mysql/error.log
-    # By default we only accept connections from localhost
-    #bind-address   = 127.0.0.1
+    # Accept all incoming connections
+    bind-address    = 0.0.0.0
     # Disabling symbolic-links is recommended to prevent assorted security risks
     symbolic-links=0
     max_allowed_packet=500M
