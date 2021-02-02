@@ -10,6 +10,15 @@ spec:
     config:
       security:
         apiSecurity:
-          overrideBaseUrl: https://spinnaker.mycompany.com/api/v1  # Public API (Gate) url. Using the same hostname for deck and gate only works when exposing spinnaker with ingress.
+          overrideBaseUrl: https://spinnaker.mycompany.com/api  # Public API (Gate) url. Using the same hostname for deck and gate only works when exposing spinnaker with ingress.
+          corsAccessPattern: https://spinnaker.mycompany.com
         uiSecurity:
           overrideBaseUrl: https://spinnaker.mycompany.com      # Public UI (Deck) url.
+    profiles:
+      gate:
+        server:
+          servlet:
+            context-path: /api
+    service-settings:
+      gate:
+        healthEndpoint: /api/health
