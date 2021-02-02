@@ -42,7 +42,7 @@ patchesStrategicMerge:
   - persistence/patch-sql-front50.yml       # setup front50 to use SQL for storage
   - persistence/patch-sql-orca.yml          # setup orca to use SQL for storage
 
-  - expose/patch-ingress.yml                # Automatically expose spinnaker
+  - expose/patch-urls.yml                   # Manually expose spinnaker for https
 
   - security/patch-basic-auth.yml           # Enable Basic Auth
   - security/patch-gate-tomcat-headers.yml  # Add headers to Tomcat for Gate
@@ -62,8 +62,8 @@ patchesStrategicMerge:
   - core_config/patch-deck.yml      
 
   # Armory features
-  # - armory/patch-dinghy.yml
-  # - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
-  # - armory/patch-terraformer.yml
-  # - armory/patch-diagnostics.yml
-  # - armory/patch-policyengine.yml           # Requires spin-policies configmap
+  - armory/patch-dinghy.yml
+  - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
+  - armory/patch-terraformer.yml          # added by minnaker install script
+  - armory/patch-diagnostics.yml
+  - armory/patch-policyengine.yml           # Requires spin-policies configmap
