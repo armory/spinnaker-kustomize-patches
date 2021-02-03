@@ -15,5 +15,5 @@ spec:
             secure: true
     service-settings:
       redis:
-        overrideBaseUrl: redis://abc.mycompany.com:6379   # External redis endpoint
+        overrideBaseUrl: redis://redis:6379   # External redis endpoint
         skipLifeCycleManagement: true                     # Tell spinnaker to not manage the embedded spin-redis pod
