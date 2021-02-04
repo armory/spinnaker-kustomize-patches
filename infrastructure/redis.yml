@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis
+    cluster: redis
+  name: redis
+  namespace: spinnaker
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redis
+      cluster: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        cluster: redis
+    spec:
+      containers:
+      - env:
+        - name: MASTER
+          value: "true"
+        image: docker.io/redis:latest
+        name: redis
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 6379
+          timeoutSeconds: 1
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    cluster: redis
+  name: redis
+  namespace: spinnaker
+spec:
+  ports:
+  - name: http
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: redis
+    cluster: redis
+  type: ClusterIP
