@@ -64,7 +64,7 @@ patchesStrategicMerge:
   - core_config/patch-deck.yml      
 
   # Armory features
-  #- armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
+  # - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
   - armory/patch-dinghy.yml
   - armory/patch-terraformer.yml          # added by minnaker install script
   - armory/patch-diagnostics.yml
