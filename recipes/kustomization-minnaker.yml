@@ -55,7 +55,9 @@ patchesStrategicMerge:
   - accounts/http/patch-http.yml            # HTTP accounts
   - accounts/git/patch-github.yml           # Public GitHub Repos
   - accounts/git/patch-gitrepo.yml          # Public Git Repos
-  # - accounts/canary/prometheus.yml         # TODO - need to add CONFIG STORE 
+  # - accounts/notifications/patch-slack.yml # Slack Notifications
+  # - accounts/ci/patch-jenkins.yml          # Jenkins CI Integration
+  # - accounts/canary/prometheus.yml        # TODO - need to add CONFIG STORE 
 
   # Core configurations
   - core_config/patch-timezone.yml          ## (Optional) adjust the display timezone visible to the user within deck
@@ -66,6 +68,6 @@ patchesStrategicMerge:
   # Armory features
   # - armory/patch-vault-secrets.yml        ## (Optional) Enable and configure vault as a secret store for Armory deployment
   - armory/patch-dinghy.yml
-  - armory/patch-terraformer.yml          # added by minnaker install script
+  - armory/patch-terraformer.yml
   - armory/patch-diagnostics.yml
   - armory/patch-policyengine.yml           # Requires spin-policies configmap
