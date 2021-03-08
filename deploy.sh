@@ -65,21 +65,15 @@ function exec_kubectl_mutating() {
 }
 
 function change_patch_flavor() {
-  if ! grep "^$API_VERSION" spinnakerservice.yml >/dev/null; then
-    info "Changing spinnaker flavor..."
-    {
-      echo "API_VERSION: $API_VERSION" >>"$OUT"
-      # shellcheck disable=SC2044
-      for f in $(find "$ROOT_DIR" -name '*.yml' -or -name '*.yaml'); do
-        if ! grep -E "^apiVersion: spinnaker.(armory.)?io/v1alpha2" "$f" >/dev/null 2>&1; then continue; fi
-        if grep "^$API_VERSION" "$f" >/dev/null 2>&1; then continue; fi
-        echo "Changing spinnaker apiVersion on file: $f"
-        sed "s|^apiVersion: spinnaker.\(armory.\)\{0,1\}io/v1alpha2|$API_VERSION|" "$f" >"$f".new
-        mv "$f.new" "$f"
-      done
-    } >>"$OUT" 2>&1
-    echo -ne "Done\n"
-  fi
+  echo '
+patchesJson6902:
+- target:
+    kind: SpinnakerService
+    group: spinnaker.armory.io
+    version: v1alpha2
+    name: spinnaker
+  path: recipes/oss-patch.yml
+' >> ./kustomization.yml
 }
 
 function check_prerequisites() {

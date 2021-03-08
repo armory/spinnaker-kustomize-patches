@@ -1,0 +1,4 @@
+- op: replace
+  path: /apiVersion
+  value: spinnaker.io/v1alpha2
+
