@@ -1,3 +1,8 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding the Kubernetes Agent plugin to clouddriver
+#
+# Documentation: https://docs.armory.io/docs/armory-agent/armory-agent-quick/
+#-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
@@ -29,15 +34,6 @@ spec:
 
   kustomize:
     clouddriver:
-      service:
-        patchesStrategicMerge:
-          - |
-            spec:
-              ports:
-                - name: http
-                  port: 7002
-                - name: grpc
-                  port: 9091
       deployment:
         patchesStrategicMerge:
           - |
@@ -46,7 +42,7 @@ spec:
                 spec:
                   initContainers:
                   - name: kubesvc-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.4.0-rc.2
+                    image: docker.io/armory/kubesvc-plugin:0.7.1  # See https://docs.armory.io/docs/armory-agent/armory-agent-quick/ for available versions
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: kubesvc-plugin-vol

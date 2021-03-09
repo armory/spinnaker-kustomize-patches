@@ -10,7 +10,7 @@ kubernetes:
 #      kubeconfigFile: /kubeconfigfiles/kubecfg-remote
 
 clouddriver:
-  grpc: spin-clouddriver-grpc
+  grpc: spin-clouddriver-grpc:9091
   insecure: true
 
 server:

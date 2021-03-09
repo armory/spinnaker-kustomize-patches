@@ -3,10 +3,11 @@ kind: Kustomization
 
 images:
   - name: armory/kubesvc
-    newTag: 0.3.0    # Version of the agent to use
+    newTag: 0.5.1    # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
 
 resources:
 - deployment.yaml
+- service.yaml
 
 configMapGenerator:
 - name: kubesvc-config
