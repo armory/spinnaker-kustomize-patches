@@ -17,6 +17,9 @@ rules:
   - list
   - watch
   - create
+  - update
+  - patch
+  - delete
 - apiGroups:
   - ""
   resources:
@@ -35,6 +38,7 @@ rules:
   - update
   - watch
   - patch
+  - delete
 - apiGroups:
   - batch
   resources:
@@ -52,6 +56,7 @@ rules:
   resources:
   - deployments
   - deployments/finalizers
+  - deployments/scale
   - daemonsets
   - replicasets
   - statefulsets
@@ -62,6 +67,7 @@ rules:
   - update
   - watch
   - patch
+  - delete
 - apiGroups:
   - monitoring.coreos.com
   resources:
