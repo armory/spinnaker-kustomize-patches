@@ -1,0 +1,19 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example configuration for adding Twilio notifications for pipelines.
+#
+# Documentation: https://spinnaker.io/setup/features/notifications/#twilio
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+       notifications:
+         twilio:
+           enabled: true
+           account:                                           # (Required). Your Twilio account SID.
+           baseUrl: https://api.twilio.com/
+           from: '1234-567-8910'                              # The phone number from which the SMS will be sent (i.e. +1234-567-8910).
+           token: encrypted:k8s!n:spin-secrets!k:twilio-token # (Secret). Twilio authentication token

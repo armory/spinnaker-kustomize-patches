@@ -9,13 +9,13 @@ metadata:
 spec:
   spinnakerConfig:
     profiles:
-      deck:
-        settings-local.js: |
-          window.spinnakerSettings.authEnabled = true;
+      # deck: # Enable this setting under core_config/patch-deck.yml
+      #   settings-local.js: |
+      #     window.spinnakerSettings.authEnabled = true;
       gate:
-        security:
-          basicform:
-            enabled: true
-          user:
-            name: username2replace                                        # The basic auth username you want to use.
-            password: encrypted:k8s!n:spin-secrets!k:spin-basic-pass      # The basic auth password you want to use.
+        security.basicform.enabled: true
+        spring:
+          security:
+            user:
+              name: username2replace                                        # The basic auth username you want to use.
+              password: encrypted:k8s!n:spin-secrets!k:http-password        # The basic auth password you want to use.

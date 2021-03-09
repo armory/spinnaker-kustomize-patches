@@ -1,0 +1,37 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Minnaker recipe
+#
+# Self contained Spinnaker installation with no external dependencies and no additional configuration needed.
+# Not for production use.
+#
+# Features:
+# - One Kubernetes account (Spinnaker's own cluster) for deployment targets
+# - One dockerhub account for public repositories
+# - One HTTP account enabled
+# - Spinnaker configured to use the same host for Deck and Gate
+# - Spinnaker Basic Auth enabled
+# - Spinnaker exposed via Traefik
+# - Self hosted minio as a persistent storage
+# - Self hosted redis backend for caching and temporal storage of services
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace where spinnaker and all its infrastructure will be installed.
+# NOTE: If changed, also change it in all ClusterRoleBinding namespace references.
+namespace: spinnaker
+
+resources:
+  - spinnakerservice.yml                    # (Mandatory). Base spinnaker manifest
+  - infrastructure/minio.yml                # Self hosted minio, a S3 compatible data store
+  - accounts/kubernetes/spin-sa.yml         # Kubernetes service account needed by patch-kube.yml
+  - expose/ingress-traefik.yml              # Use Traefik for Ingress
+
+patchesStrategicMerge:
+  - persistence/patch-minio.yml             # (Mandatory). Persistence to store spinnaker applications and pipelines
+  - expose/patch-ingress.yml                # Automatically expose spinnaker
+  - security/patch-basic-auth.yml           # Enable Basic Auth
+  - security/patch-gate-tomcat-headers.yml  # Add headers to Tomcat for Gate
+  - accounts/kubernetes/patch-kube.yml      # Kubernetes accounts
+  - accounts/docker/patch-dockerhub.yml     # Docker accounts
+  - accounts/http/patch-http.yml            # HTTP accounts

@@ -1,0 +1,21 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding a cloudfoundry account to spinnaker.
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        cloudfoundry:
+          enabled: true
+          primaryAccount: cf-1
+          accounts:
+          - name: cf-1
+            password: encrypted:k8s!n:spin-secrets!k:cf-password
+            user: user
+            skipSslValidation: false
+            api: mydomain.com
+            appsManagerUri: https://mydomain.com
