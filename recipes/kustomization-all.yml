@@ -94,6 +94,7 @@ patchesStrategicMerge:
   - core_config/patch-timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
   - core_config/patch-features.yml                      ## (Optional) adjust features of the deployment {sometimes new features are locked behind feature flags}
   - core_config/patch-version.yml                       ## Set the deployed Spinnaker version
+  # - core_config/patch-componentsizing.yml             ## Set resource requests and limits
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
