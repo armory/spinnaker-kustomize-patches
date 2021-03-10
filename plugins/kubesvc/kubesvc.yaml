@@ -1,0 +1,21 @@
+kubernetes:
+  accounts:
+    - name: account1
+      kinds: []
+      omitKinds: []
+      serviceAccount: true
+#    - name: remote
+#      kinds: []
+#      omitKinds: []
+#      kubeconfigFile: /kubeconfigfiles/kubecfg-remote
+
+clouddriver:
+  grpc: spin-clouddriver-grpc:9091
+  insecure: true
+
+server:
+  port: 8082
+  
+prometheus:
+  enabled: true
+  # port: 8008

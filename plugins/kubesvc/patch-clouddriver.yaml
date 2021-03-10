@@ -1,0 +1,56 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding the Kubernetes Agent plugin to clouddriver
+#
+# Documentation: https://docs.armory.io/docs/armory-agent/armory-agent-quick/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        kubernetes:
+          enabled: true    # This is not needed if spinnaker already has kubernetes V2 accounts enabled by other files
+
+        sql:
+          enabled: true    # kubesvc depends on clouddriver using SQL. See patch-sql-clouddriver for full configuration
+        redis:
+          enabled: true    # kubesvc depends on redis for internal pub/sub communication
+
+        kubesvc:
+          cluster: redis
+
+        spinnaker:
+          extensibility:
+            pluginsRootPath: /opt/clouddriver/lib/plugins
+            plugins:
+              Armory.Kubesvc:
+                enabled: true
+                extensions:
+                  armory.kubesvc:
+                    enabled: true
+
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec:
+              template:
+                spec:
+                  initContainers:
+                  - name: kubesvc-plugin
+                    image: docker.io/armory/kubesvc-plugin:0.7.1  # See https://docs.armory.io/docs/armory-agent/armory-agent-quick/ for available versions
+                    volumeMounts:
+                      - mountPath: /opt/plugin/target
+                        name: kubesvc-plugin-vol
+                  containers:
+                  - name: clouddriver
+                    volumeMounts:
+                      - mountPath: /opt/clouddriver/lib/plugins
+                        name: kubesvc-plugin-vol
+                  volumes:
+                  - name: kubesvc-plugin-vol
+                    emptyDir: {}

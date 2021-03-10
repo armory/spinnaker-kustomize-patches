@@ -22,6 +22,7 @@ resources:
 
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
+#  - plugins/kubesvc                    # (Optional). Alternate implementation for kubernetes deployments. Requires plugins/kubesvc/patch-clouddriver.yaml and persistence/patch-sql-clouddriver.yml
 
 patchesStrategicMerge:
   # Spinnaker persistence
@@ -96,6 +97,7 @@ patchesStrategicMerge:
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
+#  - plugins/kubesvc/patch-clouddriver.yaml  # Requires persistence/patch-sql-clouddriver.yml and the base dir plugins/kubesvc
 
 # Mounting any custom files into spinnaker pods (see patch-volumes.yml)
 #generatorOptions:
