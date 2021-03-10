@@ -1,6 +1,3 @@
-#-----------------------------------------------------------------------------------------------------------------
-# Example configuration for changing service number of pods, as well as cpu and memory requests and limits
-#-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
@@ -10,11 +7,106 @@ spec:
     config:
       deploymentEnvironment:
         customSizing:
+          # This applies sizings to the clouddriver container as well as any sidecar 
+          # containers running with clouddriver. (Use without spin- to only include the clouddriver container)
           spin-clouddriver:
-            replicas: 1       # Set the number of replicas (pods) to be created for this service.
-            requests:
-              cpu: 1          # Set the kubernetes CPU requests for each pod. For reference a m5.xlarge EC2 instance has a capacity of 4 cpu.
-              memory: 6Gi     # Set the kubernetes memory requests for each pod. For reference a m5.xlarge EC2 instance has a capacity of 16Gi of memory.
+            replicas: 1     # Set the number of replicas (pods) to be created for this service.
+            # limits:
+            #   cpu: 2        # Set the kubernetes CPU limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 4 cpu.
+            #   memory: 4Gi   # Set the kubernetes memory limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 16Gi of memory.
+            # requests:
+            #   cpu: 500m
+            #   memory: 2Gi
+          # This applies sizings to only the service container and not to any sidecar 
+          # containers running with service. (Use spin-<service> to include sidecars)
+          clouddriver:
             limits:
-              cpu: 1          # Set the kubernetes CPU limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 4 cpu.
-              memory: 6Gi     # Set the kubernetes memory limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 16Gi of memory.
+              cpu: 2        # Set the kubernetes CPU limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 4 cpu.
+              memory: 4Gi   # Set the kubernetes memory limits for each pod. For reference a m5.xlarge EC2 instance has a capacity of 16Gi of memory.
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          deck:
+            limits:
+              cpu: 300m
+              memory: 64Mi
+            requests:
+              cpu: 150m
+              memory: 32Mi
+          dinghy:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          echo:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 150m
+              memory: 512Mi
+          fiat:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          front50:
+            limits:
+              cpu: 300m
+              memory: 1Gi
+            requests:
+              cpu: 150m
+              memory: 512Mi
+          gate:
+            limits:
+              cpu: 600m
+              memory: 1Gi
+            requests:
+              cpu: 300m
+              memory: 512Mi
+          kayenta:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          igor:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          orca:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 750m
+              memory: 512Mi
+          rosco:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          terraformer:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
+          redis:
+            limits:
+              cpu: 750m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi 
