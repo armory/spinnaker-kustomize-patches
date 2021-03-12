@@ -1,0 +1,32 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Example configuration for adding Slack notifications for pipelines.
+#
+# Documentation: https://spinnaker.io/setup/features/notifications/#slack
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      echo:
+        mail:
+          enabled: true
+          from: <myemail>@hotmail.com
+        spring:
+          mail:
+            host: smtp.live.com
+            username: <myemail>@hotmail.com
+            password: hunter2
+            port: 587
+            properties:
+              mail:
+                smtp:
+                  auth: true
+                  starttls:
+                    enable: true
+                transport:
+                  protocol: smtp
+        #	debug: true <- this is useful if you are mucking around with smtp properties  
+       
