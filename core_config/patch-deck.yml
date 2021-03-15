@@ -10,3 +10,5 @@ spec:
           // window.spinnakerSettings.feature.terraform = true; // Terraform UI armory/patch-terraformer.yml
           // window.spinnakerSettings.feature.functions = true  // AWS Lambda accounts/aws/patch-aws-lambda-plugin.yml
           // window.spinnakerSettings.authEnabled = true; // Basic Authentication security/patch-basic-auth.yml
+          // window.spinnakerSettings.notifications.email = window.spinnakerSettings.notifications.email || {};
+          // window.spinnakerSettings.notifications.email.enabled = true;
