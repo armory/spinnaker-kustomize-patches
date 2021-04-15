@@ -56,3 +56,26 @@ spec:
 #        redis:
 #          baseUrl: "redis://spin-redis:6379"
 #          password: "password"
+
+# # used for adding gcp credentials for terraform
+# # first create a secret with your gcp-credentials.json e.g. `kubectl create secret generic gcp-creds --from-file gcp-credentials.json`
+#   kustomize:
+#     terraformer:
+#       deployment:
+#         patchesJson6902: |
+#           - op: add
+#             path: /spec/template/spec/containers/0/volumeMounts/-
+#             value:
+#               mountPath: /opt/spinnaker/creds
+#               name: gcp-creds
+#           - op: add
+#             path: /spec/template/spec/volumes/-
+#             value:
+#               name: gcp-creds
+#               secret:
+#                 secretName: gcp-creds
+#           - op: add
+#             path: /spec/template/spec/containers/0/env/-
+#             value:
+#               name: GOOGLE_APPLICATION_CREDENTIALS
+#               value: /opt/spinnaker/creds/gcp-credentials.json
