@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script download a version of Armory's BOM to a local directory
-# Usage: download.sh <version name>
+# Usage: bomdownloader.sh <version name> <docker_registry>
 # Prerequisites:
 # - aws cli: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
 # - access to public s3 installed (no need for credentials)
@@ -24,6 +24,7 @@ if [[ $# -lt 2 ]]; then
 fi
 
 mkdir -p ${DESTINATION_DIR}/bom
+aws s3 cp --no-sign-request --region ${ARMORY_BUCKET_REGION} s3://${ARMORY_BUCKET}/versions.yml ${DESTINATION_DIR}
 bom="${DESTINATION_DIR}/bom/${VERSION}.yml"
 aws s3 cp --no-sign-request --region ${ARMORY_BUCKET_REGION} s3://${ARMORY_BUCKET}/bom/${VERSION}.yml ${bom}
 for svc in $SERVICES; do
