@@ -14,6 +14,7 @@ spec:
             service: EXTERNAL
     profiles:
       fiat:
-        admin:
-          roles:
-            - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
+        fiat: 
+          admin:
+            roles:
+              - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
