@@ -13,7 +13,7 @@ spec:
           groupMembership:
             service: EXTERNAL
     profiles:
-      fiat:
+      fiat:  ## see https://spinnaker.io/reference/architecture/authz_authn/authorization/ for additional parameters
         fiat: 
           admin:
             roles:
