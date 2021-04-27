@@ -18,3 +18,6 @@ spec:
           admin:
             roles:
               - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
+              ### Verify if your user has admin access with using the FIAT API:
+              ### k exec deploy/spin-fiat -- wget --no-proxy -O /dev/stdout http://localhost:7003/authorize/[username]
+              ### expect to see: `admin: true` in the returned payload
