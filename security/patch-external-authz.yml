@@ -13,10 +13,14 @@ spec:
           groupMembership:
             service: EXTERNAL
     profiles:
-      fiat:
-        admin:
-          roles:
-            - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
+      fiat:  ## see https://spinnaker.io/reference/architecture/authz_authn/authorization/ for additional parameters
+        fiat: 
+          admin:
+            roles:
+              - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
+              ### Verify if your user has admin access with using the FIAT API:
+              ### k exec deploy/spin-fiat -- wget --no-proxy -O /dev/stdout http://localhost:7003/authorize/[username]
+              ### expect to see: `admin: true` in the returned payload
       # enable pipeline permissions: https://spinnaker.io/setup/security/authorization/pipeline-permissions/
       tasks:                  
         useManagedServiceAccounts: true
