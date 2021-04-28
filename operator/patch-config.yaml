@@ -7,11 +7,21 @@ spec:
     spec:
       containers:
         - name: spinnaker-operator
+          # env:                            # required if you are using a custom bucket like minio
+          #   - name: AWS_ACCESS_KEY_ID     # you can choose to use a secret for these values
+          #     value: minio
+          #   - name: AWS_SECRET_ACCESS_KEY # you can choose to use a secret for these values
+          #     value: changeme   
           volumeMounts:
             - mountPath: /opt/spinnaker/config/halyard.yml
               name: operator-config
               subPath: halyard-local.yml
         - name: halyard
+          # env:                            # required if you are using a custom bucket like minio
+          #   - name: AWS_ACCESS_KEY_ID     
+          #     value: minio
+          #   - name: AWS_SECRET_ACCESS_KEY
+          #     value: changeme             
           volumeMounts:
             - mountPath: /opt/spinnaker/config/halyard-local.yml
               name: operator-config
