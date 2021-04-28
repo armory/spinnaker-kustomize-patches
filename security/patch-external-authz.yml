@@ -17,3 +17,10 @@ spec:
         admin:
           roles:
             - spin-admin      #Assign external group spin-admin to the Spinnaker administrator role
+      # enable pipeline permissions: https://spinnaker.io/setup/security/authorization/pipeline-permissions/
+      tasks:                  
+        useManagedServiceAccounts: true
+#       # Enable this setting under core_config/patch-deck.yml
+#       deck:
+#         settings-local.js: |
+#           window.spinnakerSettings.feature.managedServiceAccounts = true;

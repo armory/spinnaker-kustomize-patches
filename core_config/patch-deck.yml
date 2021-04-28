@@ -12,3 +12,4 @@ spec:
           // window.spinnakerSettings.authEnabled = true; // Basic Authentication security/patch-basic-auth.yml
           // window.spinnakerSettings.notifications.email = window.spinnakerSettings.notifications.email || {};
           // window.spinnakerSettings.notifications.email.enabled = true;
+          // window.spinnakerSettings.feature.managedServiceAccounts = true;
