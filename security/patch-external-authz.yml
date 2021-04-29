@@ -22,9 +22,15 @@ spec:
               ### k exec deploy/spin-fiat -- wget --no-proxy -O /dev/stdout http://localhost:7003/authorize/[username]
               ### expect to see: `admin: true` in the returned payload
       # enable pipeline permissions: https://spinnaker.io/setup/security/authorization/pipeline-permissions/
-      tasks:                  
-        useManagedServiceAccounts: true
+      orca:
+        tasks:
+          useManagedServiceAccounts: true
 #       # Enable this setting under core_config/patch-deck.yml
 #       deck:
 #         settings-local.js: |
 #           window.spinnakerSettings.feature.managedServiceAccounts = true;
+#
+#      # Use thhis block if pipeline permissions had been configured with run-as-user previously
+#      front50:                                   
+#        migrations:                               
+#          migrateToManagedServiceAccounts: true.  
