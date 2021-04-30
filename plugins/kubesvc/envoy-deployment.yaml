@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: envoy
+spec:
+  type: ClusterIP
+  selector:
+    app: envoy
+  ports:
+  - name: grpc
+    protocol: TCP
+    port: 9091
+    targetPort: 9091
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy
+  template:
+    metadata:
+      labels:
+        app: envoy
+    spec:
+      containers:
+      - name: envoy
+        image: envoyproxy/envoy-alpine:v1.17.2
+        command: ["envoy", "--config-path","/etc/envoy/envoy.yaml","--bootstrap-version","2"]
+        # args: ["bootstrap-version", "2"]
+        ports:
+        - name: grpc
+          containerPort: 9091
+        volumeMounts:
+        - name: config
+          mountPath: /etc/envoy
+      volumes:
+      - name: config
+        configMap:
+          name: envoy-config

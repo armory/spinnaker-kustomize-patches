@@ -6,7 +6,7 @@ spec:
   spinnakerConfig:
     # ------- Main config section, equivalent to "~/.hal/config" from Halyard
     config:
-      version: 2.21.0            # Spinnaker version to deploy
+      version: 2.25.0            # Spinnaker version to deploy
 #      armory: {}                 # Features only available in Armory Spinnaker distribution.
       artifacts: {}              # Artifacts are "things" that can be deployed or used within spinnaker: docker images, github files, etc.
       canary: {}                 # Settings used for performing automated canary analysis.

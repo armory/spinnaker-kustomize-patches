@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: envoy
+    cluster: spin-clouddriver
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+  name: spin-clouddriver-lb
+spec:
+  ports:
+    - name: grpc
+      port: 9091
+      protocol: TCP
+      targetPort: 9091
+  selector:
+    app: envoy #use envoy's
+    cluster: spin-clouddriver
+  type: LoadBalancer

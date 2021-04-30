@@ -6,6 +6,7 @@ metadata:
     cluster: spin-clouddriver
   name: spin-clouddriver-grpc
 spec:
+  clusterIP: None
   ports:
     - name: grpc
       port: 9091

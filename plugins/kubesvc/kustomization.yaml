@@ -3,13 +3,18 @@ kind: Kustomization
 
 images:
   - name: armory/kubesvc
-    newTag: 0.5.1    # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+    newTag: 0.5.9    # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
 
 resources:
-- deployment.yaml
-- service.yaml
+- deployment.yaml # kubesvc deployment
+- nlb-envoy.yaml # Network load balancer pointing to envoy(s)
+- clouddriver-grpc-service.yaml # headless service with DNS records for clouddriver
+- envoy-deployment.yaml # envoy service and dployment
 
 configMapGenerator:
 - name: kubesvc-config
   files:
   - kubesvc.yaml
+- name: envoy-config # uses clouddriver-grpc-service dns records to balance requests to
+  files: 
+  - envoy.yaml
