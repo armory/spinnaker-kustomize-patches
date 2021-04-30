@@ -18,12 +18,12 @@ fi
 
 bom="${DESTINATION_DIR}/bom/${VERSION}.yml"
 armory_address=docker.io/armory
-new_registy_address=$(yq r ${bom} 'artifactSources.dockerRegistry')
+new_registy_address=$(yq e '.artifactSources.dockerRegistry' ${bom})
 
 set -x
 
 for svc in $SERVICES; do
-    sv=$(yq r ${bom} 'services.'${svc}'.version')
+    sv=$(yq e '.services.'${svc}'.version' ${bom})
     docker pull $armory_address/${svc}:${sv}
     docker tag $armory_address/${svc}:${sv} $new_registy_address/${svc}:${sv}
     docker push $new_registy_address/${svc}:${sv}

@@ -30,18 +30,18 @@ armory_address=docker.io
 
 set -x
 
-operatorimage=$(yq r deploy/operator/cluster/deployment.yaml 'spec.template.spec.containers[0].image')
+operatorimage=$(yq e '.spec.template.spec.containers[0].image' deploy/operator/cluster/deployment.yaml)
 shortoperatorimage=${operatorimage#armory/}  #removes armory/ from the imagename
 docker pull $armory_address/$operatorimage
 docker tag $armory_address/$operatorimage $DESTINATION_REPO/$shortoperatorimage
 docker push $DESTINATION_REPO/$shortoperatorimage
-yq w -i kustomization.yml 'images[0].name' ${operatorimage%:*} 
-yq w -i kustomization.yml 'images[0].newName' $DESTINATION_REPO/${shortoperatorimage%:*} # `%:*` removes the tag
+yq eval -i '.images[0].name = "'${operatorimage%:*}'"' kustomization.yml # `%:*` removes the tag
+yq eval -i '.images[0].newName = "'$DESTINATION_REPO/${shortoperatorimage%:*}'"' kustomization.yml # `%:*` removes the tag
 
-halyardimage=$(yq r deploy/operator/cluster/deployment.yaml 'spec.template.spec.containers[1].image')
+halyardimage=$(yq e '.spec.template.spec.containers[1].image' deploy/operator/cluster/deployment.yaml)
 shorthalyardimage=${halyardimage#armory/}
 docker pull $armory_address/$halyardimage
 docker tag $armory_address/$halyardimage $DESTINATION_REPO/$shorthalyardimage
 docker push $DESTINATION_REPO/$shorthalyardimage
-yq w -i kustomization.yml 'images[1].name' ${halyardimage%:*} 
-yq w -i kustomization.yml 'images[1].newName' $DESTINATION_REPO/${shorthalyardimage%:*}
+yq eval -i '.images[1].name = "'${halyardimage%:*}'"' kustomization.yml # `%:*` removes the tag
+yq eval -i '.images[1].newName = "'$DESTINATION_REPO/${shorthalyardimage%:*}'"' kustomization.yml # `%:*` removes the tag
