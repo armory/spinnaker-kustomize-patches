@@ -28,7 +28,7 @@ aws s3 cp --no-sign-request --region ${ARMORY_BUCKET_REGION} s3://${ARMORY_BUCKE
 bom="${DESTINATION_DIR}/bom/${VERSION}.yml"
 aws s3 cp --no-sign-request --region ${ARMORY_BUCKET_REGION} s3://${ARMORY_BUCKET}/bom/${VERSION}.yml ${bom}
 for svc in $SERVICES; do
-    sv=$(yq r ${bom} 'services.'${svc}'.version')
+    sv=$(yq e '.services.'${svc}'.version' ${bom})
     sdir="$DESTINATION_DIR/profiles/${svc}/${sv}"
     mkdir -p $sdir
     aws s3 cp --no-sign-request --region ${ARMORY_BUCKET_REGION} --recursive --include "*" s3://${ARMORY_BUCKET}/profiles/${svc}/${sv}/ $sdir
