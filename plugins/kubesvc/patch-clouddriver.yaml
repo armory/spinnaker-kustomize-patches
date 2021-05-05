@@ -34,6 +34,15 @@ spec:
 
   kustomize:
     clouddriver:
+      service:
+        patchesStrategicMerge:
+          - |
+            spec:
+              ports:
+                - name: http
+                  port: 7002
+                - name: grpc
+                  port: 9091
       deployment:
         patchesStrategicMerge:
           - |
