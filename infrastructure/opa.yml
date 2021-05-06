@@ -3,6 +3,9 @@
 #
 # If namespace is changed in root kustomization.yml or this manifest is deployed outside of it,
 # please update the namespace in all RoleBinding and ClusterRoleBinding definitions under "subjects.name".
+#
+# Note that the commented namespace definition for "opa" below will not apply if this patch is invoked by
+# a kustomization.yml file with a namespace defined.
 #-----------------------------------------------------------------------------------------------------------------
 #---
 #apiVersion: v1
