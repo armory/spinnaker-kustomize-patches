@@ -2,7 +2,7 @@
 # NOTE: "namespace" field in all objects is overridden by root kustomization.yml file.
 #
 # If namespace is changed in root kustomization.yml or this manifest is deployed outside of it,
-# please update the namespace in all RolBinding and ClusterRoleBinding definitions under "subjects.name".
+# please update the namespace in all RoleBinding and ClusterRoleBinding definitions under "subjects.name".
 #-----------------------------------------------------------------------------------------------------------------
 #---
 #apiVersion: v1
