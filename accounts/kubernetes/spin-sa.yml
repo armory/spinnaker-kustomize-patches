@@ -10,6 +10,7 @@ rules:
   - ""
   resources:
   - pods
+  - pods/log
   - ingresses/status
   - endpoints
   verbs:
@@ -59,7 +60,11 @@ rules:
   - deployments/scale
   - daemonsets
   - replicasets
+  - replicasets/finalizers
+  - replicasets/scale
   - statefulsets
+  - statefulsets/finalizers
+  - statefulsets/scale
   verbs:
   - create
   - get
