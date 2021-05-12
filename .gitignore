@@ -9,3 +9,4 @@ secrets.env
 !halyard-local.yml
 operator/deploy
 deploy_log.txt
+webhooks/*
