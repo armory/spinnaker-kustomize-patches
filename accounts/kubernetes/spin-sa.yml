@@ -7,11 +7,35 @@ metadata:
   name: spin-cluster-role
 rules:
 - apiGroups:
+  - "extensions"
+  resources:
+  - ingresses
+  - ingresses/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - ingresses
+  - ingresses/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
   - ""
   resources:
   - pods
-  - pods/log
-  - ingresses/status
   - endpoints
   verbs:
   - get
@@ -30,7 +54,6 @@ rules:
   - configmaps
   - secrets
   - namespaces
-  - ingresses
   - jobs
   verbs:
   - create
@@ -60,11 +83,7 @@ rules:
   - deployments/scale
   - daemonsets
   - replicasets
-  - replicasets/finalizers
-  - replicasets/scale
   - statefulsets
-  - statefulsets/finalizers
-  - statefulsets/scale
   verbs:
   - create
   - get
@@ -116,4 +135,3 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: spin-cluster-role
-
