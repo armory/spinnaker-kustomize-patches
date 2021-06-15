@@ -1,6 +1,8 @@
 #-----------------------------------------------------------------------------------------------------------------
 # Example configuration for adding a dockerhub account to spinnaker.
 #
+# Also need to create a configmap (see cm-token-refresh.yml in this directory)
+#
 # Documentation: https://docs.armory.io/docs/spinnaker-user-guides/docker/
 #-----------------------------------------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
@@ -14,6 +16,15 @@ spec:
         enabled: true    # Default: true. Indicate if operator should do connectivity checks to configured docker accounts before applying the manifest
   spinnakerConfig:
     config:
+      deploymentEnvironment:
+        sidecars:
+          spin-clouddriver:
+            - name: token-refresh
+              dockerImage: quay.io/skuid/ecr-token-refresh:latest
+              mountPath: /etc/passwords
+              configMapVolumeMounts:
+                - configMapName: token-refresh-config
+                  mountPath: /opt/config/ecr-token-refresh
       providers:
         dockerRegistry:
           enabled: true
