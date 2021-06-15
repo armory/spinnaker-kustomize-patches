@@ -1,0 +1,14 @@
+# Add this to your kustomization file under Resources when using patch-ecr
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: token-refresh-config
+  namespace: spinnaker
+data:
+  cm.yml: |
+    interval: 30m # defines refresh interval
+    registries: # list of registries to refresh
+      - registryId: "<aws-account-id>" #Change this
+        region: "<aws-region>" #Change this
+        passwordFile: "/etc/passwords/my-ecr-registry.pass"
