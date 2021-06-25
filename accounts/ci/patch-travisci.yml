@@ -1,0 +1,18 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  # spec.spinnakerConfig - This section is how to specify configuration spinnaker
+  spinnakerConfig:
+  # spec.spinnakerConfig.config - This section contains the contents of a deployment found in a halconfig .deploymentConfigurations[0]
+    config:
+      ci:
+        travis:
+          enabled: true
+          masters:
+          - name: travis-ci
+            baseUrl: https://travis-ci.com
+            address: https://api.travis-ci.com
+            githubToken: encrypted:k8s!n:spin-secrets!k:github-token
+            permissions: {} 
