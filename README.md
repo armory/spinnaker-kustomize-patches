@@ -1,71 +1,45 @@
-# Kustomize Patches for Armory
+# Kustomize patches for configuring Armory Enterprise
 
-This repository contains example [Kustomize](https://kustomize.io) patch files to configure and deploy Armory using the [Armory Operator](https://docs.armory.io/docs/installation/operator/), which is a Kubernetes Operator for installing Armory.
+This repository contains example [Kustomize](https://kustomize.io) patch files to configure and deploy Armory Enterprise to your Kubernetes cluster using the [Armory Operator](https://docs.armory.io/docs/installation/operator/). See the Armory Operator [docs](https://docs.armory.io/docs/installation/armory-operator/) to learn how the Operator works and how to configure Armory Enterprise using Kustomize patches.
 
-The Armory Operator has `basic` and a `cluster` modes.
-
-Functionality                                   | `basic` | `cluster`
-:-----------------------------------------------|:-------:|:--------:
-Can configure with single file                  |    Y    |     Y
-Can configure with kustomize patches            |    Y    |     Y
-Operator performs pre-flight checks/validations |    N    |     Y
-Requires Kubernetes 'cluster role'              |    N    |     Y
-
-Even though you can configure Armory in a single `SpinnakerService.yml` file, the advantage of using patch files is that each config section is its own file, with a `kustomization.yml` file that uses the patch files to build a deployment file. The Kustomize approach provides readability, consistency across environments, and maintenance manageability.  See the [Managing Configuration](https://docs.armory.io/docs/installation/operator/#managing-configuration) section of the Spinnaker Operator docs for details and examples.
-
-This repo provides one-click installation of the Armory Operator (`cluster` mode) and Armory via the `deploy.sh` script. You don't have to read the Armory Operator documentation before you start, configure a manifest, or execute several commands to install Armory - `deploy.sh` does it all! Additionally, this repo has many example patch files that you can easily modify to match your environment - no more creating YAML files from scratch!
 
 ## Disclaimer
 
-The example configurations provided in this repository serve as a starting point for configuring Armory. You may need to modify the contents for the environment where Armory is running to work properly. These examples are not exhaustive and don't showcase all available combinations of settings. It's possible that not all configurations work with all versions of Armory.
+The example configurations provided in this repository serve as a starting point for configuring Armory Enterprise. You may need to modify the contents for the environment where Armory Enterprise is running to work properly. These examples are not exhaustive and don't showcase all available combinations of settings. It's possible that not all configurations work with all versions of Armory Enterprise.
 
-You can use these patch files, with modification, to configure a Spinnaker<sup>TM</sup> instance installed using the the open source [Spinnaker Operator](https://github.com/armory/spinnaker-operator). You need to change the `apiVersion` by removing `armory` from it. For example,
+## Kubernetes requirements
 
-```
-apiVersion: spinnaker.armory.io/v1alpha2
-```
+You need to have a working Kubernetes 1.13-1.19 cluster and be able to execute `kubectl` commands against that cluster, with permissions to list and create namespaces.
 
-changes to:
+## All-in-one deployment script
 
-```
-apiVersion: spinnaker.io/v1alpha2
-```
+This repo provides a one-click `deploy.sh` script that deploys the Armory Operator in `cluster` mode and then Armory Enterprise. This is useful for a proof of concept, but you should not use this script in a production environment.
 
-The `deploy.sh` script automatically does this to deploy Spinnaker when you run it with the `SPIN_FLAVOR` environment variable:
+Clone this repository and run `./deploy.sh`.
+
+The script does the following:
+
+* Deploys the Armory Operator to the `spinnaker-operator` namespace.
+* Deploys a basic Armory Enterprise instance with some default integrations to the `spinnaker` namespace.
+
+If you already have the Armory Operator deployed, you can use `SPIN_OP_DEPLOY=0` to specify not to deploy the Operator.
+
+### Deploy open source Spinnaker
+
+You can use `deploy.sh` to deploy Spinnaker instead of Armory Enterprise.
 
 ```bash
 SPIN_FLAVOR=oss ./deploy.sh
 
 ```
 
-## Prerequisites
+When you specify `SPIN_FLAVOR=oss `, the script does the following:
 
-You need to have a working Kubernetes cluster and be able to execute `kubectl` commands against that cluster, with permissions to list and create namespaces.
+* Modifies relevant patch files, replacing `apiVersion: spinnaker.armory.io/v1alpha2` with `apiVersion: spinnaker.io/v1alpha2`.
+* Deploys the open source [Spinnaker Operator](https://github.com/armory/spinnaker-operator) to the `spinnaker-operator` namespace.
+* Deploys a basic of Spinnaker to the `spinnaker` namespace.
 
-### Quick start
 
-Clone this repository and run `./deploy.sh`.
+## Add remote clusters script
 
-This will deploy the Armory Operator to the `spinnaker-operator` namespace, and a base Armory instance to the `spinnaker` namespace with some default integrations.
-
-## General usage
-
-1. Make a link from `kustomization.yml` to one of the example kustomization files in `recipes` folder depending on your use case.
-1. Modify `kustomization.yml` by adding or removing patches depending on what you want to be included in spinnaker. [Kustomization Reference Documentation describes the syntax of this file](https://kubectl.docs.kubernetes.io/pages/reference/kustomize.html).
-1. Change any of the kustomize patch files to match your desired configuration. For example changing github username, aws account id, etc.
-1. Store secret literals in `secrets/secrets.env` and secret files in `secrets/files` if you want to store spinnaker secrets in Kubernetes. They are ignored by source control.
-1. Run `./deploy.sh` to deploy spinnaker.
-
-* Namespace for the Spinnaker Operator is configured in `operator/kustomization.yml`.
-* Namespace for Spinnaker and all its infrastructure is configured in `kustomization.yml`.
-* Spinnaker version is configured in `spinnakerservice.yml`.
-* Environment variable `SPIN_OP_DEPLOY` can be passed to deploy script to manage operator (default) or not (i.e. `SPIN_OP_DEPLOY=0 ./deploy.sh`)
-
-For adding remote Kubernetes clusters to Spinnaker, the helper script `secrets/create-kubeconfig.sh` can be used to create a Kubernetes service account (with cluster admin role) and its corresponding `kubeconfig` file for spinnaker to use.
-
-## Resources
-
-* [Armory Operator](https://docs.armory.io/docs/installation/operator/)
-* [Armory Operator Configuration](https://docs.armory.io/docs/installation/operator-reference/operator-config/)
-* [Kustomize](https://kustomize.io)
-
+For adding remote Kubernetes clusters to Armory Enterprise, you can use the helper script `secrets/create-kubeconfig.sh` to create a Kubernetes service account (with cluster admin role) and its corresponding `kubeconfig` file for Armory Enterprise to use.
