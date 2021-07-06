@@ -13,3 +13,4 @@ spec:
           // window.spinnakerSettings.notifications.email = window.spinnakerSettings.notifications.email || {};
           // window.spinnakerSettings.notifications.email.enabled = true;
           // window.spinnakerSettings.feature.managedServiceAccounts = true;
+          window.spinnakerSettings.kubernetesAdHocInfraWritesEnabled = true;
