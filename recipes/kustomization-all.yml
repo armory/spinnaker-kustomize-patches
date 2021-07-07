@@ -15,6 +15,7 @@ resources:
 #  - infrastructure/opa.yml             # (Optional). OPA server for using with Armory's policy engine, for enforcing pipeline policies
 #  - infrastructure/debugging-tools.yml # (Optional). A pod with some tools for troubleshooting spinnaker (curl, kubectl, vault, etc.)
   - accounts/kubernetes/spin-sa.yml    # (Optional, needed by accounts/kubernetes/patch-kube.yml). Kubernetes service account for spinnaker to use in its own cluster
+#  - accounts/kubernetes/spin-sa-cluster-admin.yml    # (Optional, use in place of spin-sa.yml, for POCs only!)  
 #  - expose/ingress-nginx.yml          # (Optional). Spinnaker ingress definition
 #  - expose/spin-gate-expose.yml       # (Optional). Alternate service definition for gate for exposing spinnaker with maximum configurability
 #  - expose/spin-deck-expose.yml       # (Optional). Alternate service definition for deck for exposing spinnaker with maximum configurability
