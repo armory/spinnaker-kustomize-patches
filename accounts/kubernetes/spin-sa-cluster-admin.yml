@@ -1,6 +1,9 @@
+#-----------------------------------------------------------------------------------------------------------------
+# RBAC configuration for a kubernetes service account (see patch-kube.yml)
+#-----------------------------------------------------------------------------------------------------------------
 ## NOT FOR PRODUCTION USE/CONFIG
 ## The use of 'cluster-admin' is for POC work only.
-## For production config, consult Armory for proper privilege assignment.
+## For production config, consult Armory for proper privilege assignment. See spin-sa.yml for example.
 ---
 apiVersion: v1
 kind: ServiceAccount
