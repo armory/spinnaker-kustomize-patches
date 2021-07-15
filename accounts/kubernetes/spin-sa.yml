@@ -19,7 +19,7 @@ rules:
   - update
   - patch
   - delete
-  - apiGroups:
+- apiGroups:
   - "networking.k8s.io"
   resources:
   - ingresses
