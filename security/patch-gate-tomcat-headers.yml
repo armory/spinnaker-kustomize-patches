@@ -11,6 +11,7 @@ spec:
       gate:
         server:
           tomcat:
+            max-http-header-size: 256KB        # In 2.2.4+spring boot. Tune up for larger payloads
             httpsServerPort: X-Forwarded-Port
             internalProxies: .*
             protocolHeader: X-Forwarded-Proto
