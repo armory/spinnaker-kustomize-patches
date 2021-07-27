@@ -23,4 +23,4 @@ spec:
       - backend:
           serviceName: spin-gate
           servicePort: 8084
-        path: /api/v1
+        path: /api

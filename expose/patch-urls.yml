@@ -16,6 +16,7 @@ spec:
           overrideBaseUrl: https://spinnaker.mycompany.com      # Public UI (Deck) url.
     profiles:
       gate:
+        swagger.basePath: /api
         server:
           servlet:
             context-path: /api
