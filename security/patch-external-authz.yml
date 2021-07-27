@@ -13,10 +13,6 @@ spec:
           groupMembership:
             service: EXTERNAL
     profiles:
-      #deck: # Enable this setting under core_config/patch-deck.yml
-      #  settings-local.js: |
-      #    window.spinnakerSettings.authEnabled = true;
-
       fiat:  ## see https://spinnaker.io/reference/architecture/authz_authn/authorization/ for additional parameters
         fiat: 
           admin:
@@ -25,13 +21,10 @@ spec:
               ### Verify if your user has admin access with using the FIAT API:
               ### k exec deploy/spin-fiat -- wget --no-proxy -O /dev/stdout http://localhost:7003/authorize/[username]
               ### expect to see: `admin: true` in the returned payload
-
       # enable pipeline permissions: https://spinnaker.io/setup/security/authorization/pipeline-permissions/
-
-      # Enable this setting under core_config/patch-deck.yml
-      #deck:
-      #  settings-local.js: |
-      #    window.spinnakerSettings.feature.managedServiceAccounts = true;
-      orca:
-        tasks:
-          useManagedServiceAccounts: true
+      tasks:                  
+        useManagedServiceAccounts: true
+#       # Enable this setting under core_config/patch-deck.yml
+#       deck:
+#         settings-local.js: |
+#           window.spinnakerSettings.feature.managedServiceAccounts = true;
