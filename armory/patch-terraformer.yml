@@ -35,6 +35,12 @@ spec:
       #   # Enables terraformer UI
       #   settings-local.js: |
       #     window.spinnakerSettings.feature.terraform = true;
+      gate:
+        proxies:
+          - id: terraform
+            uri: http://spin-terraformer:7088
+            methods:
+              - GET
       terraformer:
         # Terraformer named profiles, for supplying credentials to terraformer
         profiles:
@@ -56,6 +62,14 @@ spec:
 #        redis:
 #          baseUrl: "redis://spin-redis:6379"
 #          password: "password"
+
+    service-settings:
+      terraformer:
+        kubernetes:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
 
 # # used for adding gcp credentials for terraform
 # # first create a secret with your gcp-credentials.json e.g. `kubectl create secret generic gcp-creds --from-file gcp-credentials.json`
