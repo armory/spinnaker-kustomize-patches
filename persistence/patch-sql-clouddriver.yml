@@ -13,6 +13,8 @@ spec:
       clouddriver:
         sql:
           enabled: true
+          unknown-agent-cleanup-agent:
+            enabled: true
           taskRepository:
             enabled: true
           cache:
@@ -61,3 +63,20 @@ spec:
             enabled: true # enabled for Google CloudSQL and Amazon Managed RDS SQL https://spinnaker.io/setup/productionize/persistence/clouddriver-sql/#agent-scheduling
           taskRepository:
             enabled: false
+
+        # These parameters help throttle Spinnaker's API calls
+        # Default rate limit is 10 req/sec. Adjust and tune as necessary
+        # For more details see https://docs.armory.io/docs/armory-admin/rate-limit/
+        serviceLimits:
+          defaults:
+            rateLimit: 10.0
+          cloudProviderOverrides:
+            aws:
+              rateLimit: 10.0
+          implementationLimits:
+            AmazonAutoScaling:
+              defaults:
+                rateLimit: 10.0
+            AmazonElasticLoadBalancing:
+              defaults:
+                rateLimit: 10.0
