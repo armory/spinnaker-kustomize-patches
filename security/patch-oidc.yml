@@ -10,6 +10,9 @@ metadata:
 spec:
   spinnakerConfig:
     profiles:
+    #  deck: # Enable this setting under core_config/patch-deck.yml
+    #    settings-local.js: |
+    #      window.spinnakerSettings.authEnabled = true;
       gate:
         security:
           oauth2:
