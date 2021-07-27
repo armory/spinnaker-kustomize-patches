@@ -7,10 +7,14 @@ spec:
     profiles:  
       deck:                                     
         settings-local.js: |
-          // window.spinnakerSettings.feature.terraform = true; // Terraform UI armory/patch-terraformer.yml
-          // window.spinnakerSettings.feature.functions = true  // AWS Lambda accounts/aws/patch-aws-lambda-plugin.yml
-          // window.spinnakerSettings.authEnabled = true; // Basic Authentication security/patch-basic-auth.yml
+          // If there is ANY kind of AuthN or AuthZ configured authEnabled should be set!
+          // window.spinnakerSettings.authEnabled = true;                     // AuthN and AuthZ security/*.yml
+          // window.spinnakerSettings.feature.functions = true                // AWS Lambda accounts/aws/patch-aws-lambda-plugin.yml
+          // window.spinnakerSettings.feature.managedServiceAccounts = true;  // Enable Pipeline Permissions security/patch-external-authz.yml
+          // window.spinnakerSettings.feature.terraform = true;               // Terraform UI armory/patch-terraformer.yml
+          // window.spinnakerSettings.feature.quietPeriod = true;             // Enable Echo quiet period spinnaker_deployment/patch-echo-quiet.yml
+          // The following flag added in 1.26 allows operators to enable making Infrastructure changes via the UI.
+          //   For example, Undo Rollout. Previously users were always able to make infrastructure changes via the UI
+          window.spinnakerSettings.kubernetesAdHocInfraWritesEnabled = true;
           // window.spinnakerSettings.notifications.email = window.spinnakerSettings.notifications.email || {};
           // window.spinnakerSettings.notifications.email.enabled = true;
-          // window.spinnakerSettings.feature.managedServiceAccounts = true;
-          window.spinnakerSettings.kubernetesAdHocInfraWritesEnabled = true;
