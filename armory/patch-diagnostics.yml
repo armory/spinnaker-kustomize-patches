@@ -15,3 +15,12 @@ spec:
           logging:
             enabled: true                             # true/false to enable
             endpoint: https://debug.armory.io/v1/logs # Spinnaker logs will be sent to this endpoint (e.g. https://debug.armory.io/v1/logs)
+      stats:
+        enabled: false
+        # This prevents recreating echo on every single deploy of spinnaker
+        instanceId: disable-echo-always-recreating
+      telemetry:
+        enabled: true
+        endpoint: https://stats.spinnaker.io
+        connectionTimeoutMillis: 3000
+        readTimeoutMillis: 5000
