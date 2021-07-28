@@ -1,0 +1,13 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for enabling locking in Igor so the service can be scaled out
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+  # spec.spinnakerConfig.profiles - This section contains the YAML of the service's profile (*-local.yml)
+  profiles:
+    igor:       # is the contents of ~/.hal/default/profiles/igor-local.yml
+      locking.enabled: true  # this must be set in order for Igor's number of replicas to scale to something greater than 1
