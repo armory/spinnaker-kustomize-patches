@@ -1,0 +1,18 @@
+# This LoadBalancer service exposes the gRPC port on Clouddriver for the remote Agents to connect to
+# Look for the LoadBalancer service IP address that is exposed on 9091
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: spin-agent-clouddriver
+  namespace: spinnaker
+spec:
+  ports:
+    - name: grpc
+      port: 9091
+      protocol: TCP
+      targetPort: 9091
+  selector:
+    app: spin
+    cluster: spin-clouddriver
+  type: LoadBalancer
