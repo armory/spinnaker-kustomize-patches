@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spin
+    app.kubernetes.io/name: kubesvc
+    app.kubernetes.io/part-of: spinnaker
+    cluster: spin-kubesvc
+  name: spin-kubesvc
+  namespace: spin-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spin
+      cluster: spin-kubesvc
+  template:
+    metadata:
+      labels:
+        app: spin
+        app.kubernetes.io/name: kubesvc
+        app.kubernetes.io/part-of: spinnaker
+        cluster: spin-kubesvc
+    spec:
+      serviceAccount: spin-sa
+      containers:
+      - image: armory/kubesvc
+        imagePullPolicy: IfNotPresent
+        name: kubesvc
+        env:
+          - name: GRPC_ADDR 
+            valueFrom:
+              configMapKeyRef:
+                name: agent-vars
+                key: GRPC_ADDR
+          - name: CLUSTER_NAME 
+            valueFrom:
+              configMapKeyRef:
+                name: agent-vars
+                key: CLUSTER_NAME
+        ports:
+          - name: health
+            containerPort: 8082
+            protocol: TCP
+          - name: metrics
+            containerPort: 8008
+            protocol: TCP
+        readinessProbe:
+          httpGet:
+            port: health
+            path: /health
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/spinnaker/config
+          name: volume-kubesvc-config
+      restartPolicy: Always
+      volumes:
+      - name: volume-kubesvc-config
+        configMap:
+          name: kubesvc-config

@@ -10,9 +10,10 @@ namespace: spinnaker
 
 resources:
   - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
+  - infrastructure/kubesvc-lb.yml      # Required for kubesvc agent gRPC communication
   - infrastructure/minio.yml           # (Optional, not for production use). S3 compatible data store
   - infrastructure/mysql.yml           # (Optional, not for production use). MySQL server needed if using SQL backend in Spinnaker
-#  - infrastructure/opa.yml             # (Optional). OPA server for using with Armory's policy engine, for enforcing pipeline policies
+  - infrastructure/opa.yml             # (Optional). OPA server for using with Armory's policy engine, for enforcing pipeline policies
 #  - infrastructure/debugging-tools.yml # (Optional). A pod with some tools for troubleshooting spinnaker (curl, kubectl, vault, etc.)
   - accounts/kubernetes/spin-sa.yml    # (Optional, needed by accounts/kubernetes/patch-kube.yml). Kubernetes service account for spinnaker to use in its own cluster
 #  - accounts/kubernetes/spin-sa-cluster-admin.yml    # (Optional, use in place of spin-sa.yml, for POCs only!)  
@@ -26,7 +27,7 @@ resources:
 #  - plugins/kubesvc                    # (Optional). Alternate implementation for kubernetes deployments. Requires plugins/kubesvc/patch-clouddriver.yaml and persistence/patch-sql-clouddriver.yml
 
 patchesStrategicMerge:
-  # Spinnaker persistence
+  - armory/patch-plugins.yml            # This enables policy engine and kubesvc agent. infrastructure/opa.yml and infrastructure/kubesvc-lb.yml must be enabled under resources. For agent install in target cluster, refer to armory/armory-agent/README.md.
   - persistence/patch-minio.yml
 #  - persistence/patch-s3.yml
   - persistence/patch-sql-clouddriver.yml          ## setup clouddriver to use SQL for storage
@@ -43,7 +44,7 @@ patchesStrategicMerge:
 #  - expose/patch-cert-manager-ssl.yml                   ## (Optional) Enable SSL certificates to be pulled from a secret updated by cert-manager
 
   # Authentication and authorization
-#  - security/patch-github.yml
+  #- security/patch-github.yml
 #  - security/patch-saml.yml
 #  - security/patch-file-authz.yml
 #  - security/patch-google-groups-auth.yml              ## (Optional) Enable and configure Google Groups for AuthN and AuthZ https://spinnaker.io/setup/security/authorization/
@@ -60,7 +61,7 @@ patchesStrategicMerge:
 #  - accounts/aws/packer-templates.yml
 
   # CloudFoundry accounts
-  - accounts/cloudfoundry/patch-cloudfoundry.yml
+  #- accounts/cloudfoundry/patch-cloudfoundry.yml
 
   # Artifact accounts
   - accounts/docker/patch-dockerhub.yml
@@ -77,7 +78,6 @@ patchesStrategicMerge:
 #  - armory/patch-terraformer.yml
 #  - armory/patch-dinghy.yml
 #  - armory/patch-diagnostics.yml
-#  - armory/patch-policyengine.yml  # Requires spin-policies configmap
 #  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
 
   # Spinnaker monitoring
@@ -110,7 +110,7 @@ patchesStrategicMerge:
 #    files:
 #      - spinnaker_deployment/custom-volume/file.txt
 
-#configMapGenerator:
+# configMapGenerator:
 #  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
 #  - name: spin-policies
 #    files:

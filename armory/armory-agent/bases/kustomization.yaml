@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: spin-agent
+
+resources:
+  - agent-ns.yaml
+  - agent-deployment.yaml
+  - agent-cm.yaml
+  - agent-rbac.yaml
+
+configMapGenerator:
+  - name: agent-vars
+    env: config.properties
