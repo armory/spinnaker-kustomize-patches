@@ -1,0 +1,26 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+   spinnakerConfig:
+     profiles:
+       spinnaker:  
+         spinnaker:  # This second `spinnaker` is required
+           extensibility:
+             plugins:
+               Armory.EvaluateArtifactsPlugin:
+                 enabled: true
+                 version: 0.1.0 # Replace with the version you want to use. For example, use 0.1.0.
+             repositories:
+               evaluateArtifacts:
+                 url: https://raw.githubusercontent.com/armory-plugins/evaluate-artifacts-releases/master/repositories.json
+       gate:
+         spinnaker:
+           extensibility:
+             deck-proxy:
+               enabled: true
+               plugins:
+                 Armory.EvaluateArtifactsPlugin:
+                   enabled: true
+                   version: 0.1.0 # Replace with the version you want to use. For example, use 0.1.0.
