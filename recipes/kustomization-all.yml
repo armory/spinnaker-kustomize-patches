@@ -27,8 +27,6 @@ resources:
 #  - plugins/kubesvc                    # (Optional). Alternate implementation for kubernetes deployments. Requires plugins/kubesvc/patch-clouddriver.yaml and persistence/patch-sql-clouddriver.yml
 
 patchesStrategicMerge:
-  - armory/patch-eval-artifacts.yml
-  - armory/patch-plugins.yml            # This enables policy engine and kubesvc agent. infrastructure/opa.yml and infrastructure/kubesvc-lb.yml must be enabled under resources. For agent install in target cluster, refer to armory/armory-agent/README.md.
   - persistence/patch-minio.yml
 #  - persistence/patch-s3.yml
   - persistence/patch-sql-clouddriver.yml          ## setup clouddriver to use SQL for storage
@@ -80,6 +78,8 @@ patchesStrategicMerge:
 #  - armory/patch-dinghy.yml
 #  - armory/patch-diagnostics.yml
 #  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
+  - armory/patch-eval-artifacts.yml
+  - armory/patch-policy-and-agent-plugins.yml            # This enables policy engine and kubesvc agent. infrastructure/opa.yml and infrastructure/kubesvc-lb.yml must be enabled under resources. For agent install in target cluster, refer to armory/armory-agent/README.md.
 
   # Spinnaker monitoring
 #  - accounts/prometheus/patch-prometheus.yml
