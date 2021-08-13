@@ -27,6 +27,7 @@ resources:
 #  - plugins/kubesvc                    # (Optional). Alternate implementation for kubernetes deployments. Requires plugins/kubesvc/patch-clouddriver.yaml and persistence/patch-sql-clouddriver.yml
 
 patchesStrategicMerge:
+  - armory/patch-eval-artifacts.yml
   - armory/patch-plugins.yml            # This enables policy engine and kubesvc agent. infrastructure/opa.yml and infrastructure/kubesvc-lb.yml must be enabled under resources. For agent install in target cluster, refer to armory/armory-agent/README.md.
   - persistence/patch-minio.yml
 #  - persistence/patch-s3.yml
