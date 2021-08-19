@@ -1,0 +1,44 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      canary:
+        enabled: true   # Enable/disable canary analysis
+        serviceIntegrations:
+        - name: datadog
+          enabled: true   # Enable/disable Datadog provider
+          accounts:
+          - name: datadog
+            endpoint:
+              baseUrl: https://app.datadoghq.com # The base URL to the Datadog server.
+            apiKey: encrypted:k8s!n:spin-secrets!k:datadog-apikey                   # Your org's unique Datadog API key. See https://app.datadoghq.com/account/settings#api. This field supports "encrypted" field references (https://docs.armory.io/spinnaker-install-admin-guides/secrets/).
+            applicationKey: encrypted:k8s!n:spin-secrets!k:datadog-appkey           # Your Datadog application key. See https://app.datadoghq.com/account/settings#api. This field supports "encrypted" field references (https://docs.armory.io/spinnaker-install-admin-guides/secrets/).
+            # apiKey:                # Your org's unique Datadog API key. See https://app.datadoghq.com/account/settings#api. This field supports "encrypted" field references (https://docs.armory.io/spinnaker-install-admin-guides/secrets/).
+            # applicationKey:           # Your Datadog application key. See https://app.datadoghq.com/account/settings#api. This field supports "encrypted" field references (https://docs.armory.io/spinnaker-install-admin-guides/secrets/).
+            supportedTypes:                      # Array of: METRICS_STORE, METRICS_STORE, OBJECT_STORE
+            - METRICS_STORE
+        - name: aws
+          enabled: true
+          accounts:
+          - name: s3bucket
+            bucket: spinnaker
+            #region: us-west-2
+            rootFolder: kayenta
+            accessKeyId: minio  # (Optional). Your AWS Access Key ID. If not provided, Operator/Spinnaker will try to find AWS credentials as described at http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html#credentials-default
+            secretAccessKey: encrypted:k8s!n:spin-secrets!k:minioAccessKey
+            endpoint: http://minio:9000
+            #pathStyleAccess: true
+            supportedTypes:
+            - CONFIGURATION_STORE
+            - OBJECT_STORE
+          s3Enabled: true
+        reduxLoggerEnabled: true
+        defaultMetricsAccount: datadog
+        defaultJudge: NetflixACAJudge-v1.0
+        defaultMetricsStore: datadog
+        stagesEnabled: true
+        templatesEnabled: true
+        showAllConfigsEnabled: true
