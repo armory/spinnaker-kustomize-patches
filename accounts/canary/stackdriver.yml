@@ -1,0 +1,29 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+  namespace: armory
+spec:
+  spinnakerConfig:
+    config:
+      canary:
+        defaultJudge: NetflixACAJudge-v1.0
+        defaultMetricsAccount: gcp-canary
+        defaultMetricsStore: gcp-canary
+        enabled: true
+        reduxLoggerEnabled: true
+        serviceIntegrations:
+          - accounts:
+              - name: gcp-canary
+                project: cloud-project
+                jsonPath: cloud-project.json
+                bucket: bucket-canary
+                rootFolder: kayenta
+                supportedTypes:
+                  - METRICS_STORE
+                  - CONFIGURATION_STORE
+                  - OBJECT_STORE
+            enabled: true
+            gcsEnabled: true
+            name: google
+            stackdriverEnabled: true
