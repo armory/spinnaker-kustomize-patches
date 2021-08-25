@@ -111,8 +111,8 @@ patchesStrategicMerge:
 #    files:
 #      - spinnaker_deployment/custom-volume/file.txt
 
-# configMapGenerator:
-#  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
-#  - name: spin-policies
-#    files:
-#      - armory/policies/manual-judgement.rego
+ configMapGenerator:
+  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
+  - name: spin-policies
+    files:
+      - armory/policies/manual-judgement.rego
