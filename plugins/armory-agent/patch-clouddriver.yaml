@@ -51,7 +51,7 @@ spec:
                 spec:
                   initContainers:
                   - name: kubesvc-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.7.1  # See https://docs.armory.io/docs/armory-agent/armory-agent-quick/ for available versions
+                    image: docker.io/armory/kubesvc-plugin:0.9.16  # See https://docs.armory.io/docs/armory-agent/armory-agent-quick/ for available versions
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: kubesvc-plugin-vol
