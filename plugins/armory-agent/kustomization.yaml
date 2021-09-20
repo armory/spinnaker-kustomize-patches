@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+images:
+  - name: armory/agent-k8s
+    newTag: 0.6.0    # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+
+resources:
+- deployment.yaml
+- service.yaml
+
+configMapGenerator:
+- name: agent-config
+  files:
+  - armory-agent.yaml
