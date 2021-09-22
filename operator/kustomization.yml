@@ -18,8 +18,10 @@ configMapGenerator:
       - halyard-local.yml
 generatorOptions:
   disableNameSuffixHash: true
-images:
-  - name: armory/armory-operator
-    newName: mydocker.io/armory/armory-operator
-  - name: armory/halyard-armory
-    newName: mydocker.io/armory/halyard-armory
+  
+# This section is used if you need to pull operator images from a different docker registry than the default, like when running in air-gapped environments
+#images:
+#  - name: armory/armory-operator
+#    newName: mydocker.io/armory/armory-operator
+#  - name: armory/halyard-armory
+#    newName: mydocker.io/armory/halyard-armory
