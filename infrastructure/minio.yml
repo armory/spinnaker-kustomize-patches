@@ -33,7 +33,7 @@ spec:
           command:
           - /bin/sh
           - -c
-          - 'mkdir -p /storage/spinnaker && /usr/bin/minio server /storage'
+          - 'mkdir -p /storage/spinnaker && /opt/bin/minio server /storage'
           env:
             # MinIO access key and secret key
             - name: MINIO_ACCESS_KEY
