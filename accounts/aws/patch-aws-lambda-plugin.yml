@@ -30,21 +30,17 @@ spec:
           extensibility:
               deck-proxy:
                 enabled: true
-                plugins:
+                plugins: &lambda-plugin
                   Aws.LambdaDeploymentPlugin:
                     enabled: true
-                    version: 1.0.1
-              repositories:
+                    version: 1.0.9
+              repositories: &lambda-repository
                 awsLambdaDeploymentPluginRepo:
                   url: https://raw.githubusercontent.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker/master/plugins.json  
       orca:
         spinnaker:
           extensibility:
             plugins:
-              Aws.LambdaDeploymentPlugin:
-                enabled: true
-                version: 1.0.1
+              <<: *lambda-plugin
             repositories:
-              awsLambdaDeploymentPluginRepo:
-                id: awsLambdaDeploymentPluginRepo
-                url: https://raw.githubusercontent.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker/master/plugins.json
+              <<: *lambda-repository
