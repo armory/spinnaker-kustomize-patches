@@ -1,0 +1,73 @@
+#------------------------------------------------------------------------------
+# Example configuration for enabling the Policy Agent plugin to enforce rules
+# in Armory Enterprise pipelines.
+#
+# Feature documentation:
+# https://docs.armory.io/docs/armory-admin/policy-engine/policy-engine-enable/policy-engine-plug-enable/
+#
+# Make sure you check the plugin compatibility for each release before deciding
+# on a version. For example, for Armory Enterprise 2.27.1 you can find the
+# matrix here:
+# https://docs.armory.io/docs/release-notes/rn-armory-spinnaker/armoryspinnaker_v2-27-1/#plugin-compatibility
+#
+# Actual policies are defined in the "policies" folder and loaded into a
+# ConfigMap.
+#------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      # Configs in the spinnaker profile get applied to all services
+      spinnaker:
+        armory:
+          policyEngine:
+            opa:
+              # Replace with the actual URL to your Open Policy Agent deployment
+              baseUrl: http://opa:8181/v1/data
+              # Optional. The number of seconds that the Policy Engine will wait for a response from the OPA server. Default is 10 seconds if omitted.
+              # timeoutSeconds: <integer> 
+        spinnaker:
+          extensibility:
+            repositories:
+              policyEngine:
+                enabled: true
+                url: https://raw.githubusercontent.com/armory-plugins/policy-engine-releases/master/repositories.json
+      gate:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PolicyEngine:
+                enabled: true
+            deck-proxy:
+              enabled: true
+              plugins:
+                Armory.PolicyEngine:
+                  enabled: true
+                  version: &version 0.2.0
+
+      orca:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PolicyEngine:
+                enabled: true
+                version: *version
+
+      front50:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PolicyEngine:
+                enabled: true
+                version: *version
+
+      clouddriver:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PolicyEngine:
+                enabled: true
+                version: *version

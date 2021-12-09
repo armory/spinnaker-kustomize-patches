@@ -79,7 +79,7 @@ patchesStrategicMerge:
 #  - armory/patch-diagnostics.yml
 #  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
   - armory/patch-eval-artifacts.yml
-  - armory/patch-policy-and-agent-plugins.yml            # This enables policy engine and kubesvc agent. infrastructure/opa.yml and infrastructure/kubesvc-lb.yml must be enabled under resources. For agent install in target cluster, refer to armory/armory-agent/README.md.
+  - armory/patch-policy-engine-plugin.yml            # This enables policy engine. infrastructure/opa.yml must be enabled under resources.
 
   # Spinnaker monitoring
 #  - accounts/prometheus/patch-prometheus.yml
@@ -112,7 +112,7 @@ patchesStrategicMerge:
 #      - spinnaker_deployment/custom-volume/file.txt
 
 configMapGenerator:
-  # ConfigMap holding OPA policy definitions to use by Armory's policy engine. Required by patch-policyengine.yml
+  # ConfigMap holding OPA policy definitions for use by Armory's Policy Engine. Required by patch-policy-engine-plugin.yml
   - name: spin-policies
     files:
      - armory/policies/manual-judgement.rego
