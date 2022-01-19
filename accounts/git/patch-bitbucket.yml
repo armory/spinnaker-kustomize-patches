@@ -16,5 +16,5 @@ spec:
 #              username: john.doe                                                       # Bitbucket username
 #              password: encrypted:k8s!n:spin-secrets!k:bitbucket-password              # (Secret). Bitbucket password
 #              usernamePasswordFile: encryptedFile:k8s!n:spin-secrets!k:bitbucket-creds # (Secret). File containing “username:password” to use for Bitbucket authentication. File needs to be present on the machine running Spinnaker
-#              tokenFile: encryptedFile:k8s!n:spin-secrets!k:bitbucket-token            # (Secret). File containing a Bitbucket Server authentication token. File needs to be present on the machine running Spinnaker. Supports encrypted file. This file can be dynamically updated because it is automatically reloaded each time Armory Enterprise makes a request.
+#              tokenFile: encryptedFile:k8s!n:spin-secrets!k:bitbucket-tokenfile        # (Secret). File containing a Bitbucket Server authentication token. File needs to be present on the machine running Spinnaker. Supports encrypted file. This file can be dynamically updated because it is automatically reloaded each time Armory Enterprise makes a request.
 #              token: encrypted:k8s!n:spin-secrets!k:bitbucket-token                    # (Secret). Bitbucket Server token.
