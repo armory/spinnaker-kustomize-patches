@@ -34,7 +34,7 @@ spec:
 #    profiles:
 #      dinghy:
 #        parserFormat: hcl   # Must be one of: hcl, yaml, json. Use an alternate format for dinghy files.
-        # Custom branch configuration (see https://docs.armory.io/docs/spinnaker/install-dinghy/#custom-branch-configuration)
+        # Custom branch configuration (see https://docs.armory.io/armory-enterprise/armory-admin/dinghy-enable/#custom-branch-configuration)
 #        repoConfig:
 #          - branch: some_branch
 #            provider: github  # Must be one of: github, bitbucket-cloud, bitbucket-server
@@ -43,3 +43,7 @@ spec:
 #        redis:
 #          baseUrl: "redis://redis.myorg:6379"
 #          password: encrypted:k8s!n:spin-secrets!k:redis-password
+#       # Disable Github pull request notifications (See https://docs.armory.io/armory-enterprise/armory-admin/dinghy-enable/#github-notifications)
+#        notifiers:
+#          github:
+#            enabled: false       # (Default: true) Whether Github pull request notifications are disabled
