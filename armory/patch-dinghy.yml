@@ -45,5 +45,6 @@ spec:
 #          password: encrypted:k8s!n:spin-secrets!k:redis-password
 #       # Disable Github pull request notifications (See https://docs.armory.io/armory-enterprise/armory-admin/dinghy-enable/#github-notifications)
 #        notifiers:
+#          enabled: true  # Needs to stay true for spec.spinnakerConfig.config.armory.dinghy.notifiers
 #          github:
 #            enabled: false       # (Default: true) Whether Github pull request notifications are disabled
