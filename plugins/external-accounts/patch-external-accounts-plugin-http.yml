@@ -43,7 +43,7 @@ spec:
                 spec:
                   initContainers:
                   - name: eap
-                    image: docker.io/armory/eap-plugin:0.3.0-rc.3
+                    image: docker.io/armory/eap-plugin:<plugin_version>
                     volumeMounts:
                       - mountPath: /opt/eap/target
                         name: eap-plugin
