@@ -41,7 +41,7 @@ spec:
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: spin-secrets
+                  name: minio-secret-key
                   key: minioAccessKey
           ports:
             - containerPort: 9000

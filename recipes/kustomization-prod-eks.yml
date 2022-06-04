@@ -13,16 +13,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Namespace where spinnaker and all its infrastructure will be installed.
-# NOTE: If changed, also change it in all ClusterRoleBinding namespace references.
 namespace: spinnaker
 
 resources:
-  - spinnakerservice.yml               # (Mandatory). Base spinnaker manifest
   - expose/ingress-nginx.yml           # Spinnaker ingress definition
 
+components:
+  - core/base
+  # Kubernetes accounts
+  - targets/kubernetes/default
+
 patchesStrategicMerge:
-  - core_config/patch-version.yml
+  - core/patches/version.yml
   # Spinnaker persistence
   - persistence/patch-s3.yml               # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or worker node level, so that AWS access/secret keys are not used in the config. Some auth options include kube2iam and assigning IAM roles to worker nodes in the cluster.
   - persistence/patch-redis.yml            # Use an external redis instead of the one provided by spinnaker
@@ -34,9 +36,6 @@ patchesStrategicMerge:
   # Authentication and authorization using github groups.
   - security/patch-github.yml
 
-  # Kubernetes accounts
-  - accounts/kubernetes/patch-kube.yml
-
   # Docker accounts
   - accounts/docker/patch-dockerhub.yml
 
@@ -44,12 +43,10 @@ patchesStrategicMerge:
   - accounts/git/patch-github.yml
 
   # Spinnaker monitoring
-  - accounts/prometheus/patch-prometheus.yml
+  - accounts/metric-stores/patch-prometheus.yml
 
   # Service sizing
   - spinnaker_deployment/patch-sizing.yml
-
-
 
   # Store spinnaker pipelines as code under source control
   - armory/patch-dinghy.yml
