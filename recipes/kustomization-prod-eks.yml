@@ -22,6 +22,7 @@ resources:
   - expose/ingress-nginx.yml           # Spinnaker ingress definition
 
 patchesStrategicMerge:
+  - core_config/patch-version.yml
   # Spinnaker persistence
   - persistence/patch-s3.yml               # S3 bucket must exist and have a unique name, and access to the bucket should be configured at Kubernetes or worker node level, so that AWS access/secret keys are not used in the config. Some auth options include kube2iam and assigning IAM roles to worker nodes in the cluster.
   - persistence/patch-redis.yml            # Use an external redis instead of the one provided by spinnaker

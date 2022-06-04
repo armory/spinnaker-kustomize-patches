@@ -28,6 +28,7 @@ resources:
   - expose/ingress-traefik.yml              # Use Traefik for Ingress
 
 patchesStrategicMerge:
+  - core_config/patch-version.yml
   - persistence/patch-minio.yml             # (Mandatory). Persistence to store spinnaker applications and pipelines
   - expose/patch-ingress.yml                # Automatically expose spinnaker
   - security/patch-basic-auth.yml           # Enable Basic Auth
