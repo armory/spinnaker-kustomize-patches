@@ -1,0 +1,37 @@
+# Documentation: https://github.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        aws:
+          features:
+            lambda:
+              enabled: true
+          accounts:
+          - name: aws
+            lambdaEnabled: true
+            accountId: "111222333444"
+            assumeRole: role/my-role
+      gate:
+        spinnaker:
+          extensibility:
+              deck-proxy:
+                enabled: true
+                plugins: &lambda-plugin
+                  Aws.LambdaDeploymentPlugin:
+                    enabled: true
+                    version: 1.0.1
+              repositories: &plugin-repositories
+                awsLambdaDeploymentPluginRepo:
+                  url: https://raw.githubusercontent.com/spinnaker-plugins/aws-lambda-deployment-plugin-spinnaker/master/plugins.json  
+      orca:
+        spinnaker:
+          extensibility:
+            plugins:
+              <<: *lambda-plugin
+            repositories:
+              <<: *plugin-repositories
