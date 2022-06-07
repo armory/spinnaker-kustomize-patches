@@ -1,0 +1,21 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      gate:
+        spinnaker:
+          extensibility:
+            plugins: 
+                Armory.ArmoryHeader: 
+                    enabled: false
+            repositories:
+                local-repo:
+                    url: file:///opt/gate/local-plugin-repo/repositories.json
+            deck-proxy:
+              enabled: false
+              plugins: 
+                Armory.ArmoryHeader: 
+                    enabled: false
