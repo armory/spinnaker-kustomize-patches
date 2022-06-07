@@ -1,0 +1,25 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding AWS accounts to spinnaker.
+#
+# Documentation: https://docs.armory.io/docs/spinnaker-install-admin-guides/add-aws-account/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    config:
+      providers:
+        aws:
+          enabled: true
+          primaryAccount: aws
+          accounts:
+          - name: aws
+            accountId: "111222333444"
+            assumeRole: role/my-role
+            providerVersion: V1
+            regions:
+            - name: us-west-2
+          defaultRegions:
+            - name: us-west-2
