@@ -1,0 +1,8 @@
+apiVersion: builtin
+kind: NamespaceTransformer
+metadata:
+  name: add-namespace-to-service-account-resources
+fieldSpecs:
+  - kind: ClusterRoleBinding
+    group: rbac.authorization.k8s.io
+    path: subjects/namespace

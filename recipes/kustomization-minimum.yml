@@ -14,15 +14,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Namespace where spinnaker and all its infrastructure will be installed.
-# NOTE: If changed, also change it in all ClusterRoleBinding namespace references.
 namespace: spinnaker
 
-resources:
-  - spinnakerservice.yml             # (Mandatory). Base spinnaker manifest
-  - infrastructure/minio.yml         # Self hosted minio, a S3 compatible data store
-  - accounts/kubernetes/spin-sa.yml  # Kubernetes service account needed by patch-kube.yml
+components:
+  - core/base
+  - core/persistence/in-cluster
+  - targets/kubernetes/default
 
 patchesStrategicMerge:
-  - persistence/patch-minio.yml   # (Mandatory). Persistence to store spinnaker applications and pipelines
-  - accounts/kubernetes/patch-kube.yml  # Kubernetes accounts
+  - core/patches/version.yml
+
+transformers:
+  - utilities/unique-service-account.yml
