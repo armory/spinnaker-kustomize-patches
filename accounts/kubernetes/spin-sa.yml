@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: spin-cluster-role
+  name: spin-cluster-role-ovidiu
 rules:
 - apiGroups:
   - "extensions"
@@ -121,17 +121,17 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: spin-sa
+  name: spin-sa-ovidiu
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: spin-cluster-role-binding
+  name: spin-cluster-role-binding-ovidiu
 subjects:
   - kind: ServiceAccount
-    name: spin-sa
-    namespace: spinnaker
+    name: spin-sa-ovidiu
+    namespace: ovidiu-dev
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: spin-cluster-role
+  name: spin-cluster-role-ovidiu
