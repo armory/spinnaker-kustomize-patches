@@ -1,13 +1,13 @@
-# Kustomize patches for configuring Armory Continuous Delivery
+# Kustomize patches for configuring Armory Continuous Deployment
 
 This repository contains example [Kustomize](https://kustomize.io) resources to
-configure and deploy Armory Continuous Delivery to your Kubernetes cluster
+configure and deploy Armory Continuous Deployment to your Kubernetes cluster
 using the [Armory Operator][operator-overview].
 
 ## Disclaimer
 
 The example configurations provided in this repository serve as a starting
-point for configuring Armory Continuous Delivery. You may need to modify the
+point for configuring Armory Continuous Deployment. You may need to modify the
 contents for the target environment to work properly. These examples are not
 exhaustive and don't showcase all available combinations of settings. It's
 possible that not all configurations work with all versions of Armory
@@ -20,7 +20,7 @@ See our [System Requirements] page for more details.
 ## All-in-one deployment script
 
 This repo provides a one-click `deploy.sh` script that deploys the Armory
-Operator in `cluster` mode and then Armory Continuous Delivery. This is useful
+Operator in `cluster` mode and then Armory Continuous Deployment. This is useful
 for a proof of concept, but you should not use this script in a production
 environment.
 
@@ -29,7 +29,7 @@ Clone this repository and run `./deploy.sh`.
 The script does the following:
 
 * Deploys the Armory Operator to the `spinnaker-operator` namespace.
-* Deploys a basic Armory Continuous Delivery instance with some default
+* Deploys a basic Armory Continuous Deployment instance with some default
   integrations to the `spinnaker` namespace.
 
 If you already have the Armory Operator deployed, you can use
@@ -57,10 +57,10 @@ When you specify `SPIN_FLAVOR=oss `, the script does the following:
 
 ## Add remote clusters script
 
-For adding remote Kubernetes clusters to Armory Continuous Delivery, you can
+For adding remote Kubernetes clusters to Armory Continuous Deployment, you can
 use the helper script `secrets/create-kubeconfig.sh` to create a Kubernetes
 service account (with cluster admin role) and its corresponding `kubeconfig`
-file for Armory Continuous Delivery to use.
+file for Armory Continuous Deployment to use.
 
 [kustomize]: https://kustomize.io
 [operator-overview]: https://docs.armory.io/armory-enterprise/installation/armory-operator/
