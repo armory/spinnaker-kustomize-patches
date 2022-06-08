@@ -17,9 +17,6 @@ kind: Kustomization
 
 namespace: spinnaker
 
-resources:
-  - infrastructure/redis.yml
-
 components:
   - core/base
   - core/persistence/in-cluster
@@ -27,6 +24,5 @@ components:
 
 patchesStrategicMerge:
   - core/patches/version.yml
-  - persistence/patch-redis.yml
   - expose/patch-lb.yml                 # Automatically expose spinnaker
   - accounts/docker/patch-dockerhub.yml # Docker accounts
