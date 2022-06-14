@@ -1,0 +1,15 @@
+# This utility is useful when you want to use Spinnaker instead of Armory
+# Enterprise. Note that certain Components in this repository can only be
+# configured for Enterprise.
+# 
+# Add it to your Kustomize manifest alongside other components, resources, and
+# patches.
+#
+# patches:
+#   - target:
+#       kind: SpinnakerService
+#     path: utilities/switch-to-oss.yml
+#
+- op: replace
+  path: /apiVersion
+  value: spinnaker.io/v1alpha2

@@ -84,6 +84,8 @@ function change_patch_flavor() {
 
 function check_prerequisites() {
   date >"$OUT"
+  # TODO dogonthehorizon: this can be removed once the operator can be pulled
+  # in via git ref as a component.
   case $SPIN_FLAVOR in
   "oss")
     OP_API_GROUP=spinnakerservices.spinnaker.io
