@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patchesStrategicMerge:
+  - feature.yml
+
+secretGenerator:
+  - name: pac-secret
+    options:
+      disableNameSuffixHash: true
+    literals:
+      - github-token=SampleAccessKey1!
