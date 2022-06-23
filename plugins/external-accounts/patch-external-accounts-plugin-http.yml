@@ -1,0 +1,57 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        armory:
+          external-accounts:
+            url: https://server.company/accounts # (Mandatory). URL where to find account information
+            url-content-format: YAML     # (Mandatory). Content-Type response of the server. Supported formats are JSON and YAML
+        credentials:
+          poller:
+            enabled: true
+            types:
+              kubernetes:                # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+#              cloudfoundry:              # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+#              aws:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+#              ecs:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+#              dockerRegistry:            # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.EAP:
+                enabled: true
+            repositories:
+              eap:
+                enabled: true
+                url: file:///opt/spinnaker/lib/local-plugins/eap/plugins.json
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec:
+              template:
+                spec:
+                  initContainers:
+                  - name: eap
+                    image: docker.io/armory/eap-plugin:<plugin_version>
+                    volumeMounts:
+                      - mountPath: /opt/eap/target
+                        name: eap-plugin
+                  containers:
+                  - name: clouddriver
+                    volumeMounts:
+                      - mountPath: /opt/spinnaker/lib/local-plugins
+                        name: eap-plugin
+                  volumes:
+                  - name: eap-plugin
+                    emptyDir: {}

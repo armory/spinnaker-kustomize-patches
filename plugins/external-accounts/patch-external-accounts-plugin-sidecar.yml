@@ -1,0 +1,86 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        armory:
+          external-accounts:
+            dir: /tmp/accounts       # (Mandatory). directory in clouddriver where git repo will be cloned and accounts will be loaded from
+            file-prefix:             # (Optional). Configures the file prefixes to look for account information within the directory
+              default: clouddriver   # (Optional, default: clouddriver). All files with this prefix will be scanned for loading any type of account for the supported providers
+              kubernetes: kube       # (Optional, default: kube). All files with this prefix will be scanned for loading kubernetes accounts
+#              cloudfoundry: cf       # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
+#              aws: aws               # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
+#              ecs: ecs               # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
+#              dockerRegistry: docker # (Optional, default: docker). All files with this prefix will be scanned for loading docker registry accounts
+        credentials:
+          poller:
+            enabled: true
+            types:
+              kubernetes:                # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+#              cloudfoundry:              # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+#              aws:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+#              ecs:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+#              dockerRegistry:            # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+#                reloadFrequencyMs: 60000
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.EAP:
+                enabled: true
+            repositories:
+              eap:
+                enabled: true
+                url: file:///opt/spinnaker/lib/local-plugins/eap/plugins.json
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec:
+              template:
+                spec:
+                  containers:
+                  - name: eap
+                    image: docker.io/armory/eap-plugin:<plugin_version>
+                    command:
+                    - git-poller 
+                    env:
+                    - name: REPO
+                      value: "https://github.com/MyOrg/my-repo.git"    # Git repository to clone
+                    - name: BRANCH
+                      value: master
+                    - name: GIT_USER
+                      value: my-username
+                    - name: GIT_PASS
+                      valueFrom:
+                        secretKeyRef:
+                          name: spin-secrets
+                          key: github-password
+                    - name: LOCAL_CLONE_DIR
+                      value: "/tmp/accounts"                      # Should match the value in armory.eap.dir
+                    - name: SYNC_INTERVAL_SECS
+                      value: "60"                                 # How often to do a git pull
+                    volumeMounts:
+                      - mountPath: /opt/eap/target
+                        name: eap-plugin
+                      - mountPath: "/tmp/accounts"                
+                        name: git-repo
+                  - name: clouddriver
+                    volumeMounts:
+                      - mountPath: /opt/spinnaker/lib/local-plugins
+                        name: eap-plugin
+                      - mountPath: /tmp/accounts                  # Should match the value in armory.eap.dir
+                        name: git-repo
+                  volumes:
+                  - name: git-repo
+                    emptyDir: {}
+                  - name: eap-plugin
+                    emptyDir: {}
