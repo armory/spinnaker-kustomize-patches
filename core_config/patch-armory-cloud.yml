@@ -1,0 +1,24 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      gate:
+        armory.cloud:
+          enabled: true
+          iam:
+            tokenIssuerUrl: https://auth.cloud.armory.io/oauth/token
+            clientId: <clientId>
+            clientSecret: <clientSecret>
+          api:
+            baseUrl: https://api.cloud.armory.io
+          # The following hub parameters are optional and only needed if you are using features that require Armory's hosted cloud services.
+          hub:
+            baseUrl: https://api.cloud.armory.io/agents
+            grpc:
+              host: agents.cloud.armory.io
+              port: 443
+              tls:
+                insecureSkipVerify: true
