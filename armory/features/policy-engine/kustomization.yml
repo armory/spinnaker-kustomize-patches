@@ -13,3 +13,4 @@ configMapGenerator:
   - name: spin-policies
     files:
      - policies/manual-judgement.rego
+     - policies/save-pipeline.rego
