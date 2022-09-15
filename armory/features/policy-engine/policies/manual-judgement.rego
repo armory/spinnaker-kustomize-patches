@@ -5,5 +5,4 @@ deny["Every pipeline must have a Manual Judgment stage"] {
   manual_judgment_stages = [d | d = input.pipeline.stages[_].type; d == "manualJudgment"]
   count(input.pipeline.stages[_]) > 0
   count(manual_judgment_stages) == 0
-  1 := 0
 }
