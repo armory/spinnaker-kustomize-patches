@@ -28,7 +28,7 @@ spec:
               # Replace with the actual URL to your Open Policy Agent deployment
               baseUrl: http://opa:8181/v1/data
               # Optional. The number of seconds that the Policy Engine will wait for a response from the OPA server. Default is 10 seconds if omitted.
-              # timeoutSeconds: <integer> 
+              # timeoutSeconds: <integer>
         spinnaker:
           extensibility:
             repositories:
@@ -46,7 +46,7 @@ spec:
               plugins:
                 Armory.PolicyEngine:
                   enabled: true
-                  version: &version 0.2.0
+                  version: &version 0.2.2
 
       orca:
         spinnaker:
