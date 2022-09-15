@@ -1,0 +1,34 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Minimum Starting Point recipe
+#
+# Self contained Spinnaker installation with no external dependencies and no additional configuration needed.
+# This is intended as a starting point for any kubernetes cluster.
+# Not for production use.
+#
+# Features:
+# - One Kubernetes account (Spinnaker's own cluster) for deployment targets
+# - Spinnaker authentication disabled
+# - Self hosted minio as a persistent storage
+# - Self hosted redis backend for caching and temporal storage of services
+#-----------------------------------------------------------------------------------------------------------------------
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ovidiu-dev
+resources:
+  - infrastructure/debugging-tools.yml
+components:
+  - core/base
+  - core/persistence/in-cluster
+  - targets/kubernetes/default
+  - targets/aws/base
+#  - armory/features/pipelines-as-code
+
+patchesStrategicMerge:
+  - core/patches/version.yml
+#  - core/patches/patch-orca.yml
+  - core/patches/patch-clouddriver.yml
+#  - accounts/ci/patch-jenkins.yml
+
+transformers:
+  - utilities/unique-service-account.yml

@@ -8,6 +8,6 @@ metadata:
 spec:
   spinnakerConfig:
   # spec.spinnakerConfig.profiles - This section contains the YAML of the service's profile (*-local.yml)
-  profiles:
-    igor:       # is the contents of ~/.hal/default/profiles/igor-local.yml
-      locking.enabled: true  # this must be set in order for Igor's number of replicas to scale to something greater than 1
+    profiles:
+      igor:       # is the contents of ~/.hal/default/profiles/igor-local.yml
+        locking.enabled: true  # this must be set in order for Igor's number of replicas to scale to something greater than 1

@@ -14,7 +14,7 @@ spec:
       armory:
         dinghy:
           enabled: true
-          templateOrg: my-org                                      # SCM organization or namespace where application and template repositories are located
+          templateOrg: ovidiupopa07                                # SCM organization or namespace where application and template repositories are located
           templateRepo: dinghy-templates                           # SCM repository where module templates are located
 #           fiatUser: dinghy-sa                                     # Service account for dinghy to use, required if fiat is enabled
           # --- github settings

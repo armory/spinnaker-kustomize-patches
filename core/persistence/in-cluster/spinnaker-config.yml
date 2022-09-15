@@ -11,7 +11,7 @@ spec:
       persistentStorage:
         persistentStoreType: s3
         s3:
-          bucket: spinnaker                     # The name of an S3 bucket that Spinnaker will use to save information like applications and pipelines.
+          bucket: ovidiu-splat-dev              # The name of an S3 bucket that Spinnaker will use to save information like applications and pipelines.
           rootFolder: front50                   # The root folder in the chosen bucket to place all of Spinnaker's persistent data in.
           region: us-west-2                     # (Optional).
           accessKeyId: minio                    # (Optional). Your AWS Access Key ID. If not provided, Operator/Spinnaker will try to find AWS credentials as described at http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html#credentials-default

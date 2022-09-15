@@ -1,0 +1,24 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.AWSCATsOnEvent:
+                  enabled: true
+            repositories: {}
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec: 
+              template:
+                spec: 
+                  imagePullSecrets:
+                    - name: regcred

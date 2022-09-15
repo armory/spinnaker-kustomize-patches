@@ -59,4 +59,4 @@ spec:
     service-settings:
       clouddriver:
         kubernetes:
-          serviceAccountName: spin-sa-ovidiu
+          serviceAccountName: spin-sa-ovidiu-dev

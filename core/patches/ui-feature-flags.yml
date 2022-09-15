@@ -18,3 +18,13 @@ spec:
           window.spinnakerSettings.kubernetesAdHocInfraWritesEnabled = true;
           // window.spinnakerSettings.notifications.email = window.spinnakerSettings.notifications.email || {};
           // window.spinnakerSettings.notifications.email.enabled = true;
+  kustomize:
+    deck:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec: 
+              template:
+                spec: 
+                  imagePullSecrets:
+                    - name: regcred

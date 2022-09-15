@@ -9,4 +9,4 @@ secretGenerator:
     options:
       disableNameSuffixHash: true
     literals:
-      - github-token=SampleAccessKey1!
+      - github-token=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`

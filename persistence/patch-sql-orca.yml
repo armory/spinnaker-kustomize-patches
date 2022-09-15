@@ -11,6 +11,19 @@ spec:
   spinnakerConfig:
     profiles:
       orca:
+        monitoredDeploy:
+          enabled: true
+          deploymentMonitors:
+            - id: id1
+              name: LiveLogMonitor
+              baseUrl: http://logmonitor.aws.com/spinnaker
+              failOnError: false
+              maxAnalysisMinutes: 40
+            - id: id2
+              name: LocalTestMonitore
+              baseUrl: http://localhost:8080/v1
+              failOnError: true
+              maxAnalysisMinutes: 10
         sql:
           enabled: true
           connectionPool:

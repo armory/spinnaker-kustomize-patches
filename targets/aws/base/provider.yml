@@ -13,13 +13,14 @@ spec:
       providers:
         aws:
           enabled: true
-          primaryAccount: aws
+          primaryAccount: splat-dev
           accounts:
-          - name: aws
-            accountId: "111222333444"
-            assumeRole: role/my-role
+          - name: splat-dev
+            requiredGroupMembership: [ ]
             providerVersion: V1
+            permissions: { }
+            accountId: '764906212235'
             regions:
-            - name: us-west-2
-          defaultRegions:
-            - name: us-west-2
+              - name: us-east-2
+            assumeRole: role/splat-dev20220622232456904300000014
+            lifecycleHooks: [ ]

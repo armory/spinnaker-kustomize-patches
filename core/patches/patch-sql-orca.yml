@@ -1,0 +1,26 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for using SQL as a caching store for ocra.
+#
+# Documentation: https://spinnaker.io/setup/productionize/persistence/orca-sql/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      orca:
+        monitoredDeploy:
+          enabled: true
+          deploymentMonitors:
+            - id: id1
+              name: LiveLogMonitor
+              baseUrl: http://logmonitor.aws.com/spinnaker
+              failOnError: false
+              maxAnalysisMinutes: 40
+            - id: id2
+              name: LocalTestMonitore
+              baseUrl: http://localhost:8080/v1
+              failOnError: true
+              maxAnalysisMinutes: 10
