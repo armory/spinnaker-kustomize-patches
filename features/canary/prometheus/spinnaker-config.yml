@@ -23,15 +23,20 @@ spec:
               baseUrl: http://prometheus:9090       # (Required). The base URL to the Prometheus server.
             supportedTypes:
             - METRICS_STORE
-            - CONFIGURATION_STORE
             #username: admin                      # (Optional). Username for Prometheus Basic Auth
             #password: encrypted:k8s!n:spin-secrets!k:prometheus-password  # (Optional). Password for Prometheus Basic Auth
 
-        # NOTE: Needed to get past an operator/halyard validation issue
         - name: aws
-          enabled: false
-          accounts: []
-
+          enabled: true
+          accounts:
+            - name: aws
+              bucket: armory-kayenta-test-bucket
+              region: us-west-2
+              rootFolder: kayenta
+              supportedTypes:
+                - CONFIGURATION_STORE
+                - OBJECT_STORE
+          s3Enabled: true
         reduxLoggerEnabled: true                 # Whether or not to enable redux logging in the canary module in deck (Default: true).
         defaultJudge: NetflixACAJudge-v1.0       # Name of canary judge to use by default (Default: NetflixACAJudge-v1.0).
         stagesEnabled: true                      # Whether or not to enable canary stages in deck (Default: true).
