@@ -35,7 +35,7 @@ spec:
             repositories:
               policyEngine:
                 enabled: true
-                url: https://raw.githubusercontent.com/armory-plugins/policy-engine-releases/master/repositories.json
+                url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
       gate:
         spinnaker:
           extensibility:
@@ -47,7 +47,7 @@ spec:
               plugins:
                 Armory.PolicyEngine:
                   enabled: true
-                  version: &version 0.2.2
+                  version: &version 0.3.0-snapshot.master.b1bdd2d
 
       orca:
         spinnaker:
