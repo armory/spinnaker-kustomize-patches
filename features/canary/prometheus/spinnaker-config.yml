@@ -1,11 +1,15 @@
-#-----------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Example configuration for enabling canary through prometheus endpoints
-#-----------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
   name: spinnaker
 spec:
+  validation:
+    providers:
+      canary:
+        enabled: false
   spinnakerConfig:
     config:
       canary:
@@ -16,11 +20,16 @@ spec:
           accounts:
           - name: prometheus
             endpoint:
-              baseUrl: http://myprometheus       # (Required). The base URL to the Prometheus server.
+              baseUrl: http://prometheus:9090       # (Required). The base URL to the Prometheus server.
             supportedTypes:
             - METRICS_STORE
             #username: admin                      # (Optional). Username for Prometheus Basic Auth
             #password: encrypted:k8s!n:spin-secrets!k:prometheus-password  # (Optional). Password for Prometheus Basic Auth
+
+        # NOTE: Needed to get past an operator/halyard validation issue
+        - name: aws
+          enabled: false
+          accounts: []
 
         reduxLoggerEnabled: true                 # Whether or not to enable redux logging in the canary module in deck (Default: true).
         defaultJudge: NetflixACAJudge-v1.0       # Name of canary judge to use by default (Default: NetflixACAJudge-v1.0).
