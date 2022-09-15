@@ -24,6 +24,7 @@ spec:
       spinnaker:
         armory:
           policyEngine:
+            failOpen: true
             opa:
               # Replace with the actual URL to your Open Policy Agent deployment
               baseUrl: http://opa:8181/v1/data
