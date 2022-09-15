@@ -23,6 +23,7 @@ spec:
               baseUrl: http://prometheus:9090       # (Required). The base URL to the Prometheus server.
             supportedTypes:
             - METRICS_STORE
+            - CONFIGURATION_STORE
             #username: admin                      # (Optional). Username for Prometheus Basic Auth
             #password: encrypted:k8s!n:spin-secrets!k:prometheus-password  # (Optional). Password for Prometheus Basic Auth
 
