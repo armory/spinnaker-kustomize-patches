@@ -24,7 +24,7 @@ spec:
           - name: ecr
             providerVersion: V1
             address:                          # (Required). The ECR registry address you want to pull and deploy images from
-            email: fake.email@spinnaker.io    # Your docker registry email (often this only needs to be well-formed, rather than be a real address)
+            email: unused@example.com         # Your docker registry email (often this only needs to be well-formed, rather than be a real address)
             username: AWS
             passwordCommand: aws --region us-east-1 ecr get-authorization-token --output text --query 'authorizationData[].authorizationToken' | base64 -d | sed 's/^AWS://'
             cacheIntervalSeconds: 30          # (Default: 30). How many seconds elapse between polling your docker registry. Certain registries are sensitive to over-polling, and larger intervals (e.g. 10 minutes = 600 seconds) are desirable if you’re seeing rate limiting.
@@ -34,7 +34,7 @@ spec:
             paginateSize: 100                 # (Default: 100). Paginate size for the docker repository _catalog endpoint.
             permissions: {}
             repositories:                     # (Default: []). An optional list of repositories to cache images from. If not provided, Spinnaker will attempt to read accessible repositories from the registries _catalog endpoint
-              - ecr-test
+              - spinnaker-summit-22
             requiredGroupMembership: []
             sortTagsByDate: false             # (Default: false). Sort tags by creation date.
             trackDigests: false               # (Default: false). Track digest changes. This is not recommended as it consumes a high QPM, and most registries are flaky.
