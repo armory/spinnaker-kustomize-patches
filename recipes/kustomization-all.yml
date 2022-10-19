@@ -90,11 +90,9 @@ patchesStrategicMerge:
 #  - spinnaker_deployment/patch-cloudsql-sidecars.yml    ## (Optional) Google Cloud Proxy Sidecars for CloudSQL
 
   # Customization to core configuration
-  - core_config/patch-timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
-  - core_config/patch-features.yml                      ## (Optional) adjust features of the deployment {sometimes new features are locked behind feature flags}
+  - core/patches/timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
   - core/patches/version.yml                            ## Set the deployed Spinnaker version
-  - core_config/patch-deck.yml
-  # - core_config/patch-componentsizing.yml             ## Set resource requests and limits
+  - core/patches/ui-feature-flags.yml
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml

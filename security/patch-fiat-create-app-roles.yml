@@ -5,7 +5,7 @@ metadata:
 spec:
   spinnakerConfig:
     profiles:
-    #  deck: # Enable this setting under core_config/patch-deck.yml
+    #  deck: # Enable this setting under core/patches/ui-feature-flags.yml
     #    settings-local.js: |
     #      window.spinnakerSettings.authEnabled = true;
       fiat:
