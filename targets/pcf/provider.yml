@@ -14,7 +14,7 @@ spec:
           primaryAccount: cf-1
           accounts:
           - name: cf-1
-            password: encrypted:k8s!n:pcf-secret:cf-password
+            password: encrypted:k8s!n:pcf-secret!k:cf-password
             user: user
             skipSslValidation: false
             api: mydomain.com
