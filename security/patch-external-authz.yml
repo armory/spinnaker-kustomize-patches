@@ -13,7 +13,7 @@ spec:
           groupMembership:
             service: EXTERNAL
     profiles:
-      #deck: # Enable this setting under core_config/patch-deck.yml
+      #deck: # Enable this setting under core/patches/ui-feature-flags.yml
       #  settings-local.js: |
       #    window.spinnakerSettings.authEnabled = true;
 
@@ -28,7 +28,7 @@ spec:
 
       # enable pipeline permissions: https://spinnaker.io/setup/security/authorization/pipeline-permissions/
 
-      # Enable this setting under core_config/patch-deck.yml
+      # Enable this setting under core/patches/ui-feature-flags.yml
       #deck:
       #  settings-local.js: |
       #    window.spinnakerSettings.feature.managedServiceAccounts = true;

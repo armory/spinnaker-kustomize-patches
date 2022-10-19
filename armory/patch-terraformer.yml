@@ -31,7 +31,7 @@ spec:
 #              sshKnownHostsFilePath: hosts     # (Secret). File containing the known and trusted SSH hosts. File needs to be present on the machine running Spinnaker.
 #              sshTrustUnknownHosts: false      # Setting this to true allows Spinnaker to authenticate with unknown hosts.
     profiles:
-      # deck:  # Enable this setting under core_config/patch-deck.yml
+      # deck:  # Enable this setting under core/patches/ui-feature-flags.yml
       #   # Enables terraformer UI
       #   settings-local.js: |
       #     window.spinnakerSettings.feature.terraform = true;
