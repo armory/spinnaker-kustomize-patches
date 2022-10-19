@@ -17,6 +17,23 @@ Continuous Delivery.
 
 See our [System Requirements] page for more details.
 
+## Components
+
+This repository makes use of [Kustomize Components] to make configuration
+simpler for evaluation purposes.
+
+### Persistence
+
+There are two options for persisting cluster metadata. For instructions on
+configuring each, consult the associated READMEs.
+
+- [in-cluster]
+- [s3][s3-persistence]
+
+[Kustomize Components]: https://github.com/kubernetes/enhancements/blob/master/keps/sig-cli/1802-kustomize-components/README.md
+[in-cluster]: core/persistence/in-cluster/README.md
+[s3-persistence]: core/persistence/s3/README.md
+
 ## All-in-one deployment script
 
 This repo provides a one-click `deploy.sh` script that deploys the Armory
