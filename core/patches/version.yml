@@ -5,4 +5,4 @@ metadata:
 spec:
   spinnakerConfig:
     config:
-      version: 2.27.3            # Spinnaker version to deploy
+      version: 2.28.0            # Spinnaker version to deploy
