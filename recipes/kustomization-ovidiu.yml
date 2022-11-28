@@ -22,10 +22,11 @@ components:
   - core/persistence/in-cluster
   - targets/kubernetes/default
   - targets/aws/base
-#  - armory/features/pipelines-as-code
+  - armory/features/policy-engine
 
 patchesStrategicMerge:
   - core/patches/version.yml
+#  - armory/patch-policy-engine-plugin.yml
 #  - core/patches/patch-orca.yml
   - core/patches/patch-clouddriver.yml
 #  - accounts/ci/patch-jenkins.yml
