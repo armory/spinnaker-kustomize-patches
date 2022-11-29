@@ -15,3 +15,6 @@ configMapGenerator:
       - policies/manual-judgement.rego
       - policies/save-pipeline.rego
       - policies/deploy-manifest.rego
+      - policies/authz-policy.rego
+      - policies/execution-policy.rego
+      - policies/after-execution-policy.rego

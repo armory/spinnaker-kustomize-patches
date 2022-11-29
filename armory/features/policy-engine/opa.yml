@@ -27,7 +27,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: Group
-    name: system:serviceaccounts:spinnaker
+    name: system:serviceaccounts:ovidiu-dev
     apiGroup: rbac.authorization.k8s.io
 ---
 # Define role in the `opa` namespace for OPA/kube-mgmt to update configmaps with policy status.
@@ -35,7 +35,7 @@ subjects:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  namespace: opa
+  namespace: ovidiu-dev
   name: configmap-modifier
 rules:
   - apiGroups: [""]
@@ -48,7 +48,7 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  namespace: opa
+  namespace: ovidiu-dev
   name: opa-configmap-modifier
 roleRef:
   kind: Role
@@ -63,7 +63,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: opa-deployment
-  namespace: opa
+  namespace: ovidiu-dev
   labels:
     app: opa
 spec:
@@ -106,14 +106,14 @@ spec:
           image: openpolicyagent/kube-mgmt:0.9
           args:
             # Change this to the namespace where you want OPA to look for policies
-            - "--policies=spinnaker"
+            - "--policies=ovidiu-dev"
 ---
 # Create a static DNS endpoint for Spinnaker to reach OPA
 apiVersion: v1
 kind: Service
 metadata:
   name: opa
-  namespace: opa
+  namespace: ovidiu-dev
 spec:
   selector:
     app: opa
