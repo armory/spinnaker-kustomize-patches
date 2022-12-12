@@ -3,17 +3,17 @@
 # in Armory Enterprise pipelines.
 #
 # Feature documentation:
-# https://docs.armory.io/docs/armory-admin/policy-engine/policy-engine-enable/policy-engine-plug-enable/
+# https://docs.armory.io/continuous-deployment/armory-admin/policy-engine/policy-engine-enable/policy-engine-plug-enable/
 #
 # Make sure you check the plugin compatibility for each release before deciding
-# on a version. For example, for Armory Enterprise 2.27.1 you can find the
+# on a version. For example, for Armory Enterprise 2.28.1 you can find the
 # matrix here:
-# https://docs.armory.io/docs/release-notes/rn-armory-spinnaker/armoryspinnaker_v2-27-1/#plugin-compatibility
+# https://docs.armory.io/continuous-deployment/release-notes/rn-armory-spinnaker/armoryspinnaker_v2-28-1/#plugin-compatibility
 #
 # Actual policies are defined in the "policies" folder and loaded into a
 # ConfigMap.
 #------------------------------------------------------------------------------
-apiVersion: spinnaker.armory.io/v1alpha2
+apiVersion: spinnaker.armory.io/v1alpha2 # Replace this value with spinnaker.io/v1alpha2 if you are using Spinnaker and the Spinnaker Operator
 kind: SpinnakerService
 metadata:
   name: spinnaker
