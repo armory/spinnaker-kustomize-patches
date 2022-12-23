@@ -41,4 +41,4 @@ spec:
               roleProviderType: GITHUB
               baseUrl: https://api.github.com           # Used if using GitHub enterprise or some other non github.com GitHub installation.
               accessToken: encrypted:k8s!n:spin-secrets!k:github-token # (Secret). A personal access token of an account with access to your organization’s GitHub Teams structure. Supports encrypted value.
-              organization: myorg                       # The GitHub organization under which to query for GitHub Teams.
+              organization: kkotula                       # The GitHub organization under which to query for GitHub Teams.
