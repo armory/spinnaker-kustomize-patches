@@ -24,7 +24,7 @@ spec:
     spec:
       serviceAccount: spin-sa
       containers:
-      - image: armory/kubesvc
+      - image: armory/agent-k8s
         imagePullPolicy: IfNotPresent
         name: kubesvc
         env:
