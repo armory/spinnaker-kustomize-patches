@@ -7,8 +7,8 @@ kubernetes:
    - name: remote
      kinds: []
      omitKinds: []
-     kubeconfigFile: /kubeconfigfiles/kubecfg-remote
-
+     #kubeconfigFile: /kubeconfigfiles/kubecfg-remote
+     kubeconfigFile: encryptedFile:secrets-manager!r:us-east-2!s:christine-spin-secrets-remote
 clouddriver:
   grpc: spin-clouddriver-grpc.christine-zhao.svc.cluster.local:9091
   insecure: true
