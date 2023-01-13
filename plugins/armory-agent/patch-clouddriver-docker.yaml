@@ -1,8 +1,8 @@
+--- #-----------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------
-# Example configuration for adding the Kubernetes Agent plugin to clouddriver
+# Example configuration for adding the Scale Agent plugin Docker image to Clouddriver
 #
-# Documentation: https://docs.armory.io/docs/armory-agent/armory-agent-quick/
-#-----------------------------------------------------------------------------------------------------------------
+# Documentation: https://docs.armory.io/scale-agent/
 apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
@@ -12,12 +12,12 @@ spec:
     profiles:
       clouddriver:
         kubernetes:
-          enabled: true    # This is not needed if spinnaker already has kubernetes V2 accounts enabled by other files
+          enabled: true # This is not needed if Spinnaker already has Kubernetes V2 accounts enabled by other files
 
         sql:
-          enabled: true    # kubesvc depends on clouddriver using SQL. See patch-sql-clouddriver for full configuration
+          enabled: true # kubesvc depends on Clouddriver using SQL. See patch-sql-clouddriver for full configuration
         redis:
-          enabled: true    # kubesvc depends on redis for internal pub/sub communication
+          enabled: true # kubesvc depends on Redis for internal pub/sub communication
 
         kubesvc:
           cluster: redis
@@ -51,7 +51,7 @@ spec:
                 spec:
                   initContainers:
                   - name: kubesvc-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.9.16  # See https://docs.armory.io/docs/armory-agent/armory-agent-quick/ for available versions
+                    image: docker.io/armory/kubesvc-plugin:0.11.26  # Replace with a version compatible with your Armory CD version
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: kubesvc-plugin-vol

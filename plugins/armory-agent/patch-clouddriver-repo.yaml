@@ -1,0 +1,35 @@
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding the Scale Agent plugin to Clouddriver
+#
+# Documentation: https://docs.armory.io/scale-agent/
+#-----------------------------------------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        spinnaker:
+          extensibility:
+            repositories:
+              armory-agent-k8s-spinplug-releases:
+                enabled: true
+                url: https://raw.githubusercontent.com/armory-io/agent-k8s-spinplug-releases/master/repositories.json
+            plugins:
+              Armory.Kubesvc:
+                enabled: true
+                version: 0.11.26  # Replace with a version compatible with your Armory CD version
+                extensions:
+                  armory.kubesvc:
+                    enabled: true
+        # Plugin config
+        kubesvc:
+          cluster: kubernetes
+          cluster-kubernetes:
+            kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
+            verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
+            namespace: <string> # (Optional, default: null). If configured, the plugin watches Endpoints in this namespace. If null, it watches endpoints in the namespace indicated in the file "/var/run/secrets/kubernetes.io/serviceaccount/namespace".
+            httpPortName: <string> # (Optional, default: http). Name of the port configured in the Clouddriver Service that forwards traffic to the Clouddriver HTTP port for REST requests.
+            clouddriverServiceNamePrefix: <string> # (Optional, default: spin-clouddriver). Name prefix of the Kubernetes Service pointing to the Clouddriver standard HTTP port.
