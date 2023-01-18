@@ -48,4 +48,3 @@ spec:
                   volumes:
                   - name: armory-agent-plugin-vol
                     emptyDir: {}
-```
