@@ -11,38 +11,23 @@ spec:
   spinnakerConfig:
     profiles:
       clouddriver:
-        kubernetes:
-          enabled: true # This is not needed if Spinnaker already has Kubernetes V2 accounts enabled by other files
-
-        sql:
-          enabled: true # kubesvc depends on Clouddriver using SQL. See patch-sql-clouddriver for full configuration
-        redis:
-          enabled: true # kubesvc depends on Redis for internal pub/sub communication
-
-        kubesvc:
-          cluster: redis
-
         spinnaker:
           extensibility:
             pluginsRootPath: /opt/clouddriver/lib/plugins
             plugins:
               Armory.Kubesvc:
                 enabled: true
-                extensions:
-                  armory.kubesvc:
-                    enabled: true
-
+        # Plugin config
+        kubesvc:
+          cluster: kubernetes
+          cluster-kubernetes:
+            kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
+            verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
+            namespace: <string> # (Optional, default: null). If configured, the plugin watches Endpoints in this namespace. If null, it watches endpoints in the namespace indicated in the file "/var/run/secrets/kubernetes.io/serviceaccount/namespace".
+            httpPortName: <string> # (Optional, default: http). Name of the port configured in the Clouddriver Service that forwards traffic to the Clouddriver HTTP port for REST requests.
+            clouddriverServiceNamePrefix: <string> # (Optional, default: spin-clouddriver). Name prefix of the Kubernetes Service pointing to the Clouddriver standard HTTP port.
   kustomize:
     clouddriver:
-      service:
-        patchesStrategicMerge:
-          - |
-            spec:
-              ports:
-                - name: http
-                  port: 7002
-                - name: grpc
-                  port: 9091
       deployment:
         patchesStrategicMerge:
           - |
@@ -50,16 +35,17 @@ spec:
               template:
                 spec:
                   initContainers:
-                  - name: kubesvc-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.11.26  # Replace with a version compatible with your Armory CD version
+                  - name: armory-agent-plugin
+                    image: docker.io/armory/kubesvc-plugin:0.11.26 # must be compatible with your Armory CD version
                     volumeMounts:
                       - mountPath: /opt/plugin/target
-                        name: kubesvc-plugin-vol
+                        name: armory-agent-plugin-vol
                   containers:
                   - name: clouddriver
                     volumeMounts:
                       - mountPath: /opt/clouddriver/lib/plugins
-                        name: kubesvc-plugin-vol
+                        name: armory-agent-plugin-vol
                   volumes:
-                  - name: kubesvc-plugin-vol
+                  - name: armory-agent-plugin-vol
                     emptyDir: {}
+```
