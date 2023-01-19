@@ -23,7 +23,7 @@ components:
 
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
-#  - plugins/armory-agent                    # (Optional). Alternate implementation for kubernetes deployments. Requires plugins/armory-agent/patch-clouddriver.yaml and persistence/patch-sql-clouddriver.yml
+#  - plugins/armory-agent                    # (Optional). Alternate implementation for kubernetes deployments. Requires either plugins/armory-agent/patch-clouddriver-docker.yaml or plugins/armory-agent/patch-clouddriver-repo.yaml, and persistence/patch-sql-clouddriver.yml
 
 patchesStrategicMerge:
 #  - persistence/patch-s3.yml
@@ -96,7 +96,7 @@ patchesStrategicMerge:
 
   # Plugins
 #  - plugins/patch-plugin-wait.yml
-#  - plugins/armory-agent/patch-clouddriver.yaml  # Requires persistence/patch-sql-clouddriver.yml and the base dir plugins/armory-agent
+#  - plugins/armory-agent/patch-clouddriver-docker.yaml or plugins/armory-agent/patch-clouddriver-repo.yaml  # Requires persistence/patch-sql-clouddriver.yml and the base dir plugins/armory-agent
 
 # Mounting any custom files into spinnaker pods (see patch-volumes.yml)
 #generatorOptions:
