@@ -1,0 +1,50 @@
+--- #-----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding the Scale Agent plugin Docker image to Clouddriver
+#
+# Documentation: https://docs.armory.io/scale-agent/
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        spinnaker:
+          extensibility:
+            pluginsRootPath: /opt/clouddriver/lib/plugins
+            plugins:
+              Armory.Kubesvc:
+                enabled: true
+        # Plugin config
+        kubesvc:
+          cluster: kubernetes
+          cluster-kubernetes:
+            kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
+            verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
+            namespace: <string> # (Optional, default: null). If configured, the plugin watches Endpoints in this namespace. If null, it watches endpoints in the namespace indicated in the file "/var/run/secrets/kubernetes.io/serviceaccount/namespace".
+            httpPortName: <string> # (Optional, default: http). Name of the port configured in the Clouddriver Service that forwards traffic to the Clouddriver HTTP port for REST requests.
+            clouddriverServiceNamePrefix: <string> # (Optional, default: spin-clouddriver). Name prefix of the Kubernetes Service pointing to the Clouddriver standard HTTP port.
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec:
+              template:
+                spec:
+                  initContainers:
+                  - name: armory-agent-plugin
+                    image: docker.io/armory/kubesvc-plugin:0.11.26 # must be compatible with your Armory CD version
+                    volumeMounts:
+                      - mountPath: /opt/plugin/target
+                        name: armory-agent-plugin-vol
+                  containers:
+                  - name: clouddriver
+                    volumeMounts:
+                      - mountPath: /opt/clouddriver/lib/plugins
+                        name: armory-agent-plugin-vol
+                  volumes:
+                  - name: armory-agent-plugin-vol
+                    emptyDir: {}
