@@ -3,7 +3,7 @@ kind: Kustomization
 
 images:
   - name: armory/agent-k8s
-    newTag: 0.6.0    # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+    newTag: 1.0.42 # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
 
 resources:
 - deployment.yaml
