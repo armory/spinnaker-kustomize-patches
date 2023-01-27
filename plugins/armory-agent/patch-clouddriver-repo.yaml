@@ -20,16 +20,25 @@ spec:
             plugins:
               Armory.Kubesvc:
                 enabled: true
-                version: 0.11.26  # Replace with a version compatible with your Armory CD version
+                version: 0.11.31 # Replace with a version compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
                 extensions:
                   armory.kubesvc:
                     enabled: true
-        # Plugin config
+        kubernetes:
+          enabled: true # This is not needed if spinnaker already has kubernetes V2 accounts enabled by other files
+        sql:
+          enabled: true # kubesvc depends on clouddriver using SQL. See patch-sql-clouddriver for full configuration
+          scheduler:
+            enabled: true
+        redis:
+          enabled: false # kubesvc deprecate the use of redis
+          scheduler:
+            enabled: false
         kubesvc:
-          cluster: kubernetes
-          cluster-kubernetes:
-            kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
-            verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
-            namespace: <string> # (Optional, default: null). If configured, the plugin watches Endpoints in this namespace. If null, it watches endpoints in the namespace indicated in the file "/var/run/secrets/kubernetes.io/serviceaccount/namespace".
-            httpPortName: <string> # (Optional, default: http). Name of the port configured in the Clouddriver Service that forwards traffic to the Clouddriver HTTP port for REST requests.
-            clouddriverServiceNamePrefix: <string> # (Optional, default: spin-clouddriver). Name prefix of the Kubernetes Service pointing to the Clouddriver standard HTTP port.
+          cluster: kubernetes # Communication between clouddrivers is through direct HTTP requests instead of using the redis pubusb, requires redis.enabled: false
+          #cluster-kubernetes:
+            #kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
+            #verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
+            #namespace: <string> # (Optional, default: null). If configured, the plugin watches Endpoints in this namespace. If null, it watches endpoints in the namespace indicated in the file "/var/run/secrets/kubernetes.io/serviceaccount/namespace".
+            #httpPortName: <string> # (Optional, default: http). Name of the port configured in the Clouddriver Service that forwards traffic to the Clouddriver HTTP port for REST requests.
+            #clouddriverServiceNamePrefix: <string> # (Optional, default: spin-clouddriver). Name prefix of the Kubernetes Service pointing to the Clouddriver standard HTTP port.
