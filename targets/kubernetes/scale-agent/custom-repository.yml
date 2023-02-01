@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/spinnakerConfig/profiles/clouddriver/spinnaker/extensibility/repositories/armory-agent-k8s-spinplug-releases/url
+  value: my.custom.domain.com/repositories.json

@@ -11,9 +11,6 @@
 # - Spinnaker authentication disabled
 # - Self hosted minio as a persistent storage
 # - Self hosted redis backend for caching and temporal storage of services
-#
-# Scratch:
-#   - [ ] OSS version & plugin version compatibility
 #-------------------------------------------------------------------------------
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -24,7 +21,7 @@ components:
   - operator/oss/cluster                  # Installs the OSS Operator
   - core/base                             # Defines base configuration across the cluster
   - core/persistence/in-cluster           # Enables persistence using MinIO in-cluster
-  - targets/kubernetes/scale-agent/plugin # Enables the plugin version of the Scale Agent
+  - targets/kubernetes/scale-agent # Enables the plugin version of the Scale Agent
 
 patchesStrategicMerge:
   - core/patches/oss-version.yml          # Sets the OSS version to use

@@ -8,3 +8,6 @@ images:
 resources:
   - scale-agent-service.yml
   - scale-agent-deployment.yml
+
+patchesStrategicMerge:
+  - ./plugin-config.yml
