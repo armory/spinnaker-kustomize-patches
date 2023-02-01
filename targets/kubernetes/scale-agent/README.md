@@ -8,10 +8,10 @@ Please consult [our existing docs] for installation in a CDSH cluster.
 
 ## Usage
 
-A quick-start recipe is available in
-[../../../recipes/kustomization-oss-all.yml]. It assumes you are starting from
-a clean Kubernetes cluster and will install the Spinnaker Operator as well as a
-minimal Spinnaker cluster with Scale Agent enabled.
+A quick-start recipe is available in the `recipes/kustomization-oss-all.yml`
+file in the root of this project. . It assumes you are starting from a clean
+Kubernetes cluster and will install the Spinnaker Operator as well as a minimal
+Spinnaker cluster with Scale Agent enabled.
 
 If you already have the Operator installed and an existing Kustomization file
 then add the following configuration fields:
@@ -73,9 +73,9 @@ patches:
 
 # Development
 
-Versions of the Scale Agent are not updated automatically in [./versions/],
-they will need to be updated on each release.
+Versions of the Scale Agent are not updated automatically in the `versions/`
+subdirectory, they will need to be updated on each release.
 
-Versions of the Scale Agent itself will need to be updated as well in [./kustomization.yaml].
+Versions of the Scale Agent itself will need to be updated as well in `./kustomization.yml`.
 
 [cdsh-scale-agent-docs]: https://docs.armory.io/scale-agent/install/install-agent-plugin/
