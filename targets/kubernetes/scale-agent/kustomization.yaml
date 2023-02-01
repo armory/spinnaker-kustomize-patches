@@ -10,4 +10,17 @@ resources:
   - scale-agent-deployment.yml
 
 patchesStrategicMerge:
-  - ./plugin-config.yml
+  - ./plugin-config.yml  
+
+secretGenerator:
+  - name: spin-secrets
+    options:
+      disableNameSuffixHash: true
+    literals:
+      - mysqlRootPassword=changeme
+      - mysqlCdPassword=changeme
+      - mysqlCdMigratePassword=changeme
+      - mysqlOrcaPassword=changeme
+      - mysqlOrcaMigratePassword=changeme
+      - mysqlF50Password=changeme
+      - mysqlF50MigratePassword=changeme
