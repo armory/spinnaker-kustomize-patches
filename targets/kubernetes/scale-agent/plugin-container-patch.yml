@@ -1,0 +1,59 @@
+--- #-----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------
+# Example configuration for adding the Scale Agent plugin Docker image to Clouddriver
+#
+# Documentation: https://docs.armory.io/scale-agent/
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        spinnaker:
+          extensibility:
+            pluginsRootPath: /opt/clouddriver/lib/plugins
+            plugins:
+              Armory.Kubesvc:
+                enabled: true
+        kubernetes:
+          enabled: true # This is not needed if spinnaker already has kubernetes V2 accounts enabled by other files
+        sql:
+          enabled: true # kubesvc depends on clouddriver using SQL. See patch-sql-clouddriver for full configuration
+          scheduler:
+            enabled: true
+        redis:
+          enabled: false # kubesvc deprecate the use of redis
+          scheduler:
+            enabled: false
+        kubesvc:
+          cluster: kubernetes # Communication between clouddrivers is through direct HTTP requests instead of using the redis pubusb, requires redis.enabled: false
+          #cluster-kubernetes:
+            #kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
+            #verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
+            #namespace: <string> # (Optional, default: null). If configured, the plugin watches Endpoints in this namespace. If null, it watches endpoints in the namespace indicated in the file "/var/run/secrets/kubernetes.io/serviceaccount/namespace".
+            #httpPortName: <string> # (Optional, default: http). Name of the port configured in the Clouddriver Service that forwards traffic to the Clouddriver HTTP port for REST requests.
+            #clouddriverServiceNamePrefix: <string> # (Optional, default: spin-clouddriver). Name prefix of the Kubernetes Service pointing to the Clouddriver standard HTTP port.
+  kustomize:
+    clouddriver:
+      deployment:
+        patchesStrategicMerge:
+          - |
+            spec:
+              template:
+                spec:
+                  initContainers:
+                  - name: armory-agent-plugin
+                    image: docker.io/armory/kubesvc-plugin:0.11.31 # must be compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+                    volumeMounts:
+                      - mountPath: /opt/plugin/target
+                        name: armory-agent-plugin-vol
+                  containers:
+                  - name: clouddriver
+                    volumeMounts:
+                      - mountPath: /opt/clouddriver/lib/plugins
+                        name: armory-agent-plugin-vol
+                  volumes:
+                  - name: armory-agent-plugin-vol
+                    emptyDir: {}
