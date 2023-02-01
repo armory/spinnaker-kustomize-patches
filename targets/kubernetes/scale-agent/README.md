@@ -84,6 +84,7 @@ configMapGenerator:
   - armory-agent.yaml
 ```
 
+
 # Development
 
 Versions of the Scale Agent are not updated automatically in the `versions/`
