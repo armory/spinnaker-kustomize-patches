@@ -71,6 +71,20 @@ patches:
     path: targets/kubernetes/scale-agent/custom-repository.yml
 ```
 
+# Customizing Scale Agent Settings
+```yaml
+patchesStrategicMerge:
+  - ./plugin-config.yml
+  - ./agent-config.yml # patches the deployment to mount the configuration file
+  
+# generates the settings that will be mounted in the agent container
+configMapGenerator:
+- name: agent-config
+  files:
+  - armory-agent.yaml
+```
+
+
 # Development
 
 Versions of the Scale Agent are not updated automatically in the `versions/`

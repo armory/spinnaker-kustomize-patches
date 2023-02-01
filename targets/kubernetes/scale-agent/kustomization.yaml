@@ -10,7 +10,7 @@ resources:
   - scale-agent-deployment.yml
 
 patchesStrategicMerge:
-  - ./plugin-config.yml  
+  - ./plugin-config.yml
 
 secretGenerator:
   - name: spin-secrets
