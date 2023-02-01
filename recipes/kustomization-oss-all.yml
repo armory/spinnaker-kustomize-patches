@@ -13,10 +13,8 @@
 # - Self hosted redis backend for caching and temporal storage of services
 #
 # Scratch:
-#   - [x] Kustomization -- example e2e install
-#   - [ ] Operator config
-#   - [x] OSS transformer
-#   - [ ] Component -- just installs scale agent
+#   - [x] Operator config
+#   - [ ] OSS version & plugin version compatibility
 #   - [ ] SA & Bindings
 #-------------------------------------------------------------------------------
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -25,17 +23,18 @@ kind: Kustomization
 namespace: spinnaker
 
 components:
-  - core/base
-  - core/persistence/in-cluster
-  - targets/kubernetes/scale-agent/plugin
-  #- targets/kubernetes/default
+  - operator/oss/cluster                  # Installs the OSS Operator
+  - core/base                             # Defines base configuration across the cluster
+  - core/persistence/in-cluster           # Enables persistence using MinIO in-cluster
+  - targets/kubernetes/scale-agent/plugin # Enables the plugin version of the Scale Agent
 
 patchesStrategicMerge:
-  - core/patches/oss-version.yml
+  - core/patches/oss-version.yml          # Sets the OSS version to use
 
 transformers:
-  - utilities/unique-service-account.yml
+  - utilities/unique-service-account.yml  # Ensures that ServiceAccounts are unique
 
+# This patch ensures that the correct OSS apiVersion is used.
 patches:
   - target:
       kind: SpinnakerService
