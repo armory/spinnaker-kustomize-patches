@@ -13,9 +13,7 @@
 # - Self hosted redis backend for caching and temporal storage of services
 #
 # Scratch:
-#   - [x] Operator config
 #   - [ ] OSS version & plugin version compatibility
-#   - [ ] SA & Bindings
 #-------------------------------------------------------------------------------
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

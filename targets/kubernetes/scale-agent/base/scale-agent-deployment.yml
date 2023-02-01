@@ -21,7 +21,6 @@ spec:
         app.kubernetes.io/part-of: spinnaker
         cluster: armory-agent
     spec:
-      serviceAccountName: spin-sa
       containers:
       - image: armory/agent-k8s
         imagePullPolicy: IfNotPresent
@@ -43,20 +42,7 @@ spec:
           timeoutSeconds: 1
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /opt/armory/config
-          name: volume-agent-config
-        - mountPath: /kubeconfigfiles
-          name: spin-secrets
       restartPolicy: Always
-      volumes:
-      - name: volume-agent-config
-        configMap:
-          name: agent-config
-      - name: spin-secrets
-        secret:
-          defaultMode: 420
-          secretName: spin-secrets
 ---
 apiVersion: v1
 kind: Service
