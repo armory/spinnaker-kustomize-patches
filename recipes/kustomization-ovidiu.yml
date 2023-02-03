@@ -17,19 +17,21 @@ kind: Kustomization
 namespace: ovidiu-dev
 resources:
   - infrastructure/debugging-tools.yml
+  - infrastructure/mysql.yml
 components:
   - core/base
   - core/persistence/in-cluster
   - targets/kubernetes/default
   - targets/aws/base
-  - armory/features/policy-engine
 
 patchesStrategicMerge:
   - core/patches/version.yml
-#  - armory/patch-policy-engine-plugin.yml
-#  - core/patches/patch-orca.yml
   - core/patches/patch-clouddriver.yml
-#  - accounts/ci/patch-jenkins.yml
-
+  - security/patch-github.yml
+  - security/patch-fiat-create-app-roles.yml
+  - security/patch-file-authz.yml
+  - persistence/patch-sql-fiat.yml
+#  - persistence/patch-redis-fiat.yml
 transformers:
   - utilities/unique-service-account.yml
+

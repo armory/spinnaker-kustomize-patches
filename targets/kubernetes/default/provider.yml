@@ -23,7 +23,13 @@ spec:
           - name: spinnaker
             serviceAccount: true             # When true, Spinnaker will attempt to authenticate against Kubernetes using a Kubernetes service account. This only works when Spinnaker is deployed in the same Kubernetes cluster. Read more about service accounts here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/.
             providerVersion: V2
-            permissions: {}
+            permissions:
+               READ:
+                 - restricted
+               WRITE:
+                 - restricted
+               EXECUTE:
+                 - restricted
             dockerRegistries: []
             cacheThreads: 1                  # Number of caching agents for this kubernetes account. Each agent handles a subset of the namespaces available to this account. By default, only 1 agent caches all kinds for all namespaces in the account.
             namespaces: []                   # A list of namespaces this Spinnaker account can deploy to and will cache. When no namespaces are configured, this defaults to ‘all namespaces’.

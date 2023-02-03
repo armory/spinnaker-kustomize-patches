@@ -24,9 +24,9 @@ spec:
                       - "group-b-spingo" # group members that CAN create applications if enabled
                       READ:
                       - "spinnaker-admins"
-                      - "role2"
-                      - "role1"
+                      - "admin"
+                      - "restricted"
                       WRITE:
-                      - "role1"
+                      - "restricted"
                       EXECUTE:
-                      - "role1"
+                      - "restricted"
