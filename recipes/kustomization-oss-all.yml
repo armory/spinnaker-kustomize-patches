@@ -32,6 +32,7 @@ patchesStrategicMerge:
 
 transformers:
   - utilities/unique-service-account.yml  # Ensures that ServiceAccounts are unique
+  - utilities/unique-rolebinding.yml # Ensures that the role binding matches the service account
 
 # This patch ensures that the correct OSS apiVersion is used.
 patches:

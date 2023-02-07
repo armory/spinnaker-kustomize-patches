@@ -1,0 +1,13 @@
+apiVersion: builtin
+kind: ReplacementTransformer
+metadata:
+  name: host
+replacements:
+  - source:
+      kind: ServiceAccount
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: ClusterRoleBinding
+        fieldPaths:
+          - subjects.0.name

@@ -1,5 +1,7 @@
 kubernetes:
   accounts: []
+  # - kubeconfigFile: /kubeconfigfiles/config
+  #   name: account1
 
 clouddriver:
   grpc: spin-clouddriver-grpc:9091

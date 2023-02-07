@@ -84,6 +84,29 @@ configMapGenerator:
   - armory-agent.yaml
 ```
 
+## Adding static accounts
+Static Accounts are added by modifying the armory-agent.yml file:
+```yaml
+kubernetes:
+  accounts:
+   - kubeconfigFile: /kubeconfigfiles/kubeconfig
+     name: account1
+```
+
+```yaml
+patchesStrategicMerge:
+  - ./plugin-config.yml
+  - ./agent-config.yml # includes the armory-agent.yml settings file
+  - ./kubeconfig-volume.yml # patches the deployment to include the kubeconfig dir mount
+
+  secretGenerator:
+  - name: kubeconfig-secret
+    options:
+      disableNameSuffixHash: true
+    files:
+      - kubeconfig #Make sure it points to a valid kubeconfig
+```
+
 
 # Development
 
