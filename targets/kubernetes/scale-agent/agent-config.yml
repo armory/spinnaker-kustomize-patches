@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: armory-agent
+  name: armory-scale-agent
 spec:
   selector:
     matchLabels:
-      app: armory-agent
-      cluster: armory-agent
+      app: armory-scale-agent
+      cluster: armory-scale-agent
   template:
     spec:
       containers:
-      - name: armory-agent
+      - name: armory-scale-agent
         volumeMounts:
-        - mountPath: /opt/armory/config
-          name: volume-agent-config
+        - mountPath: /opt/armory-scale-agent/config
+          name: volume-armory-scale-agent-config
       volumes:
-      - name: volume-agent-config
+      - name: volume-armory-scale-agent-config
         configMap:
-          name: agent-config
+          name: armory-scale-agent-config

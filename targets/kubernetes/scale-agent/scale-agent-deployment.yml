@@ -2,61 +2,61 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: armory-agent
-    app.kubernetes.io/name: armory-agent
+    app: armory-scale-agent
+    app.kubernetes.io/name: armory-scale-agent
     app.kubernetes.io/part-of: spinnaker
-    cluster: armory-agent
-  name: armory-agent
+    cluster: armory-scale-agent
+  name: armory-scale-agent
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: armory-agent
-      cluster: armory-agent
+      app: armory-scale-agent
+      cluster: armory-scale-agent
   template:
     metadata:
       labels:
-        app: armory-agent
-        app.kubernetes.io/name: armory-agent
+        app: armory-scale-agent
+        app.kubernetes.io/name: armory-scale-agent
         app.kubernetes.io/part-of: spinnaker
-        cluster: armory-agent
+        cluster: armory-scale-agent
     spec:
       containers:
-      - image: armory/agent-k8s
-        imagePullPolicy: IfNotPresent
-        name: armory-agent
-        ports:
-          - name: health
-            containerPort: 8082
-            protocol: TCP
-          - name: metrics
-            containerPort: 8008
-            protocol: TCP
-        readinessProbe:
-          httpGet:
-            port: health
-            path: /health
-          failureThreshold: 3
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - image: armory/agent-k8s
+          imagePullPolicy: IfNotPresent
+          name: armory-scale-agent
+          ports:
+            - name: health
+              containerPort: 8082
+              protocol: TCP
+            - name: metrics
+              containerPort: 8008
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              port: health
+              path: /health
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
       restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: armory-agent-metrics
+  name: armory-scale-agent-metrics
   labels:
-    app: armory-agent
-    cluster: armory-agent
+    app: armory-scale-agent
+    cluster: armory-scale-agent
 spec:
   ports:
-  - name: metrics
-    port: 8008
-    targetPort: metrics
-    protocol: TCP
+    - name: metrics
+      port: 8008
+      targetPort: metrics
+      protocol: TCP
   selector:
-    app: armory-agent
-    cluster: armory-agent
+    app: armory-scale-agent
+    cluster: armory-scale-agent
