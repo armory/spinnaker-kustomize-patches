@@ -96,7 +96,8 @@ kubernetes:
 ```yaml
 patchesStrategicMerge:
   - ./plugin-config.yml
-  - ./agent-config.yml # patches the deployment to include the kubeconfig dir mount
+  - ./agent-config.yml # includes the armory-agent.yml settings file
+  - ./kubeconfig-volume.yml # patches the deployment to include the kubeconfig dir mount
 
   secretGenerator:
   - name: kubeconfig-secret
