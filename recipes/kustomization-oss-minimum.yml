@@ -1,0 +1,29 @@
+#-------------------------------------------------------------------------------
+# Minimum Starting Point Recipe for Spinnaker OSS.
+#
+# Self-contained Spinnaker installation with no external dependencies and no
+# additional configuration needed. This is intended as a starting point for any
+# kubernetes cluster. Not for production use.
+#
+# Features:
+# - One Kubernetes account
+# - Self hosted minio as a persistent storage
+#-------------------------------------------------------------------------------
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: spinnaker
+
+components:
+  - core/base                             # Defines base configuration across the cluster
+  - core/persistence/in-cluster           # Enables persistence using MinIO in-cluster
+  - targets/kubernetes/default
+
+patchesStrategicMerge:
+  - core/patches/oss-version.yml          # Sets the OSS version to use
+
+# This patch ensures that the correct OSS apiVersion is used.
+patches:
+  - target:
+      kind: SpinnakerService
+    path: utilities/switch-to-oss.yml

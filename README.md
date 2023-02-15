@@ -54,21 +54,45 @@ If you already have the Armory Operator deployed, you can use
 
 ### Deploy open source Spinnaker
 
-You can use `deploy.sh` to deploy Spinnaker instead of Armory Continuous
-Delivery.
+#### Deploy Spinnaker Operator open source
 
-```bash
-SPIN_FLAVOR=oss ./deploy.sh
+```shell
+# Pick a release from https://github.com/armory/spinnaker-operator/releases (or clone the repo and use the master branch for the latest development work)
+mkdir -p spinnaker-operator && cd spinnaker-operator
+bash -c 'curl -L https://github.com/armory/spinnaker-operator/releases/latest/download/manifests.tgz | tar -xz'
+ 
+# Install or update CRDs cluster wide
+kubectl apply -f deploy/crds/
 
+# Install operator in namespace spinnaker-operator, see below if you want a different namespace
+kubectl create ns spinnaker-operator
+kubectl -n spinnaker-operator apply -f deploy/operator/cluster
 ```
 
-When you specify `SPIN_FLAVOR=oss `, the script does the following:
+
+#### Deploy Spinnaker
+
+You can use oss recipes to deploy Spinnaker instead of Armory Continuous
+Delivery.
+
+```shell
+# Delete default recipe
+rm kustomization.yml
+
+# Create symlink for oss recipe
+ln -s ./recipes/kustomization-oss-minimum.yml kustomization.yml
+
+# Create the spinnaker namespace
+kubectl create ns spinnaker
+
+# Build the kustomize template and deploy in kubernetes
+kustomize build . | kubectl apply -f -
+```
+
+When you use an oss recipe, it does the following:
 
 * Modifies relevant patch files, replacing `apiVersion:
   spinnaker.armory.io/v1alpha2` with `apiVersion: spinnaker.io/v1alpha2`.
-* Deploys the open source [Spinnaker
-  Operator](https://github.com/armory/spinnaker-operator) to the
-  `spinnaker-operator` namespace.
 * Deploys a basic of Spinnaker to the `spinnaker` namespace.
 
 
