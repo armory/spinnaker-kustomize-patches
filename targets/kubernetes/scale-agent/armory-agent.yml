@@ -1,7 +1,7 @@
 kubernetes:
   accounts: []
-  # - kubeconfigFile: /kubeconfigfiles/config
-  #   name: account1
+  #  - kubeconfigFile: /kubeconfigfiles/kubeconfig
+  #    name: agent-demo
 
 clouddriver:
   grpc: spin-clouddriver-grpc:9091
