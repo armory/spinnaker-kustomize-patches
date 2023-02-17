@@ -3,14 +3,25 @@ kind: Component
 
 images:
   - name: armory/agent-k8s
-    newTag: 1.0.42 # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+    newTag: 1.0.44 # Version of the agent to use. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
 
 resources:
   - scale-agent-service.yml
+  - service-account.yml
   - scale-agent-deployment.yml
 
 patchesStrategicMerge:
   - ./plugin-config.yml
+  - ./agent-config.yml # patches the deployment to mount the configuration file
+  - ./kubeconfig-volume.yml
+
+configMapGenerator:
+- name: agent-config
+  files:
+  - armory-agent.yml
+
+transformers:
+  - service-account-reference.yml
 
 secretGenerator:
   - name: spin-secrets
@@ -24,3 +35,8 @@ secretGenerator:
       - mysqlOrcaMigratePassword=changeme
       - mysqlF50Password=changeme
       - mysqlF50MigratePassword=changeme
+  - name: kubeconfig-secret
+    options:
+      disableNameSuffixHash: true
+    files:
+      - kubeconfig #Make sure it points to a valid kubeconfig

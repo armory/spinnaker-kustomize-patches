@@ -9,6 +9,10 @@ metadata:
   name: spinnaker
 spec:
   spinnakerConfig:
+    service-settings:
+      clouddriver:
+        kubernetes:
+          serviceAccountName: spin-sa
     profiles:
       clouddriver:
         spinnaker:
@@ -26,6 +30,10 @@ spec:
                     enabled: true
         kubernetes:
           enabled: true # This is not needed if spinnaker already has kubernetes V2 accounts enabled by other files
+          # primaryAccount: spinnaker
+          # accounts:
+          # - name: spinnaker1
+          #   kubeconfigFile: encryptedFile:k8s!n:kubeconfig-secret!k:kubeconfig!ns:spinnaker
         sql:
           enabled: true # kubesvc depends on clouddriver using SQL. See patch-sql-clouddriver for full configuration
           scheduler:

@@ -7,8 +7,12 @@ apiVersion: spinnaker.armory.io/v1alpha2
 kind: SpinnakerService
 metadata:
   name: spinnaker
-spec:
+spec:  
   spinnakerConfig:
+    service-settings:
+      clouddriver:
+        kubernetes:
+          serviceAccountName: spin-sa
     profiles:
       clouddriver:
         spinnaker:
