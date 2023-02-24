@@ -9,31 +9,29 @@ spec:
   spinnakerConfig:
     # spec.spinnakerConfig.profiles - This section contains the YAML of each service's profile
     profiles:
-      gate:
+      front50:
         spinnaker:
           extensibility:
-            deck-proxy: # you need this for plugins with a Deck component
-              enabled: true
-              plugins:
-                Armory.RandomWaitPlugin:
-                  enabled: true
-                  version: 1.1.14
+            plugins:
+              Armory.ConfigurationManagement:
+                enabled: true
+                version: 0.0.2
             repositories:
-              examplePluginsRepo:
-                url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json
-      orca:
-        spinnaker:
-          extensibility:
-           plugins:
-             Armory.RandomWaitPlugin:
-              enabled: true
-              version: 1.1.14
-              extensions:
-               id: armory.randomWaitStage
-               enabled: true
-               config:
-                 defaultMaxWaitTime: 15
-           repositories:
-             examplePluginsRepo:
-              id: examplePluginsRepo
-              url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json
+              repository:
+                url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
+#      orca:
+#        spinnaker:
+#          extensibility:
+#           plugins:
+#             Armory.RandomWaitPlugin:
+#              enabled: true
+#              version: 1.1.14
+#              extensions:
+#               id: armory.randomWaitStage
+#               enabled: true
+#               config:
+#                 defaultMaxWaitTime: 15
+#           repositories:
+#             examplePluginsRepo:
+#              id: examplePluginsRepo
+#              url: https://raw.githubusercontent.com/spinnaker-plugin-examples/examplePluginRepository/master/plugins.json

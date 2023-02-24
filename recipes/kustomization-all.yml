@@ -1,113 +1,50 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# All example patches and configurations are listed here.
+# Minimum Starting Point recipe
+#
+# Self contained Spinnaker installation with no external dependencies and no additional configuration needed.
+# This is intended as a starting point for any kubernetes cluster.
+# Not for production use.
+#
+# Features:
+# - One Kubernetes account (Spinnaker's own cluster) for deployment targets
+# - Spinnaker authentication disabled
+# - Self hosted minio as a persistent storage
+# - Self hosted redis backend for caching and temporal storage of services
 #-----------------------------------------------------------------------------------------------------------------------
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: spinnaker
-
-resources:
-  - infrastructure/kubesvc-lb.yml      # Required for kubesvc agent gRPC communication
-  - infrastructure/mysql.yml           # (Optional, not for production use). MySQL server needed if using SQL backend in Spinnaker
-  - infrastructure/opa.yml             # (Optional). OPA server for using with Armory's policy engine, for enforcing pipeline policies
-#  - infrastructure/debugging-tools.yml # (Optional). A pod with some tools for troubleshooting spinnaker (curl, kubectl, vault, etc.)
-#  - expose/ingress-nginx.yml          # (Optional). Spinnaker ingress definition
-#  - expose/spin-gate-expose.yml       # (Optional). Alternate service definition for gate for exposing spinnaker with maximum configurability
-#  - expose/spin-deck-expose.yml       # (Optional). Alternate service definition for deck for exposing spinnaker with maximum configurability
-#  - expose/patch-lb-static-ip.yml     # (Optional). Expose spinnaker services through static IP load balancers 
+namespace: daniela-dev
 
 components:
   - core/base
-  - core/persistence/in-cluster
+#  - core/persistence/in-cluster
+#  - targets/aws/base
   - targets/kubernetes/default
 
-#bases:
-#  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
-#  - plugins/armory-agent                    # (Optional). Alternate implementation for kubernetes deployments. Requires either plugins/armory-agent/patch-clouddriver-docker.yaml or plugins/armory-agent/patch-clouddriver-repo.yaml, and persistence/patch-sql-clouddriver.yml
-
 patchesStrategicMerge:
-#  - persistence/patch-s3.yml
-  - persistence/patch-sql-clouddriver.yml          ## setup clouddriver to use SQL for storage
-  - persistence/patch-sql-front50.yml              ## setup front50 to use SQL for storage
-  - persistence/patch-sql-orca.yml                 ## setup orca to use SQL for storage
-#  - persistence/patch-redis.yml
-
-  # Automatically expose spinnaker
-  - expose/patch-lb.yml
-#  - expose/patch-lb-aws.yml
-#  - expose/patch-nodeport.yml
-#  - expose/patch-ingress.yml
-#  - expose/patch-urls.yml
-#  - expose/patch-cert-manager-ssl.yml                   ## (Optional) Enable SSL certificates to be pulled from a secret updated by cert-manager
-
-  # Authentication and authorization
-  #- security/patch-github.yml
-#  - security/patch-saml.yml
-#  - security/patch-file-authz.yml
-#  - security/patch-google-groups-auth.yml              ## (Optional) Enable and configure Google Groups for AuthN and AuthZ https://spinnaker.io/setup/security/authorization/
-#  - security/patch-external-authz.yml                  ## (Optional) enable external AuthZ and set spinnaker admin roles
-#  - security/patch-fiat-create-app-roles.yml           ## (Optional) configure fiat fine grain permissions like application creation by role
-
-  # Kubernetes accounts
-#  - accounts/kubernetes/patch-dynamic-git.yml
-#  - accounts/kubernetes/patch-dynamic-vault.yml
-
-  # AWS accounts
-#  - accounts/aws/patch-aws.yml
-#  - accounts/aws/packer-templates.yml
-
-  # CloudFoundry accounts
-  #- accounts/cloudfoundry/patch-cloudfoundry.yml
-
-  # Artifact accounts
-  - accounts/docker/patch-dockerhub.yml
-#  - accounts/docker/patch-gcr.yml
-#  - accounts/git/patch-github.yml
-#  - accounts/git/patch-gitrepo.yml
-#  - accounts/git/patch-gitlab.yml
-#  - accounts/git/patch-bitbucket.yml
-#  - accounts/s3/patch-s3.yml
-#  - accounts/gcs/patch-gcs.yml
-#  - accounts/http/patch-http.yml
-
-  # Armory features
-#  - armory/patch-terraformer.yml
-#  - armory/patch-dinghy.yml
-#  - armory/patch-diagnostics.yml
-#  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
-  - armory/patch-eval-artifacts.yml
-  - armory/patch-policy-engine-plugin.yml            # This enables policy engine. infrastructure/opa.yml must be enabled under resources.
-
-  # Spinnaker monitoring
-#  - accounts/prometheus/patch-prometheus.yml
-#  - accounts/datadog/patch-datadog.yml
-
-  # Customizations to spinnaker pods in Kubernetes
-#  - spinnaker_deployment/patch-volumes.yml
-#  - spinnaker_deployment/patch-sizing.yml
-#  - spinnaker_deployment/patch-labels-annotations.yml
-#  - spinnaker_deployment/patch-debug-jvm.yml
-#  - spinnaker_deployment/patch-cloudsql-sidecars.yml    ## (Optional) Google Cloud Proxy Sidecars for CloudSQL
-
-  # Customization to core configuration
-  - core/patches/timezone.yml                      ## (Optional) adjust the display timezone visible to the user within deck
-  - core/patches/version.yml                            ## Set the deployed Spinnaker version
-  - core/patches/ui-feature-flags.yml
-
-  # Plugins
+  - core/patches/version.yml
 #  - plugins/patch-plugin-wait.yml
-#  - plugins/armory-agent/patch-clouddriver-docker.yaml or plugins/armory-agent/patch-clouddriver-repo.yaml  # Requires persistence/patch-sql-clouddriver.yml and the base dir plugins/armory-agent
+#  - armory/patch-terraformer.yml
+#  - armory/patch-multiple-pipelines.yml
+#  - persistence/patch-sql-orca.yml
+#  - plugins/external-accounts/patch-external-accounts-plugin-sidecar.yml
+#  - spinnaker_deployment/patch-debug-jvm.yml
+#  - infrastructure/patch-clouddriver-image.yml
+#  - targets/azure/default/patches/packer-templates/packer-templates.yml
+#  - security/patch-external-authz.yml
+#  - security/patch-file-authz.yml
+#  - security/patch-fiat-create-app-roles.yml
+#  - security/patch-github.yml
+#  - core/patches/ui-feature-flags.yml
+#  - armory/features/pipelines-as-code/feature.yml
 
-# Mounting any custom files into spinnaker pods (see patch-volumes.yml)
-#generatorOptions:
-#  disableNameSuffixHash: true
+transformers:
+  - utilities/unique-service-account.yml
+
 #secretGenerator:
-#  - name: custom-volume
-#    files:
-#      - spinnaker_deployment/custom-volume/file.txt
-
-configMapGenerator:
-  # ConfigMap holding OPA policy definitions for use by Armory's Policy Engine. Required by patch-policy-engine-plugin.yml
-  - name: spin-policies
-    files:
-     - armory/policies/manual-judgement.rego
+#  - name: pac-secret
+#    options:
+#      disableNameSuffixHash: true
+#    literals:
+#      - github-token=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
