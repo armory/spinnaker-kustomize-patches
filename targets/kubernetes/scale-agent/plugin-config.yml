@@ -29,7 +29,7 @@ spec:
             plugins:
               Armory.Kubesvc:
                 enabled: true
-                version: 0.11.31 # Replace with a version compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+                version: 0.11.32 # Latest agent plugin version. Replace with a version compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
                 extensions:
                   armory.kubesvc:
                     enabled: true
