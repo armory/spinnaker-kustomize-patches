@@ -11,7 +11,7 @@ spec:
   validation:
     providers:
       kubernetes:
-        enabled: true    # Default: true. Indicate if operator should do connectivity checks to configured kubernetes accounts before applying the manifest
+        enabled: false    # Default: true. Indicate if operator should do connectivity checks to configured kubernetes accounts before applying the manifest
   spinnakerConfig:
     config:
       providers:
