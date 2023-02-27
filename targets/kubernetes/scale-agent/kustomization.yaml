@@ -3,7 +3,7 @@ kind: Component
 
 images:
   - name: armory/agent-k8s
-    newTag: 1.0.44 # Latest agent version. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+    newTag: 1.0.45 # Latest agent version. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
 
 resources:
   - scale-agent-service.yml
