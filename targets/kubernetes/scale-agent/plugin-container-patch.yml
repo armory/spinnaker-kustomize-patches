@@ -54,7 +54,7 @@ spec:
                 spec:
                   initContainers:
                   - name: armory-agent-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.11.32 # Latest agent plugin version. Replace with a version compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+                    image: docker.io/armory/kubesvc-plugin:0.11.35 # Latest agent plugin version. Replace with a version compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: armory-agent-plugin-vol
