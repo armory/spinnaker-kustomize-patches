@@ -1,0 +1,102 @@
+global.spinnaker.timezone: America/Los_Angeles
+services:
+  clouddriver:
+    baseUrl: http://spin-clouddriver:7002
+    enabled: true
+    host: 0.0.0.0
+    port: 7002
+  clouddriverCaching:
+    baseUrl: http://spin-clouddriver-caching:7002
+    enabled: false
+    host: 0.0.0.0
+    port: 7002
+  clouddriverRo:
+    baseUrl: http://spin-clouddriver-ro:7002
+    enabled: false
+    host: 0.0.0.0
+    port: 7002
+  clouddriverRoDeck:
+    baseUrl: http://spin-clouddriver-ro-deck:7002
+    enabled: false
+    host: 0.0.0.0
+    port: 7002
+  clouddriverRw:
+    baseUrl: http://spin-clouddriver-rw:7002
+    enabled: false
+    host: 0.0.0.0
+    port: 7002
+  deck:
+    baseUrl: http://localhost:9000
+    enabled: true
+    host: 0.0.0.0
+    port: 9000
+  dinghy:
+    baseUrl: http://spin-dinghy:8081
+    enabled: true
+    host: 0.0.0.0
+    port: 8081
+  echo:
+    baseUrl: http://spin-echo:8089
+    enabled: true
+    host: 0.0.0.0
+    port: 8089
+  echoScheduler:
+    baseUrl: http://spin-echo-scheduler:8089
+    enabled: false
+    host: 0.0.0.0
+    port: 8089
+  echoWorker:
+    baseUrl: http://spin-echo-worker:8089
+    enabled: false
+    host: 0.0.0.0
+    port: 8089
+  fiat:
+    baseUrl: http://spin-fiat:7003
+    enabled: false
+    host: 0.0.0.0
+    port: 7003
+  front50:
+    baseUrl: http://spin-front50:8080
+    enabled: true
+    host: 0.0.0.0
+    port: 8080
+  gate:
+    baseUrl: http://localhost:8084
+    enabled: true
+    host: 0.0.0.0
+    port: 8084
+  igor:
+    baseUrl: http://spin-igor:8088
+    enabled: false
+    host: 0.0.0.0
+    port: 8088
+  kayenta:
+    baseUrl: http://spin-kayenta:8090
+    enabled: false
+    host: 0.0.0.0
+    port: 8090
+  monitoringDaemon:
+    baseUrl: http://spin-monitoring-daemon:8008
+    enabled: false
+    host: 0.0.0.0
+    port: 8008
+  orca:
+    baseUrl: http://spin-orca:8083
+    enabled: true
+    host: 0.0.0.0
+    port: 8083
+  redis:
+    baseUrl: redis://spin-redis:6379
+    enabled: true
+    host: 0.0.0.0
+    port: 6379
+  rosco:
+    baseUrl: http://spin-rosco:8087
+    enabled: true
+    host: 0.0.0.0
+    port: 8087
+  terraformer:
+    baseUrl: http://spin-terraformer:7088
+    enabled: false
+    host: 0.0.0.0
+    port: 7088

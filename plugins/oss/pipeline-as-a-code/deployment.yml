@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spin-dinghy
+  annotations:
+    moniker.spinnaker.io/application: '"spin"'
+    moniker.spinnaker.io/cluster: '"dinghy"'
+  labels:
+    app: spin
+    cluster: spin-dinghy
+    app.kubernetes.io/name: dinghy
+    app.kubernetes.io/managed-by: armory
+    app.kubernetes.io/part-of: spinnaker
+    app.kubernetes.io/version: 2.28.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spin
+      cluster: spin-dinghy
+  template:
+    metadata:
+      annotations: null
+      labels:
+        app: spin
+        cluster: spin-dinghy
+        app.kubernetes.io/name: dinghy
+        app.kubernetes.io/managed-by: armory
+        app.kubernetes.io/part-of: spinnaker
+        app.kubernetes.io/version: 2.28.0
+    spec:
+      containers:
+        - name: dinghy
+          image: docker.io/armory/dinghy:2.28.0
+          ports:
+            - containerPort: 8081
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+                - wget
+                - --no-check-certificate
+                - --spider
+                - -q
+                - http://localhost:8081/health
+            failureThreshold: 3
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          volumeMounts:
+            - name: spin-dinghy-config-file
+              mountPath: /opt/spinnaker/config
+      volumes:
+        - name: spin-dinghy-config-file
+          secret:
+            secretName: spin-dinghy-config-file
