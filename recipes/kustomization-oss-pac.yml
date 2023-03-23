@@ -9,7 +9,6 @@
 # - One Kubernetes account
 # - Self hosted minio as a persistent storage
 # - Pipeline as a code enabled
-# - Dinghy service deployed
 #-------------------------------------------------------------------------------
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
