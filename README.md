@@ -77,10 +77,10 @@ Delivery.
 
 ```shell
 # Delete default recipe
-rm kustomization.yml
+rm kustomization.yaml
 
 # Create symlink for oss recipe
-ln -s ./recipes/kustomization-oss-minimum.yml kustomization.yml
+ln -s ./recipes/kustomization-oss-minimum.yml kustomization.yaml
 
 # Create the spinnaker namespace
 kubectl create ns spinnaker
