@@ -51,7 +51,7 @@ would add the following patch to your Kustomization file:
 patches:
   - target:
       kind: SpinnakerService
-    path: plugins/oss/pipeline-as-a-code/versions/v-1.26.yml
+    path: plugins/oss/pipeline-as-a-code/versions/v-1.27.yml
 ```
 
 # Customizing Pipeline as a Code Settings
