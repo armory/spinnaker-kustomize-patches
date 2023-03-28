@@ -7,7 +7,7 @@ particular Component does not support CDSH*, only Spinnaker.
 ## Usage
 
 A quick-start recipe is available in the `recipes/kustomization-oss-pac.yml`
-file in the root of this project. . It assumes you are starting from a clean
+file in the root of this project. It assumes you are starting from a clean
 Kubernetes cluster and will install the Spinnaker Operator as well as a minimal
 Spinnaker cluster with Pipeline as a Code enabled.
 
