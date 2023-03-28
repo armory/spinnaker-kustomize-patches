@@ -16,8 +16,8 @@ logging:
   remote:
     customerId: CHANGEME
     enabled: false
-    endpoint: https://debug.armory.io/v1/logs
-    version: 2.28.3
+    endpoint: CHANGEME
+    version: CHANGEME
 notifiers:
   slack:
     enabled: false

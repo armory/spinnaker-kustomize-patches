@@ -22,4 +22,17 @@ spec:
             plugins:
               Armory.PipelineAsACode:
                 enabled: true
-                version: 0.0.1
+                version: 0.0.5
+      echo:
+        armorywebhooks:
+          enabled: true
+          forwarding:
+            baseUrl: http://spin-dinghy:8081
+            endpoint: v1/webhooks
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PipelineAsACode:
+                enabled: true
+                version: 0.0.5
+

@@ -13,7 +13,7 @@ resources:
   - service.yml
   - deployment.yml
 patchesStrategicMerge:
-  - ./dinghy-version.yaml
+  - ./versions/v-1.28.yml
   - ./pac-plugin-config.yml
 
 secretGenerator:
