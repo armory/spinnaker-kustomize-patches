@@ -39,7 +39,7 @@ components:
 
 ## Compatibility Across Spinnaker Versions
 
-If you're installing the Pipeline as a Code in an older version of Spinnaker then you
+If you're installing Pipeline as Code in an older version of Spinnaker then you
 will need to ensure compatibility of the plugin with Gate and Echo. Patches are
 provided for all supported Spinnaker versions by Armory.
 
