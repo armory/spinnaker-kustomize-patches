@@ -47,7 +47,7 @@ For example, to choose a version that is compatible with Spinnaker v1.27.x you
 would add the following patch to your Kustomization file:
 
 ```yaml
-# This patch ensures that the correct Scale Agent plugin version is selected.
+# This patch ensures that the correct PaC version is selected.
 patches:
   - target:
       kind: SpinnakerService
@@ -58,7 +58,6 @@ patches:
 ```yaml
 patchesStrategicMerge:
   - ./pac-plugin-config.yml
-  - ./agent-config.yml # patches the deployment to mount the configuration file
   
 # generates the settings that will be mounted in the PaC container
 secretGenerator:
