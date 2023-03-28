@@ -4,6 +4,7 @@ This component gives you the ability to install the Pipeline as a Code plugin us
 Kustomize and the Spinnaker Operator. At the time of this writing *this
 particular Component does not support CDSH*, only Spinnaker.
 
+The CDSH specific component may be found in `armory/features/pipelines-as-code`.
 ## Usage
 
 A quick-start recipe is available in the `recipes/kustomization-oss-pac.yml`
