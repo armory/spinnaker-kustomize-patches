@@ -5,16 +5,12 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
-images:
-  - name: docker.io/armory/dinghy
-    newTag: 2.28.0
-
 resources:
   - service.yml
   - deployment.yml
 patchesStrategicMerge:
-  - ./versions/v-1.28.yml
   - ./pac-plugin-config.yml
+  - ./versions/v-1.28.yml
 
 secretGenerator:
   - name: spin-dinghy-config-file
