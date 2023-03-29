@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spin-dinghy
+  labels:
+    app.kubernetes.io/version: &version 2.26.0
+spec:
+  selector:
+    matchLabels:
+      app: spin
+      cluster: spin-dinghy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/version: *version
+    spec:
+      containers:
+        - name: dinghy
+          image: docker.io/armory/dinghy:2.26.0
+---
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      gate:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PipelineAsACode:
+                version: &pluginversion 0.0.5
+      echo:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.PipelineAsACode:
+                version: *pluginversion

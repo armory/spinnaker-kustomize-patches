@@ -1,0 +1,24 @@
+#------------------------------------------------------------------------------
+# Example configuration for enabling the Pipeline as a Code plugin and
+# starting Dinghy service
+#------------------------------------------------------------------------------
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - service.yml
+  - deployment.yml
+patchesStrategicMerge:
+  - ./pac-plugin-config.yml
+  - ./versions/v-1.28.yml
+
+secretGenerator:
+  - name: spin-dinghy-config-file
+    files:
+      - dinghy.yml
+      - spinnaker.yml
+  - name: pac-secret
+    options:
+      disableNameSuffixHash: true
+    literals:
+      - github-token=SampleAccessKey1!

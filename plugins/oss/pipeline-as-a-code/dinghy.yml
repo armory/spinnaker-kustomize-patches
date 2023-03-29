@@ -1,0 +1,41 @@
+autoLockPipelines: false
+dinghyFilename: dinghyfile
+dinghyIgnoreRegexp2Enabled: false
+echo:
+  baseURL: ${services.echo.baseUrl}
+enabled: true
+fiat:
+  baseUrl: ${services.fiat.baseUrl}
+  enabled: ${services.fiat.enabled}
+front50:
+  baseUrl: ${services.front50.baseUrl}
+  enabled: ${services.front50.enabled}
+githubEndpoint: https://api.github.com
+githubToken: CHANGEME
+logging:
+  remote:
+    customerId: CHANGEME
+    enabled: false
+    endpoint: CHANGEME
+    version: CHANGEME
+notifiers:
+  slack:
+    enabled: false
+orca:
+  baseUrl: ${services.orca.baseUrl}
+  enabled: ${services.orca.enabled}
+redis:
+  baseUrl: ${services.redis.baseUrl}
+repositoryRawdataProcessing: false
+spectator:
+  applicationName: ${spring.application.name}
+  webEndpoint:
+    enabled: false
+spinnaker:
+  extensibility:
+    plugins: {}
+    plugins-root-path: /opt/dinghy/plugins
+    repositories: {}
+    strict-plugin-loading: false
+templateOrg: CHANGEME
+templateRepo: CHANGEME
