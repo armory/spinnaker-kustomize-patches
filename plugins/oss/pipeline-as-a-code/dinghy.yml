@@ -12,12 +12,6 @@ front50:
   enabled: ${services.front50.enabled}
 githubEndpoint: https://api.github.com
 githubToken: CHANGEME
-logging:
-  remote:
-    customerId: CHANGEME
-    enabled: false
-    endpoint: CHANGEME
-    version: CHANGEME
 notifiers:
   slack:
     enabled: false
