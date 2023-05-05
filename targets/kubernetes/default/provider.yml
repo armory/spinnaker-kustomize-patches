@@ -17,10 +17,10 @@ spec:
       providers:
         kubernetes:
           enabled: true
-          primaryAccount: spinnaker
+          primaryAccount: conference
           accounts:
           # Account for Spinnaker's own kubernetes cluster (Optional).
-          - name: spinnaker
+          - name: conference
             serviceAccount: true             # When true, Spinnaker will attempt to authenticate against Kubernetes using a Kubernetes service account. This only works when Spinnaker is deployed in the same Kubernetes cluster. Read more about service accounts here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/.
             providerVersion: V2
             permissions: {}

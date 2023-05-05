@@ -8,7 +8,7 @@ spec:
       deck:                                     
         settings-local.js: |
           // If there is ANY kind of AuthN or AuthZ configured authEnabled should be set!
-          // window.spinnakerSettings.authEnabled = true;                     // AuthN and AuthZ security/*.yml
+          window.spinnakerSettings.authEnabled = true;                     // AuthN and AuthZ security/*.yml
           // window.spinnakerSettings.feature.functions = true                // AWS Lambda accounts/aws/patch-aws-lambda-plugin.yml
           // window.spinnakerSettings.feature.managedServiceAccounts = true;  // Enable Pipeline Permissions security/patch-external-authz.yml
           // window.spinnakerSettings.feature.terraform = true;               // Terraform UI armory/patch-terraformer.yml
