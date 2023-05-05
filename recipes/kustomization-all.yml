@@ -25,6 +25,7 @@ patchesStrategicMerge:
   - core/patches/version.yml
   - expose/patch-lb.yml                 # Automatically expose spinnaker
   - accounts/docker/patch-dockerhub.yml # Docker accounts
+  - security/patch-github.yml
 
 transformers:
   - utilities/unique-service-account.yml
