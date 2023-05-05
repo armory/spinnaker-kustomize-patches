@@ -20,5 +20,3 @@ secretGenerator:
   - name: pac-secret
     options:
       disableNameSuffixHash: true
-    literals:
-      - github-token=SampleAccessKey1!
