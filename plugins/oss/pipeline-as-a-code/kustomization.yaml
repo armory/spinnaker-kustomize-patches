@@ -17,6 +17,3 @@ secretGenerator:
     files:
       - dinghy.yml
       - spinnaker.yml
-  - name: pac-secret
-    options:
-      disableNameSuffixHash: true
