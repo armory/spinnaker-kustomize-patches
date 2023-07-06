@@ -1,8 +1,8 @@
 kubernetes:
-  accounts: []
-  #  - kubeconfigFile: /kubeconfigfiles/kubeconfig
-  #    name: agent-demo
-
+  accounts: 
+  - serviceAccount: true
+    name: account000
+                
 clouddriver:
   grpc: spin-clouddriver-grpc:9091
   insecure: true
@@ -13,3 +13,6 @@ server:
 prometheus:
   enabled: true
   # port: 8008
+
+logging:
+  level: debug

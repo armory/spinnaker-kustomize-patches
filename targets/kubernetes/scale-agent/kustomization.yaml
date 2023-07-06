@@ -3,7 +3,7 @@ kind: Component
 
 images:
   - name: armory/agent-k8s
-    newTag: 1.0.55 # Latest agent version. See https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+    newTag: 1.0.59
 
 resources:
   - scale-agent-service.yml
@@ -11,7 +11,7 @@ resources:
   - scale-agent-deployment.yml
 
 patchesStrategicMerge:
-  - ./plugin-config.yml
+  - ./plugin-container-patch.yml
   - ./agent-config.yml # patches the deployment to mount the configuration file
   - ./kubeconfig-volume.yml
 

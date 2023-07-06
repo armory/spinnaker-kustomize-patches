@@ -19,7 +19,13 @@ spec:
       pubsub: {}                 # Integration with pubsub providers.
       providers: {}              # Cloud providers supported by spinnaker: kubernetes, aws, gcp, etc.
       repository: {}             # Settings for artifact repositories.
-      security: {}               # Authentication and authorization.
+      security:               # Authentication and authorization.
+        authn:
+          enabled: true
+        apiSecurity:
+          ssl:
+            enabled: false
+          overrideBaseUrl: https://agent-k8s-it-test-1-grpc.rubik-dev.armory.io/api/v1
       spinnaker: {}              # Configurations for plugins
 
     # ------- Service config overrides, equivalent to "~/.hal/default/profiles" from Halyard.
@@ -27,7 +33,10 @@ spec:
     profiles:
       spinnaker: {}              # Settings in this section are applied to all spinnaker services. Equivalent of "spinnaker-local.yml"
       spinnakerconfig: {}        # Settings in this section are applied to all spinnaker services. Equivalent of "spinnakerconfig.yml", which is in turn equivalent of "bootstrap.yml" of spring boot applications.
-      gate: {}
+      gate: 
+        server:
+          servlet:
+            context-path: /api/v1      
       orca: {}
       rosco: {}
       echo: {}
@@ -40,7 +49,8 @@ spec:
     # ------- Section "spec.kustomize" gives greater control. Equivalent to "~/.hal/default/service-settings" from Halyard.
     service-settings:
       spinnaker: {}              # Configurations that apply to all services
-      gate: {}
+      gate: 
+        healthEndpoint: /api/v1/health
       orca: {}
       rosco: {}
       echo: {}

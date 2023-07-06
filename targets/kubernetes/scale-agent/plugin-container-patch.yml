@@ -37,7 +37,12 @@ spec:
           scheduler:
             enabled: false
         kubesvc:
-          cluster: kubernetes # Communication between clouddrivers is through direct HTTP requests instead of using the redis pubusb, requires redis.enabled: false
+          cluster: kubernetes
+          cache:
+            agentCleanupFrequencySeconds: 40
+            assignmentCleanupFrequencySeconds: 60
+            accountCleanupFrequencySeconds: 60
+            eventsCleanupFrequencySeconds: 3600
           #cluster-kubernetes:
             #kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
             #verifySsl: <true|false> # Optional, default: true). Whether to verify the Kubernetes API cert or not.
@@ -54,7 +59,7 @@ spec:
                 spec:
                   initContainers:
                   - name: armory-agent-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.11.35 # Latest agent plugin version. Replace with a version compatible with your Armory CD version, see https://docs.armory.io/docs/armory-agent/armory-agent-quick/#compatibility-matrix for available versions
+                    image: docker.io/armory/kubesvc-plugin:0.13.9
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: armory-agent-plugin-vol
