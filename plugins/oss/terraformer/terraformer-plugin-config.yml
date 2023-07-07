@@ -17,10 +17,15 @@ spec:
                 enabled: true
                 url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
       gate:
+        services:
+          terraformer:
+            enabled: true
+            baseUrl: http://spin-terraformer:7088
         spinnaker:
           extensibility:
             plugins:
               Armory.Terraformer:
+                enabled: true
                 version: &pluginversion 0.0.1
             deck-proxy:
               enabled: true
@@ -30,8 +35,13 @@ spec:
                   version: *pluginversion
 
       orca:
+        services:
+          terraformer:
+            enabled: true
+            baseUrl: http://spin-terraformer:7088
         spinnaker:
           extensibility:
             plugins:
               Armory.Terraformer:
+                enabled: true
                 version: *pluginversion

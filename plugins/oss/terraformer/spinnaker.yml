@@ -26,7 +26,7 @@ services:
     host: 0.0.0.0
     port: 7002
   deck:
-    baseUrl: http://localhost:9000
+    baseUrl: http://spin-deck:9000
     enabled: true
     host: 0.0.0.0
     port: 9000
@@ -56,7 +56,7 @@ services:
     host: 0.0.0.0
     port: 8080
   gate:
-    baseUrl: http://localhost:8084
+    baseUrl: http://spin-gate:8084
     enabled: true
     host: 0.0.0.0
     port: 8084

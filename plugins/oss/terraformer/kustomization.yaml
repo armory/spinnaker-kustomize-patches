@@ -7,6 +7,7 @@ kind: Component
 
 resources:
   - deployment.yml
+  - service.yml
 patchesStrategicMerge:
   - ./terraformer-plugin-config.yml
   - ./versions/v-1.28.yml
