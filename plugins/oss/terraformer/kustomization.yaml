@@ -16,5 +16,4 @@ secretGenerator:
   - name: spin-terraformer-config-file
     files:
       - terraformer.yml
-      - terraformer-local.yml
       - spinnaker.yml
