@@ -17,6 +17,11 @@ spec:
                 enabled: true
                 url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
       gate:
+        proxies:
+          - id: terraform
+            uri: http://spin-terraformer:7088
+            methods:
+              - GET
         services:
           terraformer:
             enabled: true
