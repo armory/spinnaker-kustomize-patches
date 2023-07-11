@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spin-terraformer
+  labels:
+    app: spin
+    cluster: spin-terraformer
+spec:
+  selector:
+    app: spin
+    cluster: spin-terraformer
+  ports:
+    - name: http
+      port: 7088
+      protocol: TCP
+      targetPort: 7088
+

@@ -1,0 +1,24 @@
+clouddriver:
+  baseUrl: ${services.clouddriver.baseUrl}
+enabled: true
+executor:
+  scrapeLogsIntervalSecs: 5
+  workers: 3
+git:
+  enabled: false
+redis:
+  baseUrl: ${services.redis.baseUrl}
+  enabled: ${services.redis.enabled}
+server:
+  host: ${services.terraformer.host}
+  port: ${services.terraformer.port}
+spectator:
+  applicationName: ${spring.application.name}
+  webEndpoint:
+    enabled: false
+spinnaker:
+  extensibility:
+    plugins: {}
+    plugins-root-path: /opt/terraformer/plugins
+    repositories: {}
+    strict-plugin-loading: false

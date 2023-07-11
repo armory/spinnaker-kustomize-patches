@@ -1,0 +1,52 @@
+#------------------------------------------------------------------------------
+# Example configuration for enabling the Pipeline as a Code plugin
+#------------------------------------------------------------------------------
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      # Configs in the spinnaker profile get applied to all services
+      spinnaker:
+        spinnaker:
+          extensibility:
+            repositories:
+              repository:
+                enabled: true
+                url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
+      gate:
+        proxies:
+          - id: terraform
+            uri: http://spin-terraformer:7088
+            methods:
+              - GET
+        services:
+          terraformer:
+            enabled: true
+            baseUrl: http://spin-terraformer:7088
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.Terraformer:
+                enabled: true
+                version: &pluginversion 0.0.1
+            deck-proxy:
+              enabled: true
+              plugins:
+                Armory.Terraformer:
+                  enabled: true
+                  version: *pluginversion
+
+      orca:
+        services:
+          terraformer:
+            enabled: true
+            baseUrl: http://spin-terraformer:7088
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.Terraformer:
+                enabled: true
+                version: *pluginversion

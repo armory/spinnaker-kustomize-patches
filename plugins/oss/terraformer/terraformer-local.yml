@@ -1,0 +1,15 @@
+profiles:
+  - name: aws-with-session-tokens
+    variables:
+      - kind: static
+        options:
+          name: AWS_ACCESS_KEY_ID
+          value: CHANGEME
+      - kind: static
+        options:
+          name: AWS_SECRET_ACCESS_KEY
+          value: CHANGEME
+      - kind: static
+        options:
+          name: AWS_SESSION_TOKEN
+          value: CHANGEME
