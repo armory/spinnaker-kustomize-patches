@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patchesStrategicMerge:
+  - feature.yml
+  - patch-labels.yaml
+
+configMapGenerator:
+  # ConfigMap holding OPA policy definitions for use by Armory's Policy Engine. Required by policy-engine-plugin
+  - name: spin-policies
+    options:
+      disableNameSuffixHash: true
+    files:
+      - policies/manual-judgement.rego
+      - policies/pipeline-trigger.rego
