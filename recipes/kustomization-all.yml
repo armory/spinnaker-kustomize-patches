@@ -20,6 +20,7 @@ components:
   - core/base
   - core/persistence/in-cluster
   - targets/kubernetes/default
+  - armory/features/policy-engine # This enables policy engine. infrastructure/opa.yml must be enabled under resources.
 
 #bases:
 #  - infrastructure/prometheus-grafana  # (Optional). Used in conjunction with monitoring/patch-prometheus.yml for monitoring spinnaker
@@ -76,7 +77,6 @@ patchesStrategicMerge:
 #  - armory/patch-diagnostics.yml
 #  - armory/patch-vault-secrets.yml                      ## (Optional) Enable and configure vault as a secret store for Armory deployment
   - armory/patch-eval-artifacts.yml
-  - armory/patch-policy-engine-plugin.yml            # This enables policy engine. infrastructure/opa.yml must be enabled under resources.
 
   # Spinnaker monitoring
 #  - accounts/prometheus/patch-prometheus.yml
@@ -105,9 +105,3 @@ patchesStrategicMerge:
 #  - name: custom-volume
 #    files:
 #      - spinnaker_deployment/custom-volume/file.txt
-
-configMapGenerator:
-  # ConfigMap holding OPA policy definitions for use by Armory's Policy Engine. Required by patch-policy-engine-plugin.yml
-  - name: spin-policies
-    files:
-     - armory/policies/manual-judgement.rego
