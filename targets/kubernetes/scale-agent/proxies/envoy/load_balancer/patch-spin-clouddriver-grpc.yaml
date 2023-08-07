@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: armory-agent
+    cluster: armory-agent-proxy
+  name: spin-clouddriver-grpc
+spec:
+  selector:
+    app: armory-agent
+    cluster: armory-agent-proxy
