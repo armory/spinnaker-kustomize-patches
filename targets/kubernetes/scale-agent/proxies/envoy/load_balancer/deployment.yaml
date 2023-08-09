@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: armory-agent-proxy
+  labels:
+    app: armory-agent
+    cluster: armory-agent-proxy
+  namespace: spinnaker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: armory-agent
+      cluster: armory-agent-proxy
+  template:
+    metadata:
+      labels:
+        app: armory-agent
+        cluster: armory-agent-proxy
+    spec:
+      containers:
+        - name: envoy
+          image: envoyproxy/envoy-alpine:v1.21.5
+          command: ["envoy"]
+          args: ["-l", "trace", "-c", "/etc/envoy/envoy.yaml"]
+          ports:
+            - name: grcp
+              containerPort: 9091
+          volumeMounts:
+            - name: config
+              mountPath: /etc/envoy/
+      volumes:
+        - name: config
+          configMap:
+            name: agent-proxy-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    cluster: spin-clouddriver
+  name: spin-clouddriver-grpc-headless
+  namespace: spinnaker
+spec:
+  clusterIP: None
+  ports:
+    - name: grpc
+      port: 9091
+      protocol: TCP
+      targetPort: 9091
+  selector:
+    app: spin
+    cluster: spin-clouddriver
