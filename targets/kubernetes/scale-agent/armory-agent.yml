@@ -1,7 +1,7 @@
 kubernetes:
   accounts: 
   - serviceAccount: true
-    name: account000
+    name: account-000
                 
 clouddriver:
   grpc: spin-clouddriver-grpc:9091

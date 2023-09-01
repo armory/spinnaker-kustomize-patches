@@ -6,7 +6,7 @@ kind: Component
 
 images:
   - name: armory/agent-k8s
-    newTag: 1.0.59
+    newTag: 1.0.71
 
 resources:
   - scale-agent-service.yml

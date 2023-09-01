@@ -39,9 +39,9 @@ spec:
         kubesvc:
           cluster: kubernetes
           cache:
-            agentCleanupFrequencySeconds: 40
-            assignmentCleanupFrequencySeconds: 60
-            accountCleanupFrequencySeconds: 60
+            agentCleanupFrequencySeconds: 60
+            assignmentCleanupFrequencySeconds: 90
+            accountCleanupFrequencySeconds: 90
             eventsCleanupFrequencySeconds: 3600
           #cluster-kubernetes:
             #kubeconfigFile: <path-to-file> # (Optional, default: null). If configured, the plugin uses this file to discover Endpoints. If not configured, it uses the service account mounted to the pod.
@@ -59,7 +59,7 @@ spec:
                 spec:
                   initContainers:
                   - name: armory-agent-plugin
-                    image: docker.io/armory/kubesvc-plugin:0.13.9
+                    image: docker.io/armory/kubesvc-plugin:0.14.1
                     volumeMounts:
                       - mountPath: /opt/plugin/target
                         name: armory-agent-plugin-vol
