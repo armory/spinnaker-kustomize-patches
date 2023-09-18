@@ -16,7 +16,8 @@ SPIN_FLAVOR=${SPIN_FLAVOR:-armory}         # Distribution of spinnaker to deploy
 SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}        # Whether or not to deploy and manage operator (0 or 1)
 SPIN_OP_VERSION=${SPIN_OP_VERSION:-latest} # Spinnaker operator version
 SPIN_WATCH=${SPIN_WATCH:-1}                # Whether or not to watch/wait for Spinnaker to come up (0 or 1)
-OPERATOR_NS=${OPERATOR_NS:-"spinnaker-operator"}
+OPERATOR_NS=${OPERATOR_NS:-"spinnaker-operator"} # Distribution Operator namespace
+OPERATOR_MODE=${OPERATOR_MODE:-"cluster"}  # Distribution of operator mode to use (basic or cluser)
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -161,7 +162,13 @@ function deploy_operator() {
   if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
     exec_kubectl_mutating "kubectl create ns $OPERATOR_NS" handle_generic_kubectl_error
   fi
-  exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -k $ROOT_DIR/operator/deploy/operator/cluster" handle_generic_kubectl_error
+
+  if [ "$OPERATOR_MODE" == "helm" ]; then
+    error "Helm deployment isn't support with this script right now, you should try the \"basic\" or \"cluster\" mode.\nOr you can try to deploy Helm Operator manually and set env var SPIN_OP_DEPLOY=0 to skip the overriding from this script.\n We will update helm suport in this script soon"
+    return 1
+  fi
+
+  exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -f $ROOT_DIR/operator/deploy/operator/$OPERATOR_MODE" handle_generic_kubectl_error
   info "Waiting for operator to start."
   check_operator_deployment
   while [[ $OP_READY != 1 ]]; do
@@ -181,7 +188,7 @@ function assert_operator() {
   check_operator_deployment
 
   if [[ "$CURRENT_OP_NS" != "" && "$CURRENT_OP_NS" != "$OPERATOR_NS" ]]; then
-    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$OPERATOR_NS\". Change desired namespace with env var \"export OPERATOR_NS=", or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
+    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$OPERATOR_NS\". Change desired namespace with env var \"export OPERATOR_NS=\", or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
 
   elif [[ $CURRENT_OP_IMAGE != "" && ${CURRENT_OP_IMAGE//:*/} != "$OP_IMAGE_BASE" ]]; then
     warn "There is a different operator in namespace \"$OPERATOR_NS\" (expected: \"$OP_IMAGE_BASE\", actual: \"${CURRENT_OP_IMAGE//:*/}\"). Do you want to delete it? (y/n)\n"
