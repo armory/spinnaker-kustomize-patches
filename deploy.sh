@@ -16,6 +16,7 @@ SPIN_FLAVOR=${SPIN_FLAVOR:-armory}         # Distribution of spinnaker to deploy
 SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}        # Whether or not to deploy and manage operator (0 or 1)
 SPIN_OP_VERSION=${SPIN_OP_VERSION:-latest} # Spinnaker operator version
 SPIN_WATCH=${SPIN_WATCH:-1}                # Whether or not to watch/wait for Spinnaker to come up (0 or 1)
+OPERATOR_NS=${OPERATOR_NS:-"spinnaker-operator"}
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -176,12 +177,11 @@ function assert_operator() {
   [[ $SPIN_OP_DEPLOY = 0 ]] && info "Not manging operator\n" && return
 
   find_current_operator_details
-  OPERATOR_NS=$(grep "^namespace:" "$ROOT_DIR"/operator/kustomization.yml | awk '{print $2}')
   info "Resolved operator namespace: $OPERATOR_NS\n"
   check_operator_deployment
 
   if [[ "$CURRENT_OP_NS" != "" && "$CURRENT_OP_NS" != "$OPERATOR_NS" ]]; then
-    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$OPERATOR_NS\". Change desired namespace in operator/kustomization.yml, or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
+    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$OPERATOR_NS\". Change desired namespace with env var \"export OPERATOR_NS=", or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
 
   elif [[ $CURRENT_OP_IMAGE != "" && ${CURRENT_OP_IMAGE//:*/} != "$OP_IMAGE_BASE" ]]; then
     warn "There is a different operator in namespace \"$OPERATOR_NS\" (expected: \"$OP_IMAGE_BASE\", actual: \"${CURRENT_OP_IMAGE//:*/}\"). Do you want to delete it? (y/n)\n"
