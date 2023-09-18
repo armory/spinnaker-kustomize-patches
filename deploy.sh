@@ -160,7 +160,7 @@ function deploy_operator() {
   if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
     exec_kubectl_mutating "kubectl create ns $OPERATOR_NS" handle_generic_kubectl_error
   fi
-  exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -k $ROOT_DIR/operator" handle_generic_kubectl_error
+  exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -k $ROOT_DIR/operator/deploy/operator/cluster" handle_generic_kubectl_error
   info "Waiting for operator to start."
   check_operator_deployment
   while [[ $OP_READY != 1 ]]; do
