@@ -165,7 +165,6 @@ function deploy_operator() {
 
   if [ "$OPERATOR_MODE" == "helm" ]; then
     error "Helm deployment isn't support with this script right now, you should try the \"basic\" or \"cluster\" mode.\nOr you can try to deploy Helm Operator manually and set env var SPIN_OP_DEPLOY=0 to skip the overriding from this script.\n We will update helm suport in this script soon"
-    return 1
   fi
 
   exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -f $ROOT_DIR/operator/deploy/operator/$OPERATOR_MODE" handle_generic_kubectl_error
