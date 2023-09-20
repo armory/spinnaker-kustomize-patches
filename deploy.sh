@@ -16,8 +16,8 @@ SPIN_FLAVOR=${SPIN_FLAVOR:-armory}         # Distribution of spinnaker to deploy
 SPIN_OP_DEPLOY=${SPIN_OP_DEPLOY:-1}        # Whether or not to deploy and manage operator (0 or 1)
 SPIN_OP_VERSION=${SPIN_OP_VERSION:-latest} # Spinnaker operator version
 SPIN_WATCH=${SPIN_WATCH:-1}                # Whether or not to watch/wait for Spinnaker to come up (0 or 1)
-OPERATOR_NS=${OPERATOR_NS:-"spinnaker-operator"} # Distribution Operator namespace
-OPERATOR_MODE=${OPERATOR_MODE:-"cluster"}  # Distribution of operator mode to use (basic or cluser)
+SPIN_OP_NS=${SPIN_OP_NS:-"spinnaker-operator"} # Distribution Operator namespace
+SPIN_OP_MODE=${SPIN_OP_MODE:-"cluster"}  # Distribution of operator mode to use (basic or cluser)
 
 ROOT_DIR="$(
   cd "$(dirname "$0")" >/dev/null 2>&1 || exit 1
@@ -142,11 +142,11 @@ function find_current_operator_details() {
 
 function delete_operator() {
   info "Deleting operator\n"
-  exec_kubectl_mutating "kubectl -n $OPERATOR_NS delete deployment spinnaker-operator" handle_generic_kubectl_error
+  exec_kubectl_mutating "kubectl -n $SPIN_OP_NS delete deployment spinnaker-operator" handle_generic_kubectl_error
 }
 
 function check_operator_deployment() {
-  OP_READY_REP=$({ kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.status.readyReplicas'; } 2>>"$OUT")
+  OP_READY_REP=$({ kubectl -n $SPIN_OP_NS get deployment spinnaker-operator -o json | jq '.status.readyReplicas'; } 2>>"$OUT")
   [[ "$OP_READY_REP" == "1" ]] && OP_READY=1 || OP_READY=0
 }
 
@@ -159,15 +159,15 @@ function deploy_operator() {
   info "Downloading operator from $OP_URL\n"
   { curl -L $OP_URL | tar -xz; } >>"$OUT" 2>&1
   exec_kubectl_mutating "kubectl apply -f $ROOT_DIR/operator/deploy/crds/" handle_generic_kubectl_error
-  if ! kubectl get ns "$OPERATOR_NS" >/dev/null 2>&1; then
-    exec_kubectl_mutating "kubectl create ns $OPERATOR_NS" handle_generic_kubectl_error
+  if ! kubectl get ns "$SPIN_OP_NS" >/dev/null 2>&1; then
+    exec_kubectl_mutating "kubectl create ns $SPIN_OP_NS" handle_generic_kubectl_error
   fi
 
-  if [ "$OPERATOR_MODE" == "helm" ]; then
+  if [ "$SPIN_OP_MODE" == "helm" ]; then
     error "Helm deployment isn't support with this script right now, you should try the \"basic\" or \"cluster\" mode.\nOr you can try to deploy Helm Operator manually and set env var SPIN_OP_DEPLOY=0 to skip the overriding from this script.\n We will update helm suport in this script soon"
   fi
 
-  exec_kubectl_mutating "kubectl -n $OPERATOR_NS apply -f $ROOT_DIR/operator/deploy/operator/$OPERATOR_MODE" handle_generic_kubectl_error
+  exec_kubectl_mutating "kubectl -n $SPIN_OP_NS apply -f $ROOT_DIR/operator/deploy/operator/$SPIN_OP_MODE" handle_generic_kubectl_error
   info "Waiting for operator to start."
   check_operator_deployment
   while [[ $OP_READY != 1 ]]; do
@@ -183,14 +183,14 @@ function assert_operator() {
   [[ $SPIN_OP_DEPLOY = 0 ]] && info "Not manging operator\n" && return
 
   find_current_operator_details
-  info "Resolved operator namespace: $OPERATOR_NS\n"
+  info "Resolved operator namespace: $SPIN_OP_NS\n"
   check_operator_deployment
 
-  if [[ "$CURRENT_OP_NS" != "" && "$CURRENT_OP_NS" != "$OPERATOR_NS" ]]; then
-    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$OPERATOR_NS\". Change desired namespace with env var \"export OPERATOR_NS=\", or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
+  if [[ "$CURRENT_OP_NS" != "" && "$CURRENT_OP_NS" != "$SPIN_OP_NS" ]]; then
+    error "There is already a spinnaker operator in the cluster at namespace \"$CURRENT_OP_NS\", and doesn't match the desired namespace \"$SPIN_OP_NS\". Change desired namespace with env var \"export SPIN_OP_NS=\", or delete the existing operator, or set the env var SPIN_OP_DEPLOY=0 to ignore this error.\n"
 
   elif [[ $CURRENT_OP_IMAGE != "" && ${CURRENT_OP_IMAGE//:*/} != "$OP_IMAGE_BASE" ]]; then
-    warn "There is a different operator in namespace \"$OPERATOR_NS\" (expected: \"$OP_IMAGE_BASE\", actual: \"${CURRENT_OP_IMAGE//:*/}\"). Do you want to delete it? (y/n)\n"
+    warn "There is a different operator in namespace \"$SPIN_OP_NS\" (expected: \"$OP_IMAGE_BASE\", actual: \"${CURRENT_OP_IMAGE//:*/}\"). Do you want to delete it? (y/n)\n"
     read -r del_choice
     [[ "$del_choice" != "y" ]] && exit 0
     delete_operator
@@ -199,7 +199,7 @@ function assert_operator() {
   elif [[ $CRD_READY == 0 || $OP_READY != 1 ]]; then
     deploy_operator
   fi
-  OP_IMAGE=$(kubectl -n $OPERATOR_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
+  OP_IMAGE=$(kubectl -n $SPIN_OP_NS get deployment spinnaker-operator -o json | jq '.spec.template.spec.containers | .[] | select(.name | contains("spinnaker-operator")) | .image')
   info "Operator version: $OP_IMAGE\n"
 }
 
