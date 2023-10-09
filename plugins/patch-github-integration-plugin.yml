@@ -1,0 +1,86 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    # Configs in the spinnaker profile get applied to all services
+    spinnaker:
+      spinnaker:
+        extensibility:
+          repositories:
+            repository:
+              enabled: true
+              url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
+      gate:
+        github:
+          plugin:
+            accounts: &githubIntegrationPluginAccounts []
+              #- name: FirstAppRepo
+              #  organization:  company-public
+              #  repository: first-app-repo
+              #  defaultBranch: master
+              #  githubAppId: 9753
+              #  githubAppPrivateKey: encrypted:k8s!n:spin-secrets!k:github-app-9753-privatekey
+              #- name: SecondAppRepo
+              #  organization:  company-public
+              #  repository: second-app-repo
+              #  defaultBranch: main
+              #  githubAppId: 9753
+              #  githubAppPrivateKey: encrypted:k8s!n:spin-secrets!k:github-app-9753-privatekey
+              #- name: CompanyPrivateOrgAllRepos
+              #  organization: company-private
+              #  orgWideInstallation: true
+              #  includePublicRepositories: false
+              #  defaultBranch: main
+              #  githubAppId: 1357
+              #  githubAppPrivateKey: encrypted:k8s!n:spin-secrets!k:github-app-1357-privatekey
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.GitHubIntegration:
+                enabled: true
+                version: &gituhbIntegrationPluginVersion 0.1.0
+              Armory.ArmoryHeader:
+                enabled: true
+            deck-proxy:
+              enabled: true
+              plugins:
+                Armory.GitHubIntegration:
+                  enabled: true
+                  version: *gituhbIntegrationPluginVersion
+                Armory.ArmoryHeader:
+                  enabled: true
+      orca:
+        github:
+          plugin:
+            accounts:
+              *githubIntegrationPluginAccounts
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.GitHubIntegration:
+                enabled: true
+                version: *gituhbIntegrationPluginVersion
+      igor:
+        github:
+          plugin:
+            accounts:
+              *githubIntegrationPluginAccounts
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.GitHubIntegration:
+                enabled: true
+                version: *gituhbIntegrationPluginVersion
+      echo:
+        github:
+          plugin:
+            accounts:
+              *githubIntegrationPluginAccounts
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.GitHubIntegration:
+                enabled: true
+                version: *gituhbIntegrationPluginVersion
