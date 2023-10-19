@@ -79,7 +79,7 @@ spec:
         app: mysql
     spec:
       containers:
-        - image: mysql:5.7
+        - image: mysql:8.1-oracle
           name: mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
@@ -117,8 +117,6 @@ spec:
                 secretKeyRef:
                   name: spin-secrets
                   key: mysqlF50MigratePassword
-          args:
-            - "--ignore-db-dir=lost+found"
           ports:
             - containerPort: 3306
               name: mysql
