@@ -5,7 +5,7 @@ metadata:
 spec:
   spinnakerConfig:
     # Configs in the spinnaker profile get applied to all services
-    spinnaker:
+    profiles:
       spinnaker:
         extensibility:
           repositories:
@@ -51,6 +51,25 @@ spec:
                   version: *gituhbIntegrationPluginVersion
                 Armory.ArmoryHeader:
                   enabled: true
+      #deck: # Append the github trigger setting under core/patches/ui-feature-flags.yml
+      #  settings-local.js: |
+      #   window.spinnakerSettings.triggerTypes = [
+      #    'artifactory',
+      #    'concourse',
+      #    'cron',
+      #    'docker',
+      #    'git',
+      #    'helm',
+      #    'jenkins',
+      #    'nexus',
+      #    'pipeline',
+      #    'plugin',
+      #    'pubsub',
+      #    'travis',
+      #    'webhook',
+      #    'wercker',
+      #    'github'
+      #    ];
       orca:
         github:
           plugin:
