@@ -1375,12 +1375,12 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: spin-secrets
+                  name: prometheus-secrets
                   key: grafanaDefaultUser
             - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: spin-secrets
+                  name: prometheus-secrets
                   key: grafanaDefaultPassword
             - name: GF_AUTH_ANONYMOUS_ENABLED
               value: "false"

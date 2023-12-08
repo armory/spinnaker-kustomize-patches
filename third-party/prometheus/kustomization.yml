@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - prometheus-grafana.yml
+
+secretGenerator:
+  - name: prometheus-secrets
+    literals:
+      - grafanaDefaultUser=DefaultUser1!
+      - grafanaDefaultPassword=DefaultPass1!
+    options:
+      disableNameSuffixHash: true
