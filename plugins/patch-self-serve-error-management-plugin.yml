@@ -1,0 +1,22 @@
+apiVersion: spinnaker.armory.io/v1alpha2
+kind: SpinnakerService
+metadata:
+  name: spinnaker
+spec:
+  spinnakerConfig:
+    profiles:
+      clouddriver:
+        spinnaker:
+          extensibility:
+            plugins:
+              Armory.SelfServeErrorManagement:
+                enabled: true
+            repositories:
+              pluginRepository:
+                url: https://raw.githubusercontent.com/armory-plugins/pluginRepository/master/repositories.json
+        override-error:
+          rules:
+            - errorContains: "no matches for kind"
+              replaceWith: "This is a custom error message for replacing no matches for kind error."
+            - errorContains: "credentials not found"
+              appendWith: "Credentials not found. This is a custom error message."
